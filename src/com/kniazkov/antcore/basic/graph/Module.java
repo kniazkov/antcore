@@ -15,15 +15,27 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.kniazkov.antcore;
+package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.graph.Module;
-import com.kniazkov.antcore.basic.graph.Program;
+import java.util.List;
 
-public class Main {
-    public static void main(String[] args) {
-        Program program = new Program();
-        program.addModule(new Module("SERVER"));
-        System.out.print(program.toSourceCode());
+/**
+ * The node that represents a module
+ */
+public class Module implements  Node {
+    public Module(String name) {
+        this.name = name;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void print(List<String> dst, String i, String i0) {
+        dst.add(i + "MODULE " + name);
+        dst.add(i + "END MODULE");
+    }
+
+    private String name;
 }

@@ -15,15 +15,19 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.kniazkov.antcore;
+package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.graph.Module;
-import com.kniazkov.antcore.basic.graph.Program;
+import java.util.List;
 
-public class Main {
-    public static void main(String[] args) {
-        Program program = new Program();
-        program.addModule(new Module("SERVER"));
-        System.out.print(program.toSourceCode());
-    }
+/**
+ * The basic interface for node of syntax tree
+ */
+public interface Node {
+    /**
+     * Generate program source code from the node
+     * @param dst destination listing
+     * @param i current indentation
+     * @param i0 basic indentation
+     */
+    void print(List<String> dst, String i, String i0);
 }
