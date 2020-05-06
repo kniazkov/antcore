@@ -19,14 +19,13 @@ package com.kniazkov.antcore.basic.graph;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * The node that represents a whole program
  */
 public class Program implements Node {
-    public Program() {
-        modules = new TreeMap<>();
+    public Program(Map<String, Module> modules) {
+        this.modules = modules;
     }
 
     public String toSourceCode() {
@@ -38,14 +37,6 @@ public class Program implements Node {
             builder.append("\n");
         }
         return builder.toString();
-    }
-
-    public boolean hasModule(String name) {
-        return modules.containsKey(name);
-    }
-
-    public void addModule(Module module) {
-        modules.put(module.getName(), module);
     }
 
     @Override

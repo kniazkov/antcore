@@ -15,25 +15,14 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.kniazkov.antcore;
+package com.kniazkov.antcore.basic.parser.tokens;
 
-import com.kniazkov.antcore.basic.graph.Program;
-import com.kniazkov.antcore.basic.parser.ParseError;
-import com.kniazkov.antcore.basic.parser.Parser;
-
-public class Main {
-    public static void main(String[] args) {
-        String source =
-                "MODULE SERVER LOCAL ' comment\n" +
-                "\n" +
-                        "END MODULE\n" +
-                "MODULE INTERFACE\n" +
-                "END MODULE";
-        try {
-            Program program = Parser.parse(source);
-            System.out.println(program.toSourceCode());
-        } catch (ParseError parseError) {
-            parseError.printStackTrace();
-        }
+/**
+    The "MODULE" keyword
+ */
+public class KeywordModule extends Keyword {
+    @Override
+    public String toString() {
+        return "MODULE";
     }
 }

@@ -14,26 +14,21 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+package com.kniazkov.antcore.basic.parser;
 
-package com.kniazkov.antcore;
-
-import com.kniazkov.antcore.basic.graph.Program;
-import com.kniazkov.antcore.basic.parser.ParseError;
-import com.kniazkov.antcore.basic.parser.Parser;
-
-public class Main {
-    public static void main(String[] args) {
-        String source =
-                "MODULE SERVER LOCAL ' comment\n" +
-                "\n" +
-                        "END MODULE\n" +
-                "MODULE INTERFACE\n" +
-                "END MODULE";
-        try {
-            Program program = Parser.parse(source);
-            System.out.println(program.toSourceCode());
-        } catch (ParseError parseError) {
-            parseError.printStackTrace();
-        }
+/**
+ * An exception for parser
+ */
+public abstract class ParseError extends java.lang.Exception {
+    public ParseError(Line line) {
+        this.line = line;
     }
+
+    public String toString() {
+        return "" + line.lineNumber + ", " + getErrorMessage() + ": \'" + line.text.trim() + "\'";
+    }
+
+    protected abstract String getErrorMessage();
+
+    private Line line;
 }

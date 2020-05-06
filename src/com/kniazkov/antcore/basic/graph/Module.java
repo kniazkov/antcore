@@ -23,19 +23,28 @@ import java.util.List;
  * The node that represents a module
  */
 public class Module implements  Node {
-    public Module(String name) {
+    public Module(String name, String executor) {
         this.name = name;
+        this.executor = executor;
     }
 
     public String getName() {
         return name;
     }
 
+    public String getExecutor() {
+        return executor;
+    }
+
     @Override
     public void print(List<String> dst, String i, String i0) {
-        dst.add(i + "MODULE " + name);
+        if (executor != null)
+            dst.add(i + "MODULE " + name + " " + executor);
+        else
+            dst.add(i + "MODULE " + name);
         dst.add(i + "END MODULE");
     }
 
     private String name;
+    private String executor;
 }

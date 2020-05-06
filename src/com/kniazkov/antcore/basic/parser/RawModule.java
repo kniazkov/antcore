@@ -14,26 +14,29 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+package com.kniazkov.antcore.basic.parser;
 
-package com.kniazkov.antcore;
+import com.kniazkov.antcore.basic.graph.Module;
+import com.kniazkov.antcore.basic.graph.Node;
 
-import com.kniazkov.antcore.basic.graph.Program;
-import com.kniazkov.antcore.basic.parser.ParseError;
-import com.kniazkov.antcore.basic.parser.Parser;
+import java.util.List;
 
-public class Main {
-    public static void main(String[] args) {
-        String source =
-                "MODULE SERVER LOCAL ' comment\n" +
-                "\n" +
-                        "END MODULE\n" +
-                "MODULE INTERFACE\n" +
-                "END MODULE";
-        try {
-            Program program = Parser.parse(source);
-            System.out.println(program.toSourceCode());
-        } catch (ParseError parseError) {
-            parseError.printStackTrace();
-        }
+/**
+ * Token represents module
+ */
+public class RawModule extends Entity {
+    public RawModule(String name, String executor, List<Line> body) {
+        this.name = name;
+        this.executor = executor;
+        this.body = body;
     }
+
+    @Override
+    public Node toNode() {
+        return new Module(name, executor);
+    }
+
+    private String name;
+    private String executor;
+    private List<Line> body;
 }
