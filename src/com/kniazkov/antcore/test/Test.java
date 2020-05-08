@@ -36,7 +36,9 @@ public class Test {
                 "MODULE SERVER\nEND MODULE\n",
                 "MODULE SERVER LOCAL\nEND MODULE\n",
                 "MODULE SERVER\n\tDATA\n\tEND DATA\nEND MODULE\n",
-                "MODULE SERVER\n\tDATA\n\tEND DATA\n\tDATA INPUT\n\tEND DATA\nEND MODULE\n"
+                "MODULE SERVER\n\tDATA\n\tEND DATA\n\tDATA INPUT\n\tEND DATA\nEND MODULE\n",
+                "MODULE SERVER\n\tDATA\n\t\tvalue AS INTEGER\n\tEND DATA\nEND MODULE\n",
+                "MODULE SERVER\n\tDATA\n\t\tx AS REAL\n\t\ty AS REAL\n\tEND DATA\nEND MODULE\n"
         };
         int i;
         for (i = 0; i < tests.length; i++) {

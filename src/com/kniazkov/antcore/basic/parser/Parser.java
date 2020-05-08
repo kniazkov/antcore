@@ -125,6 +125,8 @@ public class Parser {
                     return new KeywordInput();
                 case "OUTPUT":
                     return new KeywordOutput();
+                case "AS":
+                    return new KeywordAs();
             }
             return new Identifier(name);
         }
@@ -316,7 +318,19 @@ public class Parser {
         while(iterator.hasNext()) {
             line = iterator.next();
             List<Token> content = line.getTokens();
-            if (content.size() >= 2
+            if (content.size() >= 3 && content.get(0) instanceof Identifier) {
+                tokens = content.iterator();
+                Identifier name = (Identifier)tokens.next();
+                Token asKeyword = tokens.next();
+                if (!(asKeyword instanceof KeywordAs))
+                    throw new ExpectedAsKeyword(line);
+                Token typeName = tokens.next();
+                if (!(typeName instanceof Identifier))
+                    throw new ExpectedDataType(line);
+                RawField field = new RawField(line.getFragment(), name.getName(), ((Identifier) typeName).getName());
+                dataSet.addField(field);
+            }
+            else if (content.size() >= 2
                     && content.get(0) instanceof KeywordEnd && content.get(1) instanceof KeywordData) {
                 if (content.size() > 2)
                     throw new UnrecognizedSequence(line);
