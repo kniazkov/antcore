@@ -40,7 +40,7 @@ public class RawField extends Entity {
     }
 
     public Field toNode() {
-        return new Field(fragment, name, type.getName(), type.toNode());
+        return new Field(fragment, name, type.toNode());
     }
 
     private Fragment fragment;

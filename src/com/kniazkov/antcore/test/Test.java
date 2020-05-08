@@ -17,6 +17,7 @@
 
 package com.kniazkov.antcore.test;
 
+import com.kniazkov.antcore.basic.graph.Analyzer;
 import com.kniazkov.antcore.basic.graph.Program;
 import com.kniazkov.antcore.basic.SyntaxError;
 import com.kniazkov.antcore.basic.parser.Parser;
@@ -51,6 +52,7 @@ public class Test {
     private static boolean parserTest(int id, String code) {
         try {
             Program program = Parser.parse(null, code);
+            Analyzer.analyze(program);
             String code2 = program.toSourceCode();
             if (!code2.equals(code)) {
                 System.out.println("> Test " + id + " failed, expected:\n" + code + "> Actual:\n" + code2);

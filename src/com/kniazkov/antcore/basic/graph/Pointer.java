@@ -17,21 +17,31 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.SyntaxError;
 
 /**
  * The pointer data type
  */
 public class Pointer extends DataType implements DataTypeOwner {
-    public Pointer(String typeName, DataType type) {
-        this.typeName = typeName;
+    public Pointer(DataType type) {
         this.type = type;
-        if (type != null)
-            type.setOwner(this);
+        type.setOwner(this);
+    }
+
+    @Override
+    public void accept(NodeVisitor visitor) throws SyntaxError {
+        visitor.visit(this);
+    }
+
+    @Override
+    public void dfs(NodeVisitor visitor) throws SyntaxError {
+        type.dfs(visitor);
+        accept(visitor);
     }
 
     @Override
     public String getName() {
-        return "POINTER TO " + (type != null ? type.getName() : typeName);
+        return "POINTER TO " + type.getName();
     }
 
     @Override
@@ -55,6 +65,5 @@ public class Pointer extends DataType implements DataTypeOwner {
     }
 
     private DataTypeOwner owner;
-    private String typeName;
     private DataType type;
 }

@@ -17,6 +17,7 @@
 package com.kniazkov.antcore.basic.parser;
 
 import com.kniazkov.antcore.basic.graph.DataType;
+import com.kniazkov.antcore.basic.graph.DataTypeReference;
 
 /**
  * A data type represented as identifier
@@ -33,7 +34,7 @@ public class RawDataTypeIdentifier extends RawDataType {
 
     @Override
     public DataType toNode() {
-        return null;
+        return new DataTypeReference(name, null);
     }
 
     private String name;

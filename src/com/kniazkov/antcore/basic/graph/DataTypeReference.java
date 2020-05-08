@@ -16,19 +16,16 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.exceptions.UnknownType;
 
 /**
- * The node represents a field (of class, type, etc)
+ * The reference to data type
  */
-public class Field extends Expression implements DataTypeOwner {
-    public Field(Fragment fragment, String name, DataType type) {
-        this.fragment = fragment;
+public class DataTypeReference extends DataType {
+    public DataTypeReference(String name, DataType type) {
         this.name = name;
         this.type = type;
-        type.setOwner(this);
-        this.offset = -1;
     }
 
     @Override
@@ -36,45 +33,44 @@ public class Field extends Expression implements DataTypeOwner {
         visitor.visit(this);
     }
 
-    @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        type.dfs(visitor);
-        accept(visitor);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    void setOwner(DataSet owner) {
+    void setOwner(DataTypeOwner owner) {
         this.owner = owner;
     }
 
     @Override
+    public String getName() {
+        if (type != null)
+            return type.getName();
+        return name;
+    }
+
+    @Override
+    public int getSize() {
+        return type.getSize();
+    }
+
+    @Override
+    public boolean builtIn() {
+        return type.builtIn();
+    }
+
+    @Override
     public Node getOwner() {
-        return owner;
+        return (Node)owner;
     }
 
-    @Override
-    public Fragment getFragment() {
-        return fragment;
+    /**
+     * Bind data type by name
+     */
+    void bindType() throws SyntaxError {
+        if (type != null)
+            return;
+        type = findTypeByName(name);
+        if (type == null)
+            throw new UnknownType(getFragment(), name);
     }
 
-    @Override
-    public DataType getType() {
-        return type;
-    }
-
-    @Override
-    public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append(i).append(name).append(" AS ");
-        type.toSourceCode(buff, i, i0);
-        buff.append("\n");
-    }
-
-    private DataSet owner;
-    private Fragment fragment;
+    private DataTypeOwner owner;
     private String name;
     private DataType type;
-    private int offset;
 }

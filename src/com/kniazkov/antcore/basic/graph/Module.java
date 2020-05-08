@@ -18,6 +18,7 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.SyntaxError;
 
 /**
  * The node that represents a module
@@ -37,6 +38,22 @@ public class Module extends Node implements DataSetOwner {
         this.outputData = outputData;
         if (outputData != null)
             outputData.setOwner(this);
+    }
+
+    @Override
+    public void accept(NodeVisitor visitor) throws SyntaxError {
+        visitor.visit(this);
+    }
+
+    @Override
+    public void dfs(NodeVisitor visitor) throws SyntaxError {
+        if (localData != null)
+            localData.dfs(visitor);
+        if (inputData != null)
+            inputData.dfs(visitor);
+        if (outputData != null)
+            outputData.dfs(visitor);
+        accept(visitor);
     }
 
     void setOwner(Program owner) {

@@ -34,7 +34,7 @@ public class RawDataTypePointer extends RawDataType {
 
     @Override
     public DataType toNode() {
-        return new Pointer(type.getName(), type.toNode());
+        return new Pointer(type.toNode());
     }
 
     private RawDataType type;

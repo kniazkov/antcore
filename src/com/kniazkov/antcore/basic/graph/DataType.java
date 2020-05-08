@@ -48,4 +48,9 @@ public abstract class DataType extends Node {
     public void toSourceCode(StringBuilder buff, String i, String i0) {
         buff.append(getName());
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

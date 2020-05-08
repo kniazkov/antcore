@@ -16,6 +16,8 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.SyntaxError;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
@@ -31,6 +33,7 @@ public class Program extends Node implements DataTypeOwner {
         }
 
         Map<String, DataType> types = new TreeMap<>();
+
         types.put("INTEGER", new BuiltInType(this) {
             @Override
             public String getName() {
@@ -42,7 +45,35 @@ public class Program extends Node implements DataTypeOwner {
                 return 4;
             }
         });
+
+        types.put("REAL", new BuiltInType(this) {
+            @Override
+            public String getName() {
+                return "REAL";
+            }
+
+            @Override
+            public int getSize() {
+                return 8;
+            }
+        });
         this.types = Collections.unmodifiableMap(types);
+    }
+
+    @Override
+    public void accept(NodeVisitor visitor) throws SyntaxError {
+        visitor.visit(this);
+    }
+
+    @Override
+    public void dfs(NodeVisitor visitor) throws SyntaxError {
+        for (Map.Entry<String, DataType> entry : types.entrySet()) {
+            entry.getValue().dfs(visitor);
+        }
+        for (Map.Entry<String, Module> entry : modules.entrySet()) {
+            entry.getValue().dfs(visitor);
+        }
+        accept(visitor);
     }
 
     public String toSourceCode() {
@@ -66,6 +97,13 @@ public class Program extends Node implements DataTypeOwner {
             entry.getValue().toSourceCode(buff, i, i0);
             flag = true;
         }
+    }
+
+    @Override
+    protected DataType findTypeByName(String name) {
+        if (types.containsKey(name))
+            return types.get(name);
+        return null;
     }
 
     private Map<String, Module> modules;

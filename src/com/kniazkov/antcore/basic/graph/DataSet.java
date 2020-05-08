@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.DataPrefix;
 import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.SyntaxError;
 
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,19 @@ public class DataSet extends Node {
             fieldMap.put(field.getName(), field);
             field.setOwner(this);
         }
+    }
+
+    @Override
+    public void accept(NodeVisitor visitor) throws SyntaxError {
+        visitor.visit(this);
+    }
+
+    @Override
+    public void dfs(NodeVisitor visitor) throws SyntaxError {
+        for (Field field : fieldList) {
+            field.dfs(visitor);
+        }
+        accept(visitor);
     }
 
     void setOwner(DataSetOwner owner) {

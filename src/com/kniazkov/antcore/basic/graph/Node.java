@@ -18,11 +18,31 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.SyntaxError;
 
 /**
  * The basic interface for node of syntax tree
  */
 public abstract class Node {
+    /**
+     * Accept a visitor
+     * @param visitor a visitor
+     */
+    public void accept (NodeVisitor visitor) throws SyntaxError {
+    }
+
+    /**
+     * Depth-first graph traversal
+     * @param visitor a visitor
+     */
+    public void dfs(NodeVisitor visitor) throws SyntaxError {
+        accept(visitor);
+    }
+
+    /**
+     * @return node contains this node
+     */
+    public abstract Node getOwner();
 
     /**
      * @return fragment contains this node
@@ -32,9 +52,13 @@ public abstract class Node {
     }
 
     /**
-     * @return node contains this node
+     * Finds a data type by its name
+     * @param name the name
+     * @return a type or null if not found
      */
-    public abstract Node getOwner();
+    protected DataType findTypeByName(String name) {
+        return getOwner().findTypeByName(name);
+    }
 
     /**
      * Generate program source code from the node
