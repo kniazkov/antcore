@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.lib.Reference;
 
 /**
  * The node represents a field (of class, type, etc)
@@ -70,6 +71,15 @@ public class Field extends Expression implements DataTypeOwner {
         buff.append(i).append(name).append(" AS ");
         type.toSourceCode(buff, i, i0);
         buff.append("\n");
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    void setOffset(int offset) {
+        assert(offset == -1);
+        this.offset = offset;
     }
 
     private DataSet owner;

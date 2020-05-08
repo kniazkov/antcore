@@ -80,6 +80,17 @@ public class DataSet extends Node {
         buff.append(i).append("END DATA\n");
     }
 
+    /**
+     * Calculate offsets of all fields
+     */
+    void calculateOffsets() throws SyntaxError {
+        int offset = 0;
+        for (Field field : fieldList) {
+            field.setOffset(offset);
+            offset += field.getType().getSize();
+        }
+    }
+
     private DataSetOwner owner;
     private Fragment fragment;
     private DataPrefix prefix;
