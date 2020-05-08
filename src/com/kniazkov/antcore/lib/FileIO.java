@@ -14,24 +14,27 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+package com.kniazkov.antcore.lib;
 
-package com.kniazkov.antcore;
+import java.io.IOException;
+import java.nio.file.Files;
 
-import com.kniazkov.antcore.basic.graph.Program;
-import com.kniazkov.antcore.basic.SyntaxError;
-import com.kniazkov.antcore.basic.parser.Parser;
-import com.kniazkov.antcore.lib.FileIO;
-
-public class Main {
-    public static void main(String[] args) {
-        String source = FileIO.readFileToString("program.txt");
-        if (source != null) {
+/**
+ * File input/output routines
+ */
+public class FileIO {
+    public static String readFileToString(String path) {
+        java.io.File file = new java.io.File(path);
+        if (file.exists()) {
             try {
-                Program program = Parser.parse(null, source);
-                System.out.println(program.toSourceCode());
-            } catch (SyntaxError syntaxError) {
-                syntaxError.printStackTrace();
+                byte[] data = Files.readAllBytes(file.toPath());
+                return new String(data);
+            } catch (IOException e) {
+                System.err.println("Can't read '" + path + '\'');
             }
+        } else {
+            System.err.println("Can't find file specified '" + path + '\'');
         }
+        return null;
     }
 }
