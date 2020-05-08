@@ -24,8 +24,4 @@ import com.kniazkov.antcore.basic.parser.Token;
  * Token represents keyword
  */
 public abstract class Keyword extends Token {
-    @Override
-    public Node toNode() {
-        return null;
-    }
 }

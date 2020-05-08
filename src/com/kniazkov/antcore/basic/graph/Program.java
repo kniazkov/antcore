@@ -16,8 +16,6 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.Fragment;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
@@ -25,13 +23,15 @@ import java.util.TreeMap;
 /**
  * The node that represents a whole program
  */
-public class Program extends Node {
+public class Program extends Node implements DataTypeOwner {
     public Program(Map<String, Module> modules) {
-        super(null);
         this.modules = Collections.unmodifiableMap(modules);
+        for (Map.Entry<String, Module> entry : modules.entrySet()) {
+            entry.getValue().setOwner(this);
+        }
 
-        this.types = new TreeMap<>();
-        types.put("INTEGER", new DataType(null) {
+        Map<String, DataType> types = new TreeMap<>();
+        types.put("INTEGER", new BuiltInType(this) {
             @Override
             public String getName() {
                 return "INTEGER";
@@ -41,18 +41,19 @@ public class Program extends Node {
             public int getSize() {
                 return 4;
             }
-
-            @Override
-            public boolean builtIn() {
-                return true;
-            }
         });
+        this.types = Collections.unmodifiableMap(types);
     }
 
     public String toSourceCode() {
         StringBuilder buff = new StringBuilder();
         toSourceCode(buff, "", "\t");
         return buff.toString();
+    }
+
+    @Override
+    public Node getOwner() {
+        return null;
     }
 
     @Override

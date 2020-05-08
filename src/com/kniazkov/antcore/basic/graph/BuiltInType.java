@@ -16,36 +16,30 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-
 import com.kniazkov.antcore.basic.Fragment;
 
 /**
- * The basic interface for data type
+ * A built-in data type
  */
-public abstract class DataType extends Node {
-    /**
-     * @return name of the type
-     */
-    public abstract String getName();
-
-    /**
-     * @return size of the type
-     */
-    public abstract int getSize();
-
-    /**
-     * @return true if the type is built-it
-     */
-    public abstract boolean builtIn();
-
-    /**
-     * Set owner of the node
-     * @param owner owner
-     */
-    abstract void setOwner(DataTypeOwner owner);
+public abstract class BuiltInType extends DataType {
+    BuiltInType(Program owner) {
+        this.owner = owner;
+    }
 
     @Override
-    public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append(getName());
+    public boolean builtIn() {
+        return true;
     }
+
+    @Override
+    public void setOwner(DataTypeOwner owner) {
+        // do nothing
+    }
+
+    @Override
+    public Node getOwner() {
+        return owner;
+    }
+
+    private Program owner;
 }

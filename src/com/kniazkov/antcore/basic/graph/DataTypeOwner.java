@@ -16,36 +16,8 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-
-import com.kniazkov.antcore.basic.Fragment;
-
 /**
- * The basic interface for data type
+ * Marker interface for data type owners
  */
-public abstract class DataType extends Node {
-    /**
-     * @return name of the type
-     */
-    public abstract String getName();
-
-    /**
-     * @return size of the type
-     */
-    public abstract int getSize();
-
-    /**
-     * @return true if the type is built-it
-     */
-    public abstract boolean builtIn();
-
-    /**
-     * Set owner of the node
-     * @param owner owner
-     */
-    abstract void setOwner(DataTypeOwner owner);
-
-    @Override
-    public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append(getName());
-    }
+public interface DataTypeOwner {
 }

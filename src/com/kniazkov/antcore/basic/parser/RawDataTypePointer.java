@@ -14,38 +14,28 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.graph;
+package com.kniazkov.antcore.basic.parser;
 
-
-import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.graph.DataType;
+import com.kniazkov.antcore.basic.graph.Pointer;
 
 /**
- * The basic interface for data type
+ * A data type represented as pointer to another type
  */
-public abstract class DataType extends Node {
-    /**
-     * @return name of the type
-     */
-    public abstract String getName();
-
-    /**
-     * @return size of the type
-     */
-    public abstract int getSize();
-
-    /**
-     * @return true if the type is built-it
-     */
-    public abstract boolean builtIn();
-
-    /**
-     * Set owner of the node
-     * @param owner owner
-     */
-    abstract void setOwner(DataTypeOwner owner);
+public class RawDataTypePointer extends RawDataType {
+    public RawDataTypePointer(RawDataType type) {
+        this.type = type;
+    }
 
     @Override
-    public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append(getName());
+    public String getName() {
+        return "POINTER TO " + type.getName();
     }
+
+    @Override
+    public DataType toNode() {
+        return new Pointer(type.getName(), type.toNode());
+    }
+
+    private RawDataType type;
 }

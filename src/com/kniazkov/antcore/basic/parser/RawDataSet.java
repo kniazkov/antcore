@@ -20,6 +20,7 @@ import com.kniazkov.antcore.basic.DataPrefix;
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
 import com.kniazkov.antcore.basic.graph.DataSet;
+import com.kniazkov.antcore.basic.graph.DataSetOwner;
 import com.kniazkov.antcore.basic.graph.Field;
 import com.kniazkov.antcore.basic.graph.Node;
 import com.kniazkov.antcore.basic.exceptions.DuplicateField;
@@ -55,11 +56,10 @@ public class RawDataSet extends Entity {
         return prefix;
     }
 
-    @Override
-    public Node toNode() {
+    public DataSet toNode() {
         List<Field> fields = new ArrayList<>();
         for (Map.Entry<String, RawField> rawFieldEntry : rawFields.entrySet()) {
-            fields.add((Field)rawFieldEntry.getValue().toNode());
+            fields.add(rawFieldEntry.getValue().toNode());
         }
         return new DataSet(fragment, prefix != prefixDefault ? prefix : DataPrefix.DEFAULT, fields);
     }

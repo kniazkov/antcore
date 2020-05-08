@@ -22,6 +22,7 @@ import com.kniazkov.antcore.basic.graph.Module;
 import com.kniazkov.antcore.basic.graph.Program;
 import com.kniazkov.antcore.basic.parser.exceptions.*;
 import com.kniazkov.antcore.basic.parser.tokens.*;
+import com.kniazkov.antcore.lib.Reference;
 
 import java.util.*;
 
@@ -127,6 +128,10 @@ public class Parser {
                     return new KeywordOutput();
                 case "AS":
                     return new KeywordAs();
+                case "TO":
+                    return new KeywordTo();
+                case "POINTER":
+                    return new KeywordPointer();
             }
             return new Identifier(name);
         }
@@ -324,10 +329,8 @@ public class Parser {
                 Token asKeyword = tokens.next();
                 if (!(asKeyword instanceof KeywordAs))
                     throw new ExpectedAsKeyword(line);
-                Token typeName = tokens.next();
-                if (!(typeName instanceof Identifier))
-                    throw new ExpectedDataType(line);
-                RawField field = new RawField(line.getFragment(), name.getName(), ((Identifier) typeName).getName());
+                RawDataType type = parseDataType(line, tokens);
+                RawField field = new RawField(line.getFragment(), name.getName(), type);
                 dataSet.addField(field);
             }
             else if (content.size() >= 2
@@ -338,5 +341,32 @@ public class Parser {
             }
         }
         throw new UnexpectedEndOfFile(line);
+    }
+
+    /**
+     * Parse a data type
+     * @param line the source code line
+     * @param iterator the iterator by tokens
+     */
+    private RawDataType parseDataType(Line line, Iterator<Token> iterator) throws SyntaxError {
+        if (!iterator.hasNext())
+            throw new ExpectedDataType(line);
+
+        Token first = iterator.next();
+
+        if (first instanceof Identifier)
+            return new RawDataTypeIdentifier(((Identifier) first).getName());
+
+        if (first instanceof KeywordPointer) {
+            if (!iterator.hasNext())
+                throw new ExpectedToKeyword(line);
+            Token toKeyword = iterator.next();
+            if (!(toKeyword instanceof KeywordTo))
+                throw new ExpectedToKeyword(line);
+            RawDataType subType = parseDataType(line, iterator);
+            return new RawDataTypePointer(subType);
+        }
+
+        throw new ExpectedDataType(line);
     }
 }

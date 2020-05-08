@@ -21,23 +21,51 @@ import com.kniazkov.antcore.basic.Fragment;
 /**
  * The node represents a field (of class, type, etc)
  */
-public class Field extends Node {
-
-    public Field(Fragment fragment, String name, String typeName) {
-        super(fragment);
+public class Field extends Expression implements DataTypeOwner {
+    public Field(Fragment fragment, String name, String typeName, DataType type) {
+        this.fragment = fragment;
         this.name = name;
         this.typeName = typeName;
+        this.type = type;
+        if (type != null)
+            type.setOwner(this);
     }
 
     public String getName() {
         return name;
     }
 
-    @Override
-    public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append(i).append(name).append(" AS ").append(typeName).append("\n");
+    void setOwner(DataSet owner) {
+        this.owner = owner;
     }
 
+    @Override
+    public Node getOwner() {
+        return owner;
+    }
+
+    @Override
+    public Fragment getFragment() {
+        return fragment;
+    }
+
+    @Override
+    public DataType getType() {
+        return type;
+    }
+
+    @Override
+    public void toSourceCode(StringBuilder buff, String i, String i0) {
+        buff.append(i).append(name).append(" AS ");
+        if (type != null)
+            type.toSourceCode(buff, i, i0);
+        else
+            buff.append(typeName);
+        buff.append("\n");
+    }
+
+    private DataSet owner;
+    private Fragment fragment;
     private String name;
     private String typeName;
     private DataType type;

@@ -16,36 +16,12 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-
-import com.kniazkov.antcore.basic.Fragment;
-
 /**
- * The basic interface for data type
+ * An expression, i.e. node that has a type
  */
-public abstract class DataType extends Node {
+public abstract class Expression extends Node {
     /**
-     * @return name of the type
+     * @return type of the expression
      */
-    public abstract String getName();
-
-    /**
-     * @return size of the type
-     */
-    public abstract int getSize();
-
-    /**
-     * @return true if the type is built-it
-     */
-    public abstract boolean builtIn();
-
-    /**
-     * Set owner of the node
-     * @param owner owner
-     */
-    abstract void setOwner(DataTypeOwner owner);
-
-    @Override
-    public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append(getName());
-    }
+    public abstract DataType getType();
 }

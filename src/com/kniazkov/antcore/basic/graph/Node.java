@@ -23,13 +23,18 @@ import com.kniazkov.antcore.basic.Fragment;
  * The basic interface for node of syntax tree
  */
 public abstract class Node {
-    public Node(Fragment fragment) {
-        this.fragment = fragment;
+
+    /**
+     * @return fragment contains this node
+     */
+    public Fragment getFragment() {
+        return getOwner().getFragment();
     }
 
-    public Fragment getFragment() {
-        return fragment;
-    }
+    /**
+     * @return node contains this node
+     */
+    public abstract Node getOwner();
 
     /**
      * Generate program source code from the node
@@ -38,6 +43,4 @@ public abstract class Node {
      * @param i0 basic indentation
      */
     public abstract void toSourceCode(StringBuilder buff, String i, String i0);
-
-    private Fragment fragment;
 }

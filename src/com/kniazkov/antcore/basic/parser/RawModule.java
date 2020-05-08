@@ -22,6 +22,7 @@ import com.kniazkov.antcore.basic.SyntaxError;
 import com.kniazkov.antcore.basic.graph.DataSet;
 import com.kniazkov.antcore.basic.graph.Module;
 import com.kniazkov.antcore.basic.graph.Node;
+import com.kniazkov.antcore.basic.graph.Program;
 import com.kniazkov.antcore.basic.parser.exceptions.DuplicateDataSet;
 import com.kniazkov.antcore.basic.parser.exceptions.UnexpectedDataSet;
 import com.kniazkov.antcore.lib.Pair;
@@ -68,16 +69,12 @@ public class RawModule extends Entity {
         }
     }
 
-    @Override
-    public Node toNode() {
-        return new Module(
-                fragment,
-                name,
-                executor,
-                localData != null ? (DataSet) localData.toNode() : null,
-                inputData != null ? (DataSet) inputData.toNode() : null,
-                outputData != null ? (DataSet) outputData.toNode() : null
-        );
+    public Module toNode() {
+        DataSet localDataNode = localData != null ? localData.toNode() : null;
+        DataSet inputDataNode = inputData != null ? inputData.toNode() : null;
+        DataSet outputDataNode = outputData != null ? outputData.toNode() : null;
+
+        return new Module(fragment, name, executor, localDataNode, inputDataNode, outputDataNode);
     }
 
     private Fragment fragment;

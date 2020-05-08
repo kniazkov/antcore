@@ -28,14 +28,29 @@ import java.util.TreeMap;
  */
 public class DataSet extends Node {
     public DataSet(Fragment fragment, DataPrefix prefix, List<Field> fields) {
-        super(fragment);
+        this.fragment = fragment;
         this.prefix = prefix;
         this.fieldList = fields;
 
         this.fieldMap = new TreeMap<>();
         for (Field field : fields) {
             fieldMap.put(field.getName(), field);
+            field.setOwner(this);
         }
+    }
+
+    void setOwner(DataSetOwner owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public Node getOwner() {
+        return (Node)owner;
+    }
+
+    @Override
+    public Fragment getFragment() {
+        return fragment;
     }
 
     @Override
@@ -51,6 +66,8 @@ public class DataSet extends Node {
         buff.append(i).append("END DATA\n");
     }
 
+    private DataSetOwner owner;
+    private Fragment fragment;
     private DataPrefix prefix;
     private Map<String, Field> fieldMap;
     private List<Field> fieldList;

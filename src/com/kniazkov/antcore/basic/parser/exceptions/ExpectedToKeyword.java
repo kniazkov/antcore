@@ -14,38 +14,21 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.graph;
+package com.kniazkov.antcore.basic.parser.exceptions;
 
-
-import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.parser.Line;
 
 /**
- * The basic interface for data type
+ * The exception "Expected a 'TO' keyword"
  */
-public abstract class DataType extends Node {
-    /**
-     * @return name of the type
-     */
-    public abstract String getName();
-
-    /**
-     * @return size of the type
-     */
-    public abstract int getSize();
-
-    /**
-     * @return true if the type is built-it
-     */
-    public abstract boolean builtIn();
-
-    /**
-     * Set owner of the node
-     * @param owner owner
-     */
-    abstract void setOwner(DataTypeOwner owner);
+public class ExpectedToKeyword extends SyntaxError {
+    public ExpectedToKeyword(Line line) {
+        super(line.getFragment());
+    }
 
     @Override
-    public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append(getName());
+    protected String getErrorMessage() {
+        return "Expected a 'TO' keyword";
     }
 }

@@ -22,9 +22,4 @@ import com.kniazkov.antcore.basic.graph.Node;
  * An entity (token, non-terminal, etc)
  */
 public abstract class Entity {
-    /**
-     * Converts token to a node
-     * @return Node
-     */
-    public abstract Node toNode();
 }

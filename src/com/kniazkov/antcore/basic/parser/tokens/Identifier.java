@@ -17,10 +17,5 @@ public class Identifier extends Token {
         return name;
     }
 
-    @Override
-    public Node toNode() {
-        return null;
-    }
-
     private String name;
 }

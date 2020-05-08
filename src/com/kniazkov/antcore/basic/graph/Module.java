@@ -22,15 +22,35 @@ import com.kniazkov.antcore.basic.Fragment;
 /**
  * The node that represents a module
  */
-public class Module extends Node {
+public class Module extends Node implements DataSetOwner {
     public Module(Fragment fragment, String name, String executor,
                   DataSet localData, DataSet inputData, DataSet outputData) {
-        super(fragment);
+        this.fragment = fragment;
         this.name = name;
         this.executor = executor;
         this.localData = localData;
+        if (localData != null)
+            localData.setOwner(this);
         this.inputData = inputData;
+        if (inputData != null)
+            inputData.setOwner(this);
         this.outputData = outputData;
+        if (outputData != null)
+            outputData.setOwner(this);
+    }
+
+    void setOwner(Program owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public Node getOwner() {
+        return owner;
+    }
+
+    @Override
+    public Fragment getFragment() {
+        return fragment;
     }
 
     public String getName() {
@@ -57,6 +77,8 @@ public class Module extends Node {
         buff.append(i).append("END MODULE").append("\n");
     }
 
+    private Program owner;
+    private Fragment fragment;
     private String name;
     private String executor;
     private DataSet localData;

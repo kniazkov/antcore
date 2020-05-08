@@ -17,6 +17,7 @@
 package com.kniazkov.antcore.basic.parser;
 
 import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.graph.DataSet;
 import com.kniazkov.antcore.basic.graph.Field;
 import com.kniazkov.antcore.basic.graph.Node;
 
@@ -24,7 +25,7 @@ import com.kniazkov.antcore.basic.graph.Node;
  * The parsed field of data set
  */
 public class RawField extends Entity {
-    public RawField(Fragment fragment, String name, String type) {
+    public RawField(Fragment fragment, String name, RawDataType type) {
         this.fragment = fragment;
         this.name = name;
         this.type = type;
@@ -38,12 +39,11 @@ public class RawField extends Entity {
         return name;
     }
 
-    @Override
-    public Node toNode() {
-        return new Field(fragment, name, type);
+    public Field toNode() {
+        return new Field(fragment, name, type.getName(), type.toNode());
     }
 
     private Fragment fragment;
     private String name;
-    private String type;
+    private RawDataType type;
 }
