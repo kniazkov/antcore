@@ -14,44 +14,24 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.graph;
+package com.kniazkov.antcore.basic.parser.exceptions;
 
-
-import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.parser.Line;
 
 /**
- * The basic interface for data type
+ * The exception "The type already exists"
  */
-public abstract class DataType extends Node {
-    /**
-     * @return name of the type
-     */
-    public abstract String getName();
-
-    /**
-     * @return size of the type
-     */
-    public abstract int getSize() throws SyntaxError;
-
-    /**
-     * @return true if the type is built-it
-     */
-    public abstract boolean builtIn();
-
-    /**
-     * Set owner of the node
-     * @param owner owner
-     */
-    abstract void setOwner(DataTypeOwner owner);
-
-    @Override
-    public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append(getName());
+public class TypeAlreadyExists extends SyntaxError {
+    public TypeAlreadyExists(Line line, String name) {
+        super(line.getFragment());
+        this.name = name;
     }
 
     @Override
-    public String toString() {
-        return getName();
+    protected String getErrorMessage() {
+        return "The type \'" + name + "\' already exists";
     }
+
+    private String name;
 }

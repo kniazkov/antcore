@@ -85,12 +85,23 @@ public class Module extends Node implements DataSetOwner {
         else
             buff.append(i).append("MODULE ").append(name).append("\n");
         String i1 = i + i0;
-        if (localData != null)
+        boolean flag = false;
+        if (localData != null) {
             localData.toSourceCode(buff, i1, i0);
-        if (inputData != null)
+            flag = true;
+        }
+        if (inputData != null) {
+            if (flag)
+                buff.append('\n');
             inputData.toSourceCode(buff, i1, i0);
-        if (outputData != null)
+            flag = true;
+        }
+        if (outputData != null) {
+            if (flag)
+                buff.append('\n');
             outputData.toSourceCode(buff, i1, i0);
+            flag = true;
+        }
         buff.append(i).append("END MODULE").append("\n");
     }
 

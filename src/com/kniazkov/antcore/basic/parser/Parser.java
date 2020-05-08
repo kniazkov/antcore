@@ -18,11 +18,11 @@ package com.kniazkov.antcore.basic.parser;
 
 import com.kniazkov.antcore.basic.DataPrefix;
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.graph.DataType;
 import com.kniazkov.antcore.basic.graph.Module;
 import com.kniazkov.antcore.basic.graph.Program;
 import com.kniazkov.antcore.basic.parser.exceptions.*;
 import com.kniazkov.antcore.basic.parser.tokens.*;
-import com.kniazkov.antcore.lib.Reference;
 
 import java.util.*;
 
@@ -39,6 +39,7 @@ public class Parser {
     public static Program parse(String fileName, String source) throws SyntaxError
     {
         // prepare an array of lines:
+
         String[] list = source.split("\n");
         ArrayList<Line> lines = new ArrayList<>();
         for (int i = 0; i < list.length; i++) {
@@ -52,17 +53,25 @@ public class Parser {
         }
 
         // parse
+
         Parser parser = new Parser();
         parser.parse(lines);
 
         // convert to node
+
         Map<String, Module> modules = new TreeMap<>();
         for (Map.Entry<String, RawModule> entry : parser.rawModules.entrySet()) {
-            Module module = (Module)entry.getValue().toNode();
+            Module module = entry.getValue().toNode();
             modules.put(module.getName(), module);
         }
-        Program program = new Program(modules);
-        return program;
+
+        Map<String, DataType> dataTypes = new TreeMap<>();
+        for (Map.Entry<String, RawDataType> entry : parser.rawDataTypes.entrySet()) {
+            DataType dataType = entry.getValue().toNode();
+            dataTypes.put(dataType.getName(), dataType);
+        }
+
+        return new Program(modules, dataTypes);
     }
 
     /**
@@ -132,6 +141,8 @@ public class Parser {
                     return new KeywordTo();
                 case "POINTER":
                     return new KeywordPointer();
+                case "TYPE":
+                    return new KeywordType();
             }
             return new Identifier(name);
         }
@@ -189,9 +200,11 @@ public class Parser {
     }
 
     private Map<String, RawModule> rawModules;
+    private Map<String, RawDataType> rawDataTypes;
 
     private Parser() {
         rawModules = new TreeMap<>();
+        rawDataTypes = new TreeMap<>();
     }
 
     /**
@@ -216,6 +229,9 @@ public class Parser {
             assert(line.getTokens().size() > 0);
             if (line.getTokens().get(0) instanceof KeywordModule) {
                 parseModule(line, iterator);
+            }
+            else if (line.getTokens().get(0) instanceof KeywordType) {
+                parseStructure(line, iterator);
             }
             else
                 throw new UnexpectedSequence(line);
@@ -368,5 +384,53 @@ public class Parser {
         }
 
         throw new ExpectedDataType(line);
+    }
+
+    /**
+     * Parse a struct
+     * @param declaration the line contains struct declaration
+     * @param iterator the iterator by lines
+     */
+    private void parseStructure(Line declaration, Iterator<Line> iterator) throws SyntaxError {
+        Iterator<Token> tokens = declaration.getTokens().iterator();
+        tokens.next();
+
+        if (!tokens.hasNext())
+            throw new ExpectedTypeName(declaration);
+        Token tokenStructName = tokens.next();
+        if (!(tokenStructName instanceof Identifier))
+            throw new ExpectedTypeName(declaration);
+        String structName = ((Identifier) tokenStructName).getName();
+        if (rawDataTypes.containsKey(structName))
+            throw new TypeAlreadyExists(declaration, structName);
+
+        if (tokens.hasNext())
+            throw new UnrecognizedSequence(declaration);
+
+        RawStruct struct = new RawStruct(declaration.getFragment(), structName);
+
+        Line line = declaration;
+        while(iterator.hasNext()) {
+            line = iterator.next();
+            List<Token> content = line.getTokens();
+            if (content.size() >= 3 && content.get(0) instanceof Identifier) {
+                tokens = content.iterator();
+                Identifier fieldName = (Identifier)tokens.next();
+                Token asKeyword = tokens.next();
+                if (!(asKeyword instanceof KeywordAs))
+                    throw new ExpectedAsKeyword(line);
+                RawDataType type = parseDataType(line, tokens);
+                RawField field = new RawField(line.getFragment(), fieldName.getName(), type);
+                struct.addField(field);
+            }
+            else if (content.size() >= 2
+                    && content.get(0) instanceof KeywordEnd && content.get(1) instanceof KeywordType) {
+                if (content.size() > 2)
+                    throw new UnrecognizedSequence(line);
+                rawDataTypes.put(structName, struct);
+                return;
+            }
+        }
+        throw new UnexpectedEndOfFile(line);
     }
 }

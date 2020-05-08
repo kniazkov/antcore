@@ -16,16 +16,20 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.DataPrefix;
+import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
-import com.kniazkov.antcore.basic.exceptions.UnknownType;
+
+import java.util.List;
 
 /**
- * The reference to data type
+ * The structure (TYPE..END TYPE), a data set wrapper
  */
-public class DataTypeReference extends DataType {
-    public DataTypeReference(String name, DataType type) {
+public class Struct extends DataType implements DataSetOwner {
+    public Struct(Fragment fragment, String name, List<Field> fields) {
         this.name = name;
-        this.type = type;
+        this.dataSet = new DataSet(fragment, DataPrefix.DEFAULT, fields);
+        dataSet.setOwner(this);
     }
 
     @Override
@@ -33,25 +37,30 @@ public class DataTypeReference extends DataType {
         visitor.visit(this);
     }
 
-    void setOwner(DataTypeOwner owner) {
-        this.owner = owner;
+    @Override
+    public void dfs(NodeVisitor visitor) throws SyntaxError {
+        dataSet.dfs(visitor);
+        accept(visitor);
     }
 
     @Override
     public String getName() {
-        if (type != null)
-            return type.getName();
         return name;
     }
 
     @Override
     public int getSize() throws SyntaxError {
-        return type.getSize();
+        return dataSet.getSize();
     }
 
     @Override
     public boolean builtIn() {
-        return type.builtIn();
+        return false;
+    }
+
+    @Override
+    void setOwner(DataTypeOwner owner) {
+        this.owner = owner;
     }
 
     @Override
@@ -59,18 +68,22 @@ public class DataTypeReference extends DataType {
         return (Node)owner;
     }
 
-    /**
-     * Bind data type by name
-     */
-    void bindType() throws SyntaxError {
-        if (type != null)
-            return;
-        type = findTypeByName(name);
-        if (type == null)
-            throw new UnknownType(getFragment(), name);
+    @Override
+    public Fragment getFragment() {
+        return dataSet.getFragment();
+    }
+
+    @Override
+    public void toSourceCode(StringBuilder buff, String i, String i0) {
+        buff.append(i).append("TYPE ").append(name).append("\n");
+        String i1 = i + i0;
+        for (Field field : dataSet.getFields()) {
+            field.toSourceCode(buff, i1, i0);
+        }
+        buff.append(i).append("END TYPE").append('\n');
     }
 
     private DataTypeOwner owner;
     private String name;
-    private DataType type;
+    private DataSet dataSet;
 }

@@ -26,13 +26,18 @@ import java.util.TreeMap;
  * The node that represents a whole program
  */
 public class Program extends Node implements DataTypeOwner {
-    public Program(Map<String, Module> modules) {
+    public Program(Map<String, Module> modules, Map<String, DataType> customTypes) {
         this.modules = Collections.unmodifiableMap(modules);
         for (Map.Entry<String, Module> entry : modules.entrySet()) {
             entry.getValue().setOwner(this);
         }
 
+
         Map<String, DataType> types = new TreeMap<>();
+        for (Map.Entry<String, DataType> entry : customTypes.entrySet()) {
+            types.put(entry.getKey(), entry.getValue());
+            entry.getValue().setOwner(this);
+        }
 
         types.put("INTEGER", new BuiltInType(this) {
             @Override
@@ -57,6 +62,7 @@ public class Program extends Node implements DataTypeOwner {
                 return 8;
             }
         });
+
         this.types = Collections.unmodifiableMap(types);
     }
 
@@ -90,6 +96,16 @@ public class Program extends Node implements DataTypeOwner {
     @Override
     public void toSourceCode(StringBuilder buff, String i, String i0) {
         boolean flag = false;
+
+        for (Map.Entry<String, DataType> entry : types.entrySet()) {
+            DataType type = entry.getValue();
+            if (!type.builtIn()) {
+                if (flag)
+                    buff.append("\n");
+                type.toSourceCode(buff, i, i0);
+                flag = true;
+            }
+        }
 
         for (Map.Entry<String, Module> entry : modules.entrySet()) {
             if (flag)

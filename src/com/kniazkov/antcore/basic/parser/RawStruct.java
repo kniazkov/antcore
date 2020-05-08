@@ -16,11 +16,12 @@
  */
 package com.kniazkov.antcore.basic.parser;
 
-import com.kniazkov.antcore.basic.DataPrefix;
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
-import com.kniazkov.antcore.basic.graph.*;
 import com.kniazkov.antcore.basic.exceptions.DuplicateField;
+import com.kniazkov.antcore.basic.graph.DataType;
+import com.kniazkov.antcore.basic.graph.Field;
+import com.kniazkov.antcore.basic.graph.Struct;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,13 +29,12 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * The parsed list of fields
+ * The parsed struct
  */
-public class RawDataSet extends Entity {
-    RawDataSet(Fragment fragment, DataPrefix prefix, DataPrefix prefixDefault) {
+public class RawStruct extends RawDataType {
+    RawStruct(Fragment fragment, String name) {
         this.fragment = fragment;
-        this.prefix = prefix;
-        this.prefixDefault = prefixDefault;
+        this.name = name;
         rawFieldsList = new ArrayList<>();
         rawFieldsMap = new TreeMap<>();
     }
@@ -47,25 +47,22 @@ public class RawDataSet extends Entity {
         rawFieldsMap.put(name, field);
     }
 
-    public Fragment getFragment() {
-        return fragment;
+    @Override
+    public String getName() {
+        return name;
     }
 
-    public DataPrefix getPrefix() {
-        return prefix;
-    }
-
-    public DataSet toNode() {
+    @Override
+    public DataType toNode() {
         List<Field> fields = new ArrayList<>();
         for (RawField rawField : rawFieldsList) {
             fields.add(rawField.toNode());
         }
-        return new DataSet(fragment, prefix != prefixDefault ? prefix : DataPrefix.DEFAULT, fields);
+        return new Struct(fragment, name, fields);
     }
 
     private Fragment fragment;
-    private DataPrefix prefix;
-    private DataPrefix prefixDefault;
+    private String name;
     private List<RawField> rawFieldsList;
     private Map<String, RawField> rawFieldsMap;
 }

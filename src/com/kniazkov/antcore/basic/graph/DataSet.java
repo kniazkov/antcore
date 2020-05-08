@@ -19,7 +19,9 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.DataPrefix;
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.exceptions.RecursiveNesting;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -31,13 +33,14 @@ public class DataSet extends Node {
     public DataSet(Fragment fragment, DataPrefix prefix, List<Field> fields) {
         this.fragment = fragment;
         this.prefix = prefix;
-        this.fieldList = fields;
-
+        this.fieldList = Collections.unmodifiableList(fields);
         this.fieldMap = new TreeMap<>();
         for (Field field : fields) {
             fieldMap.put(field.getName(), field);
             field.setOwner(this);
         }
+
+        this.size = UNKNOWN_SIZE;
     }
 
     @Override
@@ -77,7 +80,11 @@ public class DataSet extends Node {
         for (Field field : fieldList) {
             field.toSourceCode(buff, i1, i0);
         }
-        buff.append(i).append("END DATA\n");
+        buff.append(i).append("END DATA").append('\n');
+    }
+
+    public List<Field> getFields() {
+        return fieldList;
     }
 
     /**
@@ -91,9 +98,37 @@ public class DataSet extends Node {
         }
     }
 
+    /**
+     * Calculate size of the data set
+     */
+    public int getSize() throws SyntaxError {
+        if (size != UNKNOWN_SIZE && size != INVALID_SIZE )
+            return size;
+
+        if (size == INVALID_SIZE) {
+            String name = null;
+            Node owner = getOwner();
+            if (owner instanceof DataType)
+                name = ((DataType) owner).getName();
+            throw new RecursiveNesting(getFragment(), name);
+        }
+
+        size = INVALID_SIZE;
+        int newSize = 0;
+        for (Field field : fieldList) {
+            newSize +=  field.getType().getSize();
+        }
+        size = newSize;
+        return newSize;
+    }
+
     private DataSetOwner owner;
     private Fragment fragment;
     private DataPrefix prefix;
     private Map<String, Field> fieldMap;
     private List<Field> fieldList;
+    private int size;
+
+    private static final int UNKNOWN_SIZE = -1;
+    private static final int INVALID_SIZE = -2;
 }

@@ -14,26 +14,15 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.SyntaxError;
+package com.kniazkov.antcore.basic.parser.tokens;
 
 /**
- * A visitor for nodes
+    The "TYPE" keyword
  */
-public abstract class NodeVisitor {
-    public void visit(DataSet obj) throws SyntaxError {
-    }
-    public void visit(DataTypeReference obj) throws SyntaxError {
-    }
-    public void visit(Field obj) throws SyntaxError {
-    }
-    public void visit(Module obj) throws SyntaxError {
-    }
-    public void visit(Pointer obj) throws SyntaxError {
-    }
-    public void visit(Program obj)  throws SyntaxError {
-    }
-    public void visit(Struct obj)  throws SyntaxError {
+public class KeywordType extends Keyword {
+    @Override
+    public String toString() {
+        return "TYPE";
     }
 }
