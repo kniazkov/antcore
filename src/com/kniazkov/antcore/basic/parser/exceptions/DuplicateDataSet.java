@@ -16,19 +16,23 @@
  */
 package com.kniazkov.antcore.basic.parser.exceptions;
 
-import com.kniazkov.antcore.basic.parser.Line;
+import com.kniazkov.antcore.basic.DataPrefix;
+import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
 
 /**
- * The exception "Expected a module executor name"
+ * The exception "A data set is already defined in the scope"
  */
-public class ExpectedModuleExecutor extends SyntaxError {
-    public ExpectedModuleExecutor(Line line) {
-        super(line.getFragment());
+public class DuplicateDataSet extends SyntaxError {
+    public DuplicateDataSet(Fragment fragment, DataPrefix prefix) {
+        super(fragment);
+        this.prefix = prefix;
     }
 
     @Override
     protected String getErrorMessage() {
-        return "Expected a module executor name";
+        return "A \'" + prefix + "\' data set is already defined in the scope";
     }
+
+    private DataPrefix prefix;
 }

@@ -17,14 +17,14 @@
 package com.kniazkov.antcore.basic.parser.exceptions;
 
 import com.kniazkov.antcore.basic.parser.Line;
-import com.kniazkov.antcore.basic.parser.ParseError;
+import com.kniazkov.antcore.basic.SyntaxError;
 
 /**
  * The exception "Unexpected tokens sequence"
  */
-public class UnexpectedSequence extends ParseError {
+public class UnexpectedSequence extends SyntaxError {
     public UnexpectedSequence(Line line) {
-        super(line);
+        super(line.getFragment());
     }
 
     @Override

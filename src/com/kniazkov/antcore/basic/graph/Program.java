@@ -16,39 +16,57 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-import java.util.List;
-import java.util.ArrayList;
+import com.kniazkov.antcore.basic.Fragment;
+
+import java.util.Collections;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * The node that represents a whole program
  */
-public class Program implements Node {
+public class Program extends Node {
     public Program(Map<String, Module> modules) {
-        this.modules = modules;
+        super(null);
+        this.modules = Collections.unmodifiableMap(modules);
+
+        this.types = new TreeMap<>();
+        types.put("INTEGER", new DataType(null) {
+            @Override
+            public String getName() {
+                return "INTEGER";
+            }
+
+            @Override
+            public int getSize() {
+                return 4;
+            }
+
+            @Override
+            public boolean builtIn() {
+                return true;
+            }
+        });
     }
 
     public String toSourceCode() {
-        List<String> listing = new ArrayList<>();
-        print(listing, "", "  ");
-        StringBuilder builder = new StringBuilder();
-        for (String line : listing) {
-            builder.append(line);
-            builder.append("\n");
-        }
-        return builder.toString();
+        StringBuilder buff = new StringBuilder();
+        toSourceCode(buff, "", "\t");
+        return buff.toString();
     }
 
     @Override
-    public void print(List<String> dst, String i, String i0) {
+    public void toSourceCode(StringBuilder buff, String i, String i0) {
         boolean flag = false;
+
         for (Map.Entry<String, Module> entry : modules.entrySet()) {
             if (flag)
-                dst.add("");
-            entry.getValue().print(dst, i, i0);
+                buff.append("\n");
+            entry.getValue().toSourceCode(buff, i, i0);
             flag = true;
         }
     }
 
     private Map<String, Module> modules;
+    private Map<String, DataType> types;
 }

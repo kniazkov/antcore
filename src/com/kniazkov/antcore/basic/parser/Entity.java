@@ -26,7 +26,5 @@ public abstract class Entity {
      * Converts token to a node
      * @return Node
      */
-    public Node toNode() {
-        return null;
-    }
+    public abstract Node toNode();
 }

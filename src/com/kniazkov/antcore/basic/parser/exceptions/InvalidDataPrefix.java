@@ -16,19 +16,19 @@
  */
 package com.kniazkov.antcore.basic.parser.exceptions;
 
-import com.kniazkov.antcore.basic.parser.Line;
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.parser.Line;
 
 /**
- * The exception "Expected a module executor name"
+ * The exception "Invalid data prefix"
  */
-public class ExpectedModuleExecutor extends SyntaxError {
-    public ExpectedModuleExecutor(Line line) {
+public class InvalidDataPrefix extends SyntaxError {
+    public InvalidDataPrefix(Line line) {
         super(line.getFragment());
     }
 
     @Override
     protected String getErrorMessage() {
-        return "Expected a module executor name";
+        return "Invalid data prefix";
     }
 }

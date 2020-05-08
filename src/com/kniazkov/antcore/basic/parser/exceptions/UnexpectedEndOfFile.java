@@ -17,14 +17,14 @@
 package com.kniazkov.antcore.basic.parser.exceptions;
 
 import com.kniazkov.antcore.basic.parser.Line;
-import com.kniazkov.antcore.basic.parser.ParseError;
+import com.kniazkov.antcore.basic.SyntaxError;
 
 /**
  * The exception "Unexpected end of file"
  */
-public class UnexpectedEndOfFile extends ParseError {
+public class UnexpectedEndOfFile extends SyntaxError {
     public UnexpectedEndOfFile(Line line) {
-        super(line);
+        super(line.getFragment());
     }
 
     @Override

@@ -18,7 +18,7 @@
 package com.kniazkov.antcore.test;
 
 import com.kniazkov.antcore.basic.graph.Program;
-import com.kniazkov.antcore.basic.parser.ParseError;
+import com.kniazkov.antcore.basic.SyntaxError;
 import com.kniazkov.antcore.basic.parser.Parser;
 
 /**
@@ -34,7 +34,9 @@ public class Test {
         boolean flag = true;
         final String[] tests = {
                 "MODULE SERVER\nEND MODULE\n",
-                "MODULE SERVER LOCAL\nEND MODULE\n"
+                "MODULE SERVER LOCAL\nEND MODULE\n",
+                "MODULE SERVER\n\tDATA\n\tEND DATA\nEND MODULE\n",
+                "MODULE SERVER\n\tDATA\n\tEND DATA\n\tDATA INPUT\n\tEND DATA\nEND MODULE\n"
         };
         int i;
         for (i = 0; i < tests.length; i++) {
@@ -46,14 +48,14 @@ public class Test {
 
     private static boolean parserTest(int id, String code) {
         try {
-            Program program = Parser.parse(code);
+            Program program = Parser.parse(null, code);
             String code2 = program.toSourceCode();
             if (!code2.equals(code)) {
                 System.out.println("> Test " + id + " failed, expected:\n" + code + "> Actual:\n" + code2);
                 return false;
             }
         }
-        catch(ParseError error) {
+        catch(SyntaxError error) {
             System.out.println("> Test " + id + " failed, parsing error:\n" + code);
             return false;
         }

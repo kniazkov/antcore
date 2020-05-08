@@ -14,21 +14,25 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.parser.exceptions;
-
-import com.kniazkov.antcore.basic.parser.Line;
-import com.kniazkov.antcore.basic.SyntaxError;
+package com.kniazkov.antcore.lib;
 
 /**
- * The exception "Expected a module executor name"
+ * A pair of objects
  */
-public class ExpectedModuleExecutor extends SyntaxError {
-    public ExpectedModuleExecutor(Line line) {
-        super(line.getFragment());
+public class Pair<K, V> {
+    public Pair(K key, V value) {
+        this.key = key;
+        this.value = value;
     }
 
-    @Override
-    protected String getErrorMessage() {
-        return "Expected a module executor name";
+    public K getKey() {
+        return key;
     }
+
+    public V getValue() {
+        return value;
+    }
+
+    private K key;
+    private V value;
 }

@@ -16,27 +16,75 @@
  */
 package com.kniazkov.antcore.basic.parser;
 
+import com.kniazkov.antcore.basic.DataPrefix;
+import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.graph.DataSet;
 import com.kniazkov.antcore.basic.graph.Module;
 import com.kniazkov.antcore.basic.graph.Node;
+import com.kniazkov.antcore.basic.parser.exceptions.DuplicateDataSet;
+import com.kniazkov.antcore.basic.parser.exceptions.UnexpectedDataSet;
+import com.kniazkov.antcore.lib.Pair;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Token represents module
+ * Entity represents module
  */
 public class RawModule extends Entity {
-    public RawModule(String name, String executor, List<Line> body) {
+    public RawModule(Fragment fragment, String name, String executor, List<Line> body) {
+        this.fragment = fragment;
         this.name = name;
         this.executor = executor;
-        this.body = body;
+        this.body = Collections.unmodifiableList(body);
+    }
+
+    public List<Line> getBody() {
+        return body;
+    }
+
+    public void setData(RawDataSet dataSet) throws SyntaxError {
+        DataPrefix prefix = dataSet.getPrefix();
+        switch (prefix) {
+            case PRIVATE:
+                if (localData != null)
+                    throw new DuplicateDataSet(dataSet.getFragment(), prefix);
+                localData = dataSet;
+                break;
+            case INPUT:
+                if (inputData != null)
+                    throw new DuplicateDataSet(dataSet.getFragment(), prefix);
+                inputData = dataSet;
+                break;
+            case OUTPUT:
+                if (outputData != null)
+                    throw new DuplicateDataSet(dataSet.getFragment(), prefix);
+                outputData = dataSet;
+                break;
+            default:
+                throw new UnexpectedDataSet(dataSet.getFragment(), prefix);
+        }
     }
 
     @Override
     public Node toNode() {
-        return new Module(name, executor);
+        return new Module(
+                fragment,
+                name,
+                executor,
+                localData != null ? (DataSet) localData.toNode() : null,
+                inputData != null ? (DataSet) inputData.toNode() : null,
+                outputData != null ? (DataSet) outputData.toNode() : null
+        );
     }
 
+    private Fragment fragment;
     private String name;
     private String executor;
     private List<Line> body;
+    private RawDataSet localData;
+    private RawDataSet inputData;
+    private RawDataSet outputData;
 }

@@ -14,21 +14,15 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.parser;
+
+package com.kniazkov.antcore.basic.parser.tokens;
 
 /**
- * An exception for parser
+    The "OUTPUT" keyword
  */
-public abstract class ParseError extends java.lang.Exception {
-    public ParseError(Line line) {
-        this.line = line;
-    }
-
+public class KeywordOutput extends Keyword {
+    @Override
     public String toString() {
-        return "" + line.lineNumber + ", " + getErrorMessage() + ": \'" + line.text.trim() + "\'";
+        return "OUTPUT";
     }
-
-    protected abstract String getErrorMessage();
-
-    private Line line;
 }

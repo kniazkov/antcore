@@ -16,19 +16,28 @@
  */
 package com.kniazkov.antcore.basic.parser;
 
+import com.kniazkov.antcore.basic.Fragment;
+
+import java.util.Collections;
 import java.util.List;
 
 /**
  * One line of source code
  */
 public class Line {
-    public Line(int lineNumber, String text, List<Token> tokens) {
-        this.lineNumber = lineNumber;
-        this.text = text;
-        this.tokens = tokens;
+    public Line(String fileName, int line, String code, List<Token> tokens) {
+        this.fragment = new Fragment(fileName, line, code);
+        this.tokens = Collections.unmodifiableList(tokens);
     }
 
-    public int lineNumber;
-    public String text;
-    public List<Token> tokens;
+    public Fragment getFragment() {
+        return fragment;
+    }
+
+    public List<Token> getTokens() {
+        return tokens;
+    }
+
+    private Fragment fragment;
+    private List<Token> tokens;
 }

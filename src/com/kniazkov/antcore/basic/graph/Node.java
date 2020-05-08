@@ -17,17 +17,27 @@
 
 package com.kniazkov.antcore.basic.graph;
 
-import java.util.List;
+import com.kniazkov.antcore.basic.Fragment;
 
 /**
  * The basic interface for node of syntax tree
  */
-public interface Node {
+public abstract class Node {
+    public Node(Fragment fragment) {
+        this.fragment = fragment;
+    }
+
+    public Fragment getFragment() {
+        return fragment;
+    }
+
     /**
      * Generate program source code from the node
-     * @param dst destination listing
+     * @param buff destination buffer
      * @param i current indentation
      * @param i0 basic indentation
      */
-    void print(List<String> dst, String i, String i0);
+    public abstract void toSourceCode(StringBuilder buff, String i, String i0);
+
+    private Fragment fragment;
 }

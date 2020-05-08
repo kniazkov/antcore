@@ -17,14 +17,14 @@
 package com.kniazkov.antcore.basic.parser.exceptions;
 
 import com.kniazkov.antcore.basic.parser.Line;
-import com.kniazkov.antcore.basic.parser.ParseError;
+import com.kniazkov.antcore.basic.SyntaxError;
 
 /**
  * The exception "Expected a module name"
  */
-public class ExpectedModuleName extends ParseError {
+public class ExpectedModuleName extends SyntaxError {
     public ExpectedModuleName(Line line) {
-        super(line);
+        super(line.getFragment());
     }
 
     @Override

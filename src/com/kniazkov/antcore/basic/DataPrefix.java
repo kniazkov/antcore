@@ -14,21 +14,16 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.parser.exceptions;
-
-import com.kniazkov.antcore.basic.parser.Line;
-import com.kniazkov.antcore.basic.SyntaxError;
+package com.kniazkov.antcore.basic;
 
 /**
- * The exception "Expected a module executor name"
+ * The prefix for data set
  */
-public class ExpectedModuleExecutor extends SyntaxError {
-    public ExpectedModuleExecutor(Line line) {
-        super(line.getFragment());
-    }
-
-    @Override
-    protected String getErrorMessage() {
-        return "Expected a module executor name";
-    }
+public enum DataPrefix {
+    DEFAULT,
+    PRIVATE,
+    PROTECTED,
+    PUBLIC,
+    INPUT,
+    OUTPUT
 }

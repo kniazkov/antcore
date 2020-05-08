@@ -14,21 +14,36 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.parser.exceptions;
+package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.parser.Line;
-import com.kniazkov.antcore.basic.SyntaxError;
+
+import com.kniazkov.antcore.basic.Fragment;
 
 /**
- * The exception "Expected a module executor name"
+ * The basic interface for data type
  */
-public class ExpectedModuleExecutor extends SyntaxError {
-    public ExpectedModuleExecutor(Line line) {
-        super(line.getFragment());
+public abstract class DataType extends Node {
+    public DataType(Fragment fragment) {
+        super(fragment);
     }
 
+    /**
+     * @return name of the type
+     */
+    public abstract String getName();
+
+    /**
+     * @return size of the type
+     */
+    public abstract int getSize();
+
+    /**
+     * @return true if the type is built-it
+     */
+    public abstract boolean builtIn();
+
     @Override
-    protected String getErrorMessage() {
-        return "Expected a module executor name";
+    public void toSourceCode(StringBuilder buff, String i, String i0) {
+        buff.append(getName());
     }
 }

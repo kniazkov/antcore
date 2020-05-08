@@ -14,21 +14,24 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.parser.exceptions;
-
-import com.kniazkov.antcore.basic.parser.Line;
-import com.kniazkov.antcore.basic.SyntaxError;
+package com.kniazkov.antcore.basic;
 
 /**
- * The exception "Expected a module executor name"
+ * An exception for parser
  */
-public class ExpectedModuleExecutor extends SyntaxError {
-    public ExpectedModuleExecutor(Line line) {
-        super(line.getFragment());
+public abstract class SyntaxError extends java.lang.Exception {
+    public SyntaxError(Fragment fragment) {
+        this.fragment = fragment;
     }
 
-    @Override
-    protected String getErrorMessage() {
-        return "Expected a module executor name";
+    public String toString() {
+        String fileName  = fragment.getFileName();
+        if (fileName != null)
+            return fileName + ", " + fragment.getLine() + ": \'" + fragment.getCode() + "\' - " + getErrorMessage();
+        return "" + fragment.getLine() + ": \'" + fragment.getCode() + "\' - " + getErrorMessage();
     }
+
+    protected abstract String getErrorMessage();
+
+    private Fragment fragment;
 }

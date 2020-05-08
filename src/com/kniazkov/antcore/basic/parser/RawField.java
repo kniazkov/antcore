@@ -14,21 +14,36 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.parser.exceptions;
+package com.kniazkov.antcore.basic.parser;
 
-import com.kniazkov.antcore.basic.parser.Line;
-import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.graph.Field;
+import com.kniazkov.antcore.basic.graph.Node;
 
 /**
- * The exception "Expected a module executor name"
+ * The parsed field of data set
  */
-public class ExpectedModuleExecutor extends SyntaxError {
-    public ExpectedModuleExecutor(Line line) {
-        super(line.getFragment());
+public class RawField extends Entity {
+    public RawField(Fragment fragment, String name, String type) {
+        this.fragment = fragment;
+        this.name = name;
+        this.type = type;
+    }
+
+    public Fragment getFragment() {
+        return fragment;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override
-    protected String getErrorMessage() {
-        return "Expected a module executor name";
+    public Node toNode() {
+        return new Field(fragment, name, type);
     }
+
+    private Fragment fragment;
+    private String name;
+    private String type;
 }

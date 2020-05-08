@@ -17,14 +17,14 @@
 package com.kniazkov.antcore.basic.parser.exceptions;
 
 import com.kniazkov.antcore.basic.parser.Line;
-import com.kniazkov.antcore.basic.parser.ParseError;
+import com.kniazkov.antcore.basic.SyntaxError;
 
 /**
  * The exception "The module already exists"
  */
-public class ModuleAlreadyExists extends ParseError {
+public class ModuleAlreadyExists extends SyntaxError {
     public ModuleAlreadyExists(Line line, String name) {
-        super(line);
+        super(line.getFragment());
         this.name = name;
     }
 

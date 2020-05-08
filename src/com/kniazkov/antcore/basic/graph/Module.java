@@ -17,15 +17,20 @@
 
 package com.kniazkov.antcore.basic.graph;
 
-import java.util.List;
+import com.kniazkov.antcore.basic.Fragment;
 
 /**
  * The node that represents a module
  */
-public class Module implements  Node {
-    public Module(String name, String executor) {
+public class Module extends Node {
+    public Module(Fragment fragment, String name, String executor,
+                  DataSet localData, DataSet inputData, DataSet outputData) {
+        super(fragment);
         this.name = name;
         this.executor = executor;
+        this.localData = localData;
+        this.inputData = inputData;
+        this.outputData = outputData;
     }
 
     public String getName() {
@@ -37,14 +42,24 @@ public class Module implements  Node {
     }
 
     @Override
-    public void print(List<String> dst, String i, String i0) {
+    public void toSourceCode(StringBuilder buff, String i, String i0) {
         if (executor != null)
-            dst.add(i + "MODULE " + name + " " + executor);
+            buff.append(i).append("MODULE ").append(name).append(" ").append(executor).append("\n");
         else
-            dst.add(i + "MODULE " + name);
-        dst.add(i + "END MODULE");
+            buff.append(i).append("MODULE ").append(name).append("\n");
+        String i1 = i + i0;
+        if (localData != null)
+            localData.toSourceCode(buff, i1, i0);
+        if (inputData != null)
+            inputData.toSourceCode(buff, i1, i0);
+        if (outputData != null)
+            outputData.toSourceCode(buff, i1, i0);
+        buff.append(i).append("END MODULE").append("\n");
     }
 
     private String name;
     private String executor;
+    private DataSet localData;
+    private DataSet inputData;
+    private DataSet outputData;
 }

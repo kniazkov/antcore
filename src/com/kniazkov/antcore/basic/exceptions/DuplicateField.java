@@ -14,21 +14,24 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.parser.exceptions;
+package com.kniazkov.antcore.basic.exceptions;
 
-import com.kniazkov.antcore.basic.parser.Line;
+import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
 
 /**
- * The exception "Expected a module executor name"
+ * The exception "A field is already defined in the scope"
  */
-public class ExpectedModuleExecutor extends SyntaxError {
-    public ExpectedModuleExecutor(Line line) {
-        super(line.getFragment());
+public class DuplicateField extends SyntaxError {
+    public DuplicateField(Fragment fragment, String name) {
+        super(fragment);
+        this.name = name;
     }
 
     @Override
     protected String getErrorMessage() {
-        return "Expected a module executor name";
+        return "A field \'" + name + "\' is already defined in the scope";
     }
+
+    private String name;
 }

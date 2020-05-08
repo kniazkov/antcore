@@ -1,5 +1,6 @@
 package com.kniazkov.antcore.basic.parser.tokens;
 
+import com.kniazkov.antcore.basic.graph.Node;
 import com.kniazkov.antcore.basic.parser.Token;
 
 public class Identifier extends Token {
@@ -14,6 +15,11 @@ public class Identifier extends Token {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public Node toNode() {
+        return null;
     }
 
     private String name;

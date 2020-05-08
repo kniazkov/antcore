@@ -18,7 +18,7 @@
 package com.kniazkov.antcore;
 
 import com.kniazkov.antcore.basic.graph.Program;
-import com.kniazkov.antcore.basic.parser.ParseError;
+import com.kniazkov.antcore.basic.SyntaxError;
 import com.kniazkov.antcore.basic.parser.Parser;
 
 public class Main {
@@ -30,10 +30,10 @@ public class Main {
                 "MODULE INTERFACE\n" +
                 "END MODULE";
         try {
-            Program program = Parser.parse(source);
+            Program program = Parser.parse(null, source);
             System.out.println(program.toSourceCode());
-        } catch (ParseError parseError) {
-            parseError.printStackTrace();
+        } catch (SyntaxError syntaxError) {
+            syntaxError.printStackTrace();
         }
     }
 }
