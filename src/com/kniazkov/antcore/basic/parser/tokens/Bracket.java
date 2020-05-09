@@ -19,21 +19,15 @@ package com.kniazkov.antcore.basic.parser.tokens;
 import com.kniazkov.antcore.basic.parser.Token;
 
 /**
- * Token represents identifier
+ * Token represents bracket
  */
-public class Identifier extends Token {
-    public Identifier(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
+public abstract class Bracket extends Token {
     @Override
     public String toString() {
-        return name;
+        return String.valueOf(getSymbol());
     }
 
-    private String name;
+    public abstract char getSymbol();
+    public abstract char getPairSymbol();
+    public abstract boolean isClosed();
 }

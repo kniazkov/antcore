@@ -18,22 +18,23 @@ package com.kniazkov.antcore.basic.parser.tokens;
 
 import com.kniazkov.antcore.basic.parser.Token;
 
-/**
- * Token represents identifier
- */
-public class Identifier extends Token {
-    public Identifier(String name) {
-        this.name = name;
-    }
+import java.util.List;
 
-    public String getName() {
-        return name;
+/**
+ * Token represents '()' brackets pair
+ */
+public class RoundBracketsPair extends BracketsPair {
+    public RoundBracketsPair(List<Token> tokens) {
+        super(tokens);
     }
 
     @Override
-    public String toString() {
-        return name;
+    public char getOpenBracket() {
+        return '(';
     }
 
-    private String name;
+    @Override
+    public char getCloseBracket() {
+        return ')';
+    }
 }

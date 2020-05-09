@@ -17,7 +17,6 @@
 
 package com.kniazkov.antcore.basic.parser.tokens;
 
-import com.kniazkov.antcore.basic.graph.Node;
 import com.kniazkov.antcore.basic.parser.Token;
 
 /**

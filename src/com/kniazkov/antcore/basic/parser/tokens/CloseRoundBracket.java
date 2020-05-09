@@ -16,24 +16,33 @@
  */
 package com.kniazkov.antcore.basic.parser.tokens;
 
-import com.kniazkov.antcore.basic.parser.Token;
-
 /**
- * Token represents identifier
+ * Token represents ')' bracket
  */
-public class Identifier extends Token {
-    public Identifier(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
+public class CloseRoundBracket extends Bracket {
+    @Override
+    public char getSymbol() {
+        return ')';
     }
 
     @Override
-    public String toString() {
-        return name;
+    public char getPairSymbol() {
+        return '(';
     }
 
-    private String name;
+    @Override
+    public boolean isClosed() {
+        return true;
+    }
+
+    private CloseRoundBracket() {
+    }
+
+    private static CloseRoundBracket instance;
+
+    public static Bracket getInstance() {
+        if (instance == null)
+            instance = new CloseRoundBracket();
+        return instance;
+    }
 }

@@ -14,26 +14,26 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.parser.tokens;
+package com.kniazkov.antcore.basic.parser.exceptions;
 
-import com.kniazkov.antcore.basic.parser.Token;
+import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.SyntaxError;
 
 /**
- * Token represents identifier
+ * The exception "Сlosing bracket does not match opening"
  */
-public class Identifier extends Token {
-    public Identifier(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
+public class BracketDoesNotMatch extends SyntaxError {
+    public BracketDoesNotMatch(Fragment fragment, char openBracket, char closeBracket) {
+        super(fragment);
+        this.openBracket = openBracket;
+        this.closeBracket = closeBracket;
     }
 
     @Override
-    public String toString() {
-        return name;
+    protected String getErrorMessage() {
+        return "Сlosing bracket "+ closeBracket +" does not match opening " + openBracket;
     }
 
-    private String name;
+    protected char openBracket;
+    protected char closeBracket;
 }

@@ -17,6 +17,7 @@
 package com.kniazkov.antcore.basic.parser;
 
 import com.kniazkov.antcore.basic.DataPrefix;
+import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
 import com.kniazkov.antcore.basic.graph.DataType;
 import com.kniazkov.antcore.basic.graph.Module;
@@ -45,9 +46,11 @@ public class Parser {
         for (int i = 0; i < list.length; i++) {
             String code = list[i].trim();
             if (code.length() > 0) {
-                List<Token> tokens = scan(code);
+                Fragment fragment = new Fragment(fileName, i + 1, code);
+                List<Token> tokens = scan(fragment);
                 if (tokens != null && tokens.size() > 0) {
-                    lines.add(new Line( fileName,i + 1, code, tokens));
+                    tokens = parseBrackets(fragment, tokens);
+                    lines.add(new Line(fragment, tokens));
                 }
             }
         }
@@ -76,10 +79,11 @@ public class Parser {
 
     /**
      * Scanner, splits string by tokens
-     * @param text The string
+     * @param fragment The fragment of code
      * @return The list of tokens
      */
-    private static List<Token> scan(String text) throws SyntaxError {
+    private static List<Token> scan(Fragment fragment) throws SyntaxError {
+        String text = fragment.getCode();
 
         // remove comment
         int comment = text.indexOf('\'');
@@ -90,9 +94,9 @@ public class Parser {
         }
 
         ArrayList<Token> tokens = new ArrayList<>();
-        Source src = new Source(text);
-        while(src.valid()) {
-            Token token = getToken(src);
+        Source source = new Source(text);
+        while(source.valid()) {
+            Token token = getToken(fragment, source);
             tokens.add(token);
         }
         return tokens;
@@ -103,7 +107,7 @@ public class Parser {
      * @param src The source string
      * @return The next token
      */
-    private static Token getToken(Source src) throws SyntaxError {
+    private static Token getToken(Fragment fragment, Source src) throws SyntaxError {
         char c = src.get();
 
         while (isSpace(c))
@@ -149,7 +153,17 @@ public class Parser {
             return new Identifier(name);
         }
 
-        return null;
+        if (c == '(') {
+            src.next();
+            return OpenRoundBracket.getInstance();
+        }
+
+        if (c == ')') {
+            src.next();
+            return CloseRoundBracket.getInstance();
+        }
+
+        throw new UnknownCharacter(fragment, c);
     }
 
     /**
@@ -201,6 +215,50 @@ public class Parser {
         return (c == ' ' || c == '\t');
     }
 
+    /**
+     * Parsing of all brackets (including nested)
+     * @param fragment the fragment of source code
+     * @param tokens the list of tokens
+     * @return a list of tokens where some tokens combined into groups
+     */
+    private static List<Token> parseBrackets(Fragment fragment, List<Token> tokens) throws SyntaxError {
+        List<Token> result = new ArrayList<>();
+        parseBrackets(fragment, tokens.iterator(), result, '\0');
+        return Collections.unmodifiableList(result);
+    }
+
+    /**
+     * Parsing of all brackets (recursive method)
+     * @param fragment fragment of source code
+     * @param src source iterator
+     * @param dst destination list
+     * @param closeBracket a bracket that closes the sequence
+     */
+     private static void parseBrackets(Fragment fragment, Iterator<Token> src, List<Token> dst, char closeBracket) throws SyntaxError {
+        while(src.hasNext()) {
+            Token token = src.next();
+            if (token instanceof Bracket) {
+                Bracket bracket = (Bracket) token;
+                if (bracket.isClosed()) {
+                    if (bracket.getSymbol() != closeBracket)
+                        throw new BracketDoesNotMatch(fragment, bracket.getPairSymbol(), closeBracket);
+                    return;
+                }
+                else {
+                    List<Token> sublist = new ArrayList<>();
+                    parseBrackets(fragment, src, sublist, bracket.getPairSymbol());
+                    BracketsPair bracketsPair = BracketsPair.create(bracket.getSymbol(), sublist);
+                    dst.add(bracketsPair);
+                }
+            }
+            else {
+                dst.add(token);
+            }
+        }
+        if (closeBracket != '\0')
+            throw new MissedBracket(fragment, closeBracket);
+    }
+
     private Map<String, RawModule> rawModules;
     private Map<String, RawDataType> rawDataTypes;
     private List<RawFunction> rawFunctions;
@@ -230,11 +288,12 @@ public class Parser {
     private void parseProgram(Iterator<Line> iterator) throws SyntaxError {
         while(iterator.hasNext()) {
             Line line = iterator.next();
-            assert(line.getTokens().size() > 0);
-            if (line.getTokens().get(0) instanceof KeywordModule) {
+            List<Token> tokens = line.getTokens();
+            assert(tokens.size() > 0);
+            if (tokens.get(0) instanceof KeywordModule) {
                 parseModule(line, iterator);
             }
-            else if (line.getTokens().get(0) instanceof KeywordType) {
+            else if (tokens.get(0) instanceof KeywordType) {
                 parseStructure(line, iterator);
             }
             else

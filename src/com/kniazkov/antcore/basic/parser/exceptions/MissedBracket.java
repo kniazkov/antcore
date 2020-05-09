@@ -14,26 +14,24 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.parser.tokens;
+package com.kniazkov.antcore.basic.parser.exceptions;
 
-import com.kniazkov.antcore.basic.parser.Token;
+import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.SyntaxError;
 
 /**
- * Token represents identifier
+ * The exception "Missed a bracket"
  */
-public class Identifier extends Token {
-    public Identifier(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
+public class MissedBracket extends SyntaxError {
+    public MissedBracket(Fragment fragment, char bracket) {
+        super(fragment);
+        this.bracket = bracket;
     }
 
     @Override
-    public String toString() {
-        return name;
+    protected String getErrorMessage() {
+        return "Missed a bracket: " + bracket;
     }
 
-    private String name;
+    protected char bracket;
 }

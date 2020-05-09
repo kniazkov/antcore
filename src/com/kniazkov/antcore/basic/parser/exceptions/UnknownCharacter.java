@@ -14,26 +14,25 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.parser.tokens;
+package com.kniazkov.antcore.basic.parser.exceptions;
 
-import com.kniazkov.antcore.basic.parser.Token;
+import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.parser.Line;
 
 /**
- * Token represents identifier
+ * The exception "Unknown character"
  */
-public class Identifier extends Token {
-    public Identifier(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
+public class UnknownCharacter extends SyntaxError {
+    public UnknownCharacter(Fragment fragment, char value) {
+        super(fragment);
+        this.value = value;
     }
 
     @Override
-    public String toString() {
-        return name;
+    protected String getErrorMessage() {
+        return "Unknown character: '" + value + '\'';
     }
 
-    private String name;
+    protected char value;
 }

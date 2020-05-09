@@ -14,30 +14,46 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.parser;
+package com.kniazkov.antcore.basic.parser.tokens;
 
-import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.parser.Token;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
- * One line of source code
+ * Token represents brackets pair
  */
-public class Line {
-    public Line(Fragment fragment, List<Token> tokens) {
-        this.fragment = fragment;
+public abstract class BracketsPair extends Token {
+    public BracketsPair(List<Token> tokens) {
         this.tokens = Collections.unmodifiableList(tokens);
     }
 
-    public Fragment getFragment() {
-        return fragment;
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(getOpenBracket());
+        for (Token token : tokens) {
+            builder.append(' ').append(token);
+        }
+        builder.append(' ').append(getCloseBracket());
+        return builder.toString();
     }
+
+    public abstract char getOpenBracket();
+    public abstract char getCloseBracket();
 
     public List<Token> getTokens() {
         return tokens;
     }
 
-    private Fragment fragment;
     private List<Token> tokens;
+
+    public static BracketsPair create(char openBracket, List<Token> tokens) {
+        switch (openBracket) {
+            case '(':
+                return new RoundBracketsPair(tokens);
+        }
+        return null;
+    }
 }
