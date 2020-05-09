@@ -124,33 +124,38 @@ public class Parser {
             String name = b.toString();
             switch (name) {
                 case "MODULE":
-                    return new KeywordModule();
+                    return KeywordModule.getInstance();
                 case "DATA":
-                    return new KeywordData();
+                    return KeywordData.getInstance();
                 case "END":
-                    return new KeywordEnd();
+                    return KeywordEnd.getInstance();
                 case "PRIVATE":
-                    return new KeywordPrivate();
+                    return KeywordPrivate.getInstance();
                 case "PROTECTED":
-                    return new KeywordProtected();
+                    return KeywordProtected.getInstance();
                 case "PUBLIC":
-                    return new KeywordPublic();
+                    return KeywordPublic.getInstance();
                 case "INPUT":
-                    return new KeywordInput();
+                    return KeywordInput.getInstance();
                 case "OUTPUT":
-                    return new KeywordOutput();
+                    return KeywordOutput.getInstance();
                 case "AS":
-                    return new KeywordAs();
+                    return KeywordAs.getInstance();
                 case "TO":
-                    return new KeywordTo();
+                    return KeywordTo.getInstance();
                 case "POINTER":
-                    return new KeywordPointer();
+                    return KeywordPointer.getInstance();
                 case "TYPE":
-                    return new KeywordType();
+                    return KeywordType.getInstance();
                 case "FUNCTION":
-                    return new KeywordFunction();
+                    return KeywordFunction.getInstance();
             }
             return new Identifier(name);
+        }
+
+        if (c == ',') {
+            src.next();
+            return Comma.getInstance();
         }
 
         if (c == '(') {
@@ -519,7 +524,47 @@ public class Parser {
             throw new ExpectedFunctionName(declaration);
         String name = ((Identifier)token).getName();
 
-        if (tokens.hasNext())
+        Token nextToken = null;
+        List<RawArgument> arguments = null;
+        if (tokens.hasNext()) {
+            nextToken = tokens.next();
+            if (nextToken instanceof RoundBracketsPair) {
+                Iterator<Token> argIterator = ((RoundBracketsPair) nextToken).getTokens().iterator();
+                boolean oneMoreArg = false;
+                arguments = new ArrayList<>();
+                while(true) {
+                    if (!argIterator.hasNext())
+                    {
+                        if (!oneMoreArg)
+                            break;
+                        throw new ExpectedArgument(declaration);
+                    }
+                    Token argNameToken = argIterator.next();
+                    if (!(argNameToken instanceof Identifier))
+                        throw new ExpectedArgument(declaration);
+                    String argName = ((Identifier) argNameToken).getName();
+                    if (!argIterator.hasNext())
+                        throw new ExpectedAsKeyword(declaration);
+                    Token asKeyword = argIterator.next();
+                    if (!(asKeyword instanceof KeywordAs))
+                        throw new ExpectedAsKeyword(declaration);
+                    RawDataType argType = parseDataType(declaration, argIterator);
+                    RawArgument argument = new RawArgument(argName, argType);
+                    arguments.add(argument);
+                    if (argIterator.hasNext()) {
+                        Token comma = argIterator.next();
+                        if (!(comma instanceof Comma))
+                            throw new ExpectedComma(declaration);
+                        oneMoreArg = true;
+                    }
+                    else
+                        break;
+                }
+                nextToken = tokens.hasNext() ? tokens.next() : null;
+            }
+        }
+
+        if (nextToken != null)
             throw new UnrecognizedSequence(declaration);
 
         Line line = declaration;
@@ -531,7 +576,7 @@ public class Parser {
                     && content.get(0) instanceof KeywordEnd && content.get(1) instanceof KeywordFunction) {
                 if (content.size() > 2)
                     throw new UnrecognizedSequence(line);
-                return new RawFunction(declaration.getFragment(), name, body);
+                return new RawFunction(declaration.getFragment(), name, arguments, body);
             }
             body.add(line);
         }

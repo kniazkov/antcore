@@ -16,17 +16,20 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
- * The function
+ * The list of arguments
  */
-public class Function extends Node {
-    public Function(Fragment fragment, String name, ArgumentsList arguments) {
-        this.fragment = fragment;
-        this.name = name;
-        this.arguments = arguments;
+public class ArgumentsList extends Node {
+    public ArgumentsList(List<Argument> arguments) {
+        this.arguments = Collections.unmodifiableList(arguments);
+        for (Argument argument : arguments) {
+            argument.setOwner(this);
+        }
     }
 
     @Override
@@ -36,10 +39,13 @@ public class Function extends Node {
 
     @Override
     public void dfs(NodeVisitor visitor) throws SyntaxError {
+        for (Argument argument : arguments) {
+            argument.dfs(visitor);
+        }
         accept(visitor);
     }
 
-    void setOwner(FunctionOwner owner) {
+    void setOwner(Function owner) {
         this.owner = owner;
     }
 
@@ -49,26 +55,29 @@ public class Function extends Node {
     }
 
     @Override
-    public Fragment getFragment() {
-        return fragment;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    @Override
     public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append(i).append("FUNCTION ").append(name);
-        if (arguments != null)
-            arguments.toSourceCode(buff, i, i0);
-        buff.append('\n');
-
-        buff.append(i).append("END FUNCTION\n");
+        buff.append('(');
+        boolean flag = false;
+        for (Argument argument : arguments) {
+            if (flag)
+                buff.append(", ");
+            flag = true;
+            argument.toSourceCode(buff, i, i0);
+        }
+        buff.append(')');
     }
 
-    private FunctionOwner owner;
-    private Fragment fragment;
-    private String name;
-    private ArgumentsList arguments;
+    /**
+     * Calculate offsets of all arguments
+     */
+    void calculateOffsets() throws SyntaxError {
+        int offset = 0;
+        for (Argument argument : arguments) {
+            argument.setOffset(offset);
+            offset += argument.getType().getSize();
+        }
+    }
+
+    private Function owner;
+    private List<Argument> arguments;
 }

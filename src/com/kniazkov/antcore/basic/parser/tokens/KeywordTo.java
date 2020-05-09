@@ -17,6 +17,8 @@
 
 package com.kniazkov.antcore.basic.parser.tokens;
 
+import com.kniazkov.antcore.basic.parser.Token;
+
 /**
     The "TO" keyword
  */
@@ -24,5 +26,16 @@ public class KeywordTo extends Keyword {
     @Override
     public String toString() {
         return "TO";
+    }
+
+    private KeywordTo() {
+    }
+
+    private static KeywordTo instance;
+
+    public static Token getInstance() {
+        if (instance == null)
+            instance = new KeywordTo();
+        return instance;
     }
 }

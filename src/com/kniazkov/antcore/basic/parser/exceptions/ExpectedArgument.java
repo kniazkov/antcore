@@ -14,28 +14,21 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+package com.kniazkov.antcore.basic.parser.exceptions;
 
-package com.kniazkov.antcore.basic.parser.tokens;
-
-import com.kniazkov.antcore.basic.parser.Token;
+import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.parser.Line;
 
 /**
-    The "PROTECTED" keyword
+ * The exception "Expected an argument"
  */
-public class KeywordProtected extends Keyword {
+public class ExpectedArgument extends SyntaxError {
+    public ExpectedArgument(Line line) {
+        super(line.getFragment());
+    }
+
     @Override
-    public String toString() {
-        return "PROTECTED";
-    }
-
-    private KeywordProtected() {
-    }
-
-    private static KeywordProtected instance;
-
-    public static Token getInstance() {
-        if (instance == null)
-            instance = new KeywordProtected();
-        return instance;
+    protected String getErrorMessage() {
+        return "Expected an argument";
     }
 }

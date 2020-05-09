@@ -17,6 +17,8 @@
 
 package com.kniazkov.antcore.basic.parser.tokens;
 
+import com.kniazkov.antcore.basic.parser.Token;
+
 /**
     The "POINTER" keyword
  */
@@ -24,5 +26,16 @@ public class KeywordPointer extends Keyword {
     @Override
     public String toString() {
         return "POINTER";
+    }
+
+    private KeywordPointer() {
+    }
+
+    private static KeywordPointer instance;
+
+    public static Token getInstance() {
+        if (instance == null)
+            instance = new KeywordPointer();
+        return instance;
     }
 }

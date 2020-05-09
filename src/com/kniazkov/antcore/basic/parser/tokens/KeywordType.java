@@ -17,6 +17,8 @@
 
 package com.kniazkov.antcore.basic.parser.tokens;
 
+import com.kniazkov.antcore.basic.parser.Token;
+
 /**
     The "TYPE" keyword
  */
@@ -24,5 +26,16 @@ public class KeywordType extends Keyword {
     @Override
     public String toString() {
         return "TYPE";
+    }
+
+    private KeywordType() {
+    }
+
+    private static KeywordType instance;
+
+    public static Token getInstance() {
+        if (instance == null)
+            instance = new KeywordType();
+        return instance;
     }
 }

@@ -17,6 +17,8 @@
 
 package com.kniazkov.antcore.basic.parser.tokens;
 
+import com.kniazkov.antcore.basic.parser.Token;
+
 /**
     The "INPUT" keyword
  */
@@ -24,5 +26,16 @@ public class KeywordInput extends Keyword {
     @Override
     public String toString() {
         return "INPUT";
+    }
+
+    private KeywordInput() {
+    }
+
+    private static KeywordInput instance;
+
+    public static Token getInstance() {
+        if (instance == null)
+            instance = new KeywordInput();
+        return instance;
     }
 }

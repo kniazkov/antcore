@@ -17,8 +17,11 @@
 package com.kniazkov.antcore.basic.parser;
 
 import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.graph.Argument;
+import com.kniazkov.antcore.basic.graph.ArgumentsList;
 import com.kniazkov.antcore.basic.graph.Function;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,10 +29,11 @@ import java.util.List;
  * Entity represents function
  */
 public class RawFunction extends Entity {
-    public RawFunction(Fragment fragment, String name, List<Line> body) {
+    public RawFunction(Fragment fragment, String name, List<RawArgument> arguments, List<Line> body) {
         this.fragment = fragment;
         this.name = name;
-        this.body = Collections.unmodifiableList(body);
+        this.rawArguments = arguments != null ? Collections.unmodifiableList(arguments) : null;
+        this.rawBody = Collections.unmodifiableList(body);
     }
 
     public Fragment getFragment() {
@@ -41,14 +45,24 @@ public class RawFunction extends Entity {
     }
 
     public List<Line> getBody() {
-        return body;
+        return rawBody;
     }
 
     public Function toNode() {
-        return new Function(fragment, name);
+        List<Argument> arguments = null;
+        if (rawArguments != null) {
+            arguments = new ArrayList<>();
+            for (RawArgument rawArgument : rawArguments) {
+                Argument argument = rawArgument.toNode();
+                arguments.add(argument);
+            }
+        }
+        return new Function(fragment, name,
+                arguments != null ? new ArgumentsList(arguments) : null);
     }
 
     private Fragment fragment;
     private String name;
-    private List<Line> body;
+    private List<RawArgument> rawArguments;
+    private List<Line> rawBody;
 }

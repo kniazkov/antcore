@@ -17,6 +17,8 @@
 
 package com.kniazkov.antcore.basic.parser.tokens;
 
+import com.kniazkov.antcore.basic.parser.Token;
+
 /**
     The "END" keyword
  */
@@ -24,5 +26,16 @@ public class KeywordEnd extends Keyword {
     @Override
     public String toString() {
         return "END";
+    }
+
+    private KeywordEnd() {
+    }
+
+    private static KeywordEnd instance;
+
+    public static Token getInstance() {
+        if (instance == null)
+            instance = new KeywordEnd();
+        return instance;
     }
 }

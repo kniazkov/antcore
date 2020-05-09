@@ -17,6 +17,8 @@
 
 package com.kniazkov.antcore.basic.parser.tokens;
 
+import com.kniazkov.antcore.basic.parser.Token;
+
 /**
     The "PRIVATE" keyword
  */
@@ -24,5 +26,16 @@ public class KeywordPrivate extends Keyword {
     @Override
     public String toString() {
         return "PRIVATE";
+    }
+
+    private KeywordPrivate() {
+    }
+
+    private static KeywordPrivate instance;
+
+    public static Token getInstance() {
+        if (instance == null)
+            instance = new KeywordPrivate();
+        return instance;
     }
 }

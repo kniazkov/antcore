@@ -22,6 +22,10 @@ import com.kniazkov.antcore.basic.SyntaxError;
  * A visitor for nodes
  */
 public abstract class NodeVisitor {
+    public void visit(Argument obj) throws SyntaxError {
+    }
+    public void visit(ArgumentsList obj) throws SyntaxError {
+    }
     public void visit(DataSet obj) throws SyntaxError {
     }
     public void visit(DataTypeReference obj) throws SyntaxError {

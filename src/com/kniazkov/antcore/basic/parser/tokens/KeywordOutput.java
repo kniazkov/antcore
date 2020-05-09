@@ -17,6 +17,8 @@
 
 package com.kniazkov.antcore.basic.parser.tokens;
 
+import com.kniazkov.antcore.basic.parser.Token;
+
 /**
     The "OUTPUT" keyword
  */
@@ -24,5 +26,16 @@ public class KeywordOutput extends Keyword {
     @Override
     public String toString() {
         return "OUTPUT";
+    }
+
+    private KeywordOutput() {
+    }
+
+    private static KeywordOutput instance;
+
+    public static Token getInstance() {
+        if (instance == null)
+            instance = new KeywordOutput();
+        return instance;
     }
 }

@@ -14,28 +14,29 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+package com.kniazkov.antcore.basic.parser;
 
-package com.kniazkov.antcore.basic.parser.tokens;
-
-import com.kniazkov.antcore.basic.parser.Token;
+import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.graph.Argument;
+import com.kniazkov.antcore.basic.graph.Field;
 
 /**
-    The "PROTECTED" keyword
+ * The parsed argument of a function
  */
-public class KeywordProtected extends Keyword {
-    @Override
-    public String toString() {
-        return "PROTECTED";
+public class RawArgument extends Entity {
+    public RawArgument(String name, RawDataType type) {
+        this.name = name;
+        this.type = type;
     }
 
-    private KeywordProtected() {
+    public String getName() {
+        return name;
     }
 
-    private static KeywordProtected instance;
-
-    public static Token getInstance() {
-        if (instance == null)
-            instance = new KeywordProtected();
-        return instance;
+    public Argument toNode() {
+        return new Argument(name, type.toNode());
     }
+
+    private String name;
+    private RawDataType type;
 }

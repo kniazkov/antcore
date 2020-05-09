@@ -20,13 +20,14 @@ import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
 
 /**
- * The function
+ * The node represents an function (method) argument
  */
-public class Function extends Node {
-    public Function(Fragment fragment, String name, ArgumentsList arguments) {
-        this.fragment = fragment;
+public class Argument extends Expression implements DataTypeOwner {
+    public Argument(String name, DataType type) {
         this.name = name;
-        this.arguments = arguments;
+        this.type = type;
+        type.setOwner(this);
+        this.offset = -1;
     }
 
     @Override
@@ -36,39 +37,45 @@ public class Function extends Node {
 
     @Override
     public void dfs(NodeVisitor visitor) throws SyntaxError {
+        type.dfs(visitor);
         accept(visitor);
-    }
-
-    void setOwner(FunctionOwner owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public Node getOwner() {
-        return (Node)owner;
-    }
-
-    @Override
-    public Fragment getFragment() {
-        return fragment;
     }
 
     public String getName() {
         return name;
     }
 
-    @Override
-    public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append(i).append("FUNCTION ").append(name);
-        if (arguments != null)
-            arguments.toSourceCode(buff, i, i0);
-        buff.append('\n');
-
-        buff.append(i).append("END FUNCTION\n");
+    void setOwner(ArgumentsList owner) {
+        this.owner = owner;
     }
 
-    private FunctionOwner owner;
-    private Fragment fragment;
+    @Override
+    public Node getOwner() {
+        return owner;
+    }
+    
+    @Override
+    public DataType getType() {
+        return type;
+    }
+
+    @Override
+    public void toSourceCode(StringBuilder buff, String i, String i0) {
+        buff.append(name).append(" AS ");
+        type.toSourceCode(buff, i, i0);
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    void setOffset(int offset) {
+        assert(offset == -1);
+        this.offset = offset;
+    }
+
+    private ArgumentsList owner;
     private String name;
-    private ArgumentsList arguments;
+    private DataType type;
+    private int offset;
 }

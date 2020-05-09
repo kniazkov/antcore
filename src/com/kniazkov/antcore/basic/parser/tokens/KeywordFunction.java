@@ -17,6 +17,8 @@
 
 package com.kniazkov.antcore.basic.parser.tokens;
 
+import com.kniazkov.antcore.basic.parser.Token;
+
 /**
     The "FUNCTION" keyword
  */
@@ -24,5 +26,16 @@ public class KeywordFunction extends Keyword {
     @Override
     public String toString() {
         return "FUNCTION";
+    }
+
+    private KeywordFunction() {
+    }
+
+    private static KeywordFunction instance;
+
+    public static Token getInstance() {
+        if (instance == null)
+            instance = new KeywordFunction();
+        return instance;
     }
 }

@@ -17,6 +17,8 @@
 
 package com.kniazkov.antcore.basic.parser.tokens;
 
+import com.kniazkov.antcore.basic.parser.Token;
+
 /**
     The "DATA" keyword
  */
@@ -24,5 +26,16 @@ public class KeywordData extends Keyword {
     @Override
     public String toString() {
         return "DATA";
+    }
+
+    private KeywordData() {
+    }
+
+    private static KeywordData instance;
+
+    public static Token getInstance() {
+        if (instance == null)
+            instance = new KeywordData();
+        return instance;
     }
 }

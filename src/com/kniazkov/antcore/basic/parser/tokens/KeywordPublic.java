@@ -17,6 +17,8 @@
 
 package com.kniazkov.antcore.basic.parser.tokens;
 
+import com.kniazkov.antcore.basic.parser.Token;
+
 /**
     The "PUBLIC" keyword
  */
@@ -24,5 +26,16 @@ public class KeywordPublic extends Keyword {
     @Override
     public String toString() {
         return "PUBLIC";
+    }
+
+    private KeywordPublic() {
+    }
+
+    private static KeywordPublic instance;
+
+    public static Token getInstance() {
+        if (instance == null)
+            instance = new KeywordPublic();
+        return instance;
     }
 }

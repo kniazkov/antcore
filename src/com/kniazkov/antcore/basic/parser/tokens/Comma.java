@@ -20,22 +20,21 @@ package com.kniazkov.antcore.basic.parser.tokens;
 import com.kniazkov.antcore.basic.parser.Token;
 
 /**
-    The "PROTECTED" keyword
+ * Token represents a comma
  */
-public class KeywordProtected extends Keyword {
-    @Override
+public class Comma extends Token {
     public String toString() {
-        return "PROTECTED";
+        return ",";
     }
 
-    private KeywordProtected() {
+    private Comma() {
     }
 
-    private static KeywordProtected instance;
+    private static Comma instance;
 
     public static Token getInstance() {
         if (instance == null)
-            instance = new KeywordProtected();
+            instance = new Comma();
         return instance;
     }
 }
