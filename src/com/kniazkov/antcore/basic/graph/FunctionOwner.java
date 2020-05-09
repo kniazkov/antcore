@@ -16,26 +16,8 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.SyntaxError;
-
 /**
- * A visitor for nodes
+ * Marker interface for function owners
  */
-public abstract class NodeVisitor {
-    public void visit(DataSet obj) throws SyntaxError {
-    }
-    public void visit(DataTypeReference obj) throws SyntaxError {
-    }
-    public void visit(Field obj) throws SyntaxError {
-    }
-    public void visit(Function obj) throws SyntaxError {
-    }
-    public void visit(Module obj) throws SyntaxError {
-    }
-    public void visit(Pointer obj) throws SyntaxError {
-    }
-    public void visit(Program obj)  throws SyntaxError {
-    }
-    public void visit(Struct obj)  throws SyntaxError {
-    }
+public interface FunctionOwner {
 }

@@ -143,6 +143,8 @@ public class Parser {
                     return new KeywordPointer();
                 case "TYPE":
                     return new KeywordType();
+                case "FUNCTION":
+                    return new KeywordFunction();
             }
             return new Identifier(name);
         }
@@ -201,10 +203,12 @@ public class Parser {
 
     private Map<String, RawModule> rawModules;
     private Map<String, RawDataType> rawDataTypes;
+    private List<RawFunction> rawFunctions;
 
     private Parser() {
         rawModules = new TreeMap<>();
         rawDataTypes = new TreeMap<>();
+        rawFunctions = new ArrayList<>();
     }
 
     /**
@@ -293,10 +297,16 @@ public class Parser {
         Iterator<Line> iterator = module.getBody().iterator();
         while (iterator.hasNext()) {
             Line line = iterator.next();
-            assert(line.getTokens().size() > 0);
-            if (line.getTokens().get(0) instanceof KeywordData) {
+            List<Token> tokens = line.getTokens();
+            assert(tokens.size() > 0);
+            if (tokens.get(0) instanceof KeywordData) {
                 RawDataSet dataSet = parseDataSet(line, iterator, DataPrefix.PRIVATE);
                 module.setData(dataSet);
+            }
+            else if (tokens.get(0) instanceof KeywordFunction) {
+                RawFunction function = parseFunction(line, iterator);
+                module.addFunction(function);
+                rawFunctions.add(function);
             }
             else
                 throw new UnexpectedSequence(line);
@@ -430,6 +440,41 @@ public class Parser {
                 rawDataTypes.put(structName, struct);
                 return;
             }
+        }
+        throw new UnexpectedEndOfFile(line);
+    }
+
+    /**
+     * Parse a function
+     * @param declaration the line contains function declaration
+     * @param iterator the iterator by lines
+     */
+    private RawFunction parseFunction(Line declaration, Iterator<Line> iterator) throws SyntaxError {
+        Iterator<Token> tokens = declaration.getTokens().iterator();
+        tokens.next();
+
+        if (!tokens.hasNext())
+            throw new ExpectedFunctionName(declaration);
+        Token token = tokens.next();
+        if (!(token instanceof Identifier))
+            throw new ExpectedFunctionName(declaration);
+        String name = ((Identifier)token).getName();
+
+        if (tokens.hasNext())
+            throw new UnrecognizedSequence(declaration);
+
+        Line line = declaration;
+        List<Line> body = new ArrayList<>();
+        while(iterator.hasNext()) {
+            line = iterator.next();
+            List<Token> content = line.getTokens();
+            if (content.size() >= 2
+                    && content.get(0) instanceof KeywordEnd && content.get(1) instanceof KeywordFunction) {
+                if (content.size() > 2)
+                    throw new UnrecognizedSequence(line);
+                return new RawFunction(declaration.getFragment(), name, body);
+            }
+            body.add(line);
         }
         throw new UnexpectedEndOfFile(line);
     }

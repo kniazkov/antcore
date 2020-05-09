@@ -14,28 +14,21 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.graph;
+package com.kniazkov.antcore.basic.parser.exceptions;
 
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.parser.Line;
 
 /**
- * A visitor for nodes
+ * The exception "Expected a function name"
  */
-public abstract class NodeVisitor {
-    public void visit(DataSet obj) throws SyntaxError {
+public class ExpectedFunctionName extends SyntaxError {
+    public ExpectedFunctionName(Line line) {
+        super(line.getFragment());
     }
-    public void visit(DataTypeReference obj) throws SyntaxError {
-    }
-    public void visit(Field obj) throws SyntaxError {
-    }
-    public void visit(Function obj) throws SyntaxError {
-    }
-    public void visit(Module obj) throws SyntaxError {
-    }
-    public void visit(Pointer obj) throws SyntaxError {
-    }
-    public void visit(Program obj)  throws SyntaxError {
-    }
-    public void visit(Struct obj)  throws SyntaxError {
+
+    @Override
+    protected String getErrorMessage() {
+        return "Expected a function name";
     }
 }

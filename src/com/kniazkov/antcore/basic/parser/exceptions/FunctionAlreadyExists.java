@@ -14,28 +14,24 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.graph;
+package com.kniazkov.antcore.basic.parser.exceptions;
 
+import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
 
 /**
- * A visitor for nodes
+ * The exception "A function already defined"
  */
-public abstract class NodeVisitor {
-    public void visit(DataSet obj) throws SyntaxError {
+public class FunctionAlreadyExists extends SyntaxError {
+    public FunctionAlreadyExists(Fragment fragment, String name) {
+        super(fragment);
+        this.name = name;
     }
-    public void visit(DataTypeReference obj) throws SyntaxError {
+
+    @Override
+    protected String getErrorMessage() {
+        return "A function \'" + name + "\' already defined in this scope";
     }
-    public void visit(Field obj) throws SyntaxError {
-    }
-    public void visit(Function obj) throws SyntaxError {
-    }
-    public void visit(Module obj) throws SyntaxError {
-    }
-    public void visit(Pointer obj) throws SyntaxError {
-    }
-    public void visit(Program obj)  throws SyntaxError {
-    }
-    public void visit(Struct obj)  throws SyntaxError {
-    }
+
+    private String name;
 }

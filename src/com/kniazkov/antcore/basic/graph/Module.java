@@ -20,12 +20,18 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
  * The node that represents a module
  */
-public class Module extends Node implements DataSetOwner {
+public class Module extends Node implements DataSetOwner, FunctionOwner {
     public Module(Fragment fragment, String name, String executor,
-                  DataSet localData, DataSet inputData, DataSet outputData) {
+                  DataSet localData, DataSet inputData, DataSet outputData,
+                  List<Function> functions) {
         this.fragment = fragment;
         this.name = name;
         this.executor = executor;
@@ -38,6 +44,12 @@ public class Module extends Node implements DataSetOwner {
         this.outputData = outputData;
         if (outputData != null)
             outputData.setOwner(this);
+        this.functionList = Collections.unmodifiableList(functions);
+        this.functionMap = new TreeMap<>();
+        for (Function function : functions) {
+            function.setOwner(this);
+            functionMap.put(function.getName(), function);
+        }
     }
 
     @Override
@@ -102,6 +114,21 @@ public class Module extends Node implements DataSetOwner {
             outputData.toSourceCode(buff, i1, i0);
             flag = true;
         }
+        if (functionMap.containsKey("MAIN")) {
+            Function mainFunction = functionMap.get("MAIN");
+            if (flag)
+                buff.append('\n');
+            mainFunction.toSourceCode(buff, i1, i0);
+            flag = true;
+        }
+        for (Function function : functionList) {
+            if (!function.getName().equals("MAIN")) {
+                if (flag)
+                    buff.append('\n');
+                function.toSourceCode(buff, i1, i0);
+                flag = true;
+            }
+        }
         buff.append(i).append("END MODULE").append("\n");
     }
 
@@ -112,4 +139,6 @@ public class Module extends Node implements DataSetOwner {
     private DataSet localData;
     private DataSet inputData;
     private DataSet outputData;
+    private List<Function> functionList;
+    private Map<String, Function> functionMap;
 }
