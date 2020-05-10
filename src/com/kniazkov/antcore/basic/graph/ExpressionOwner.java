@@ -17,22 +17,7 @@
 package com.kniazkov.antcore.basic.graph;
 
 /**
- * An expression, i.e. node that has a type
+ * Marker interface for expression owners
  */
-public abstract class Expression extends Node {
-    /**
-     * @return type of the expression
-     */
-    public abstract DataType getType();
-
-    /**
-     * @return constant value of the expression
-     */
-    public abstract Object calculate();
-
-    /**
-     * Set owner of the node
-     * @param owner owner
-     */
-    abstract void setOwner(ExpressionOwner owner);
+public interface ExpressionOwner {
 }

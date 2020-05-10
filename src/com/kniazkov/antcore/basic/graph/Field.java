@@ -47,6 +47,10 @@ public class Field extends LeftExpression implements DataTypeOwner {
         return name;
     }
 
+    void setOwner(ExpressionOwner owner) {
+        this.owner = (DataSet) owner;
+    }
+
     void setOwner(DataSet owner) {
         this.owner = owner;
     }

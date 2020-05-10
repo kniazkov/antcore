@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * The list of arguments
  */
-public class ArgumentsList extends Node {
+public class ArgumentsList extends Node implements ExpressionOwner {
     public ArgumentsList(List<Argument> arguments) {
         this.arguments = Collections.unmodifiableList(arguments);
         for (Argument argument : arguments) {

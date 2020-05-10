@@ -45,6 +45,11 @@ public class Argument extends LeftExpression implements DataTypeOwner {
         return name;
     }
 
+    @Override
+    void setOwner(ExpressionOwner owner) {
+        this.owner = (ArgumentsList) owner;
+    }
+
     void setOwner(ArgumentsList owner) {
         this.owner = owner;
     }

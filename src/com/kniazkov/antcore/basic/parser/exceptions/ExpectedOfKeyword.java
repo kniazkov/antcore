@@ -14,25 +14,21 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.graph;
+package com.kniazkov.antcore.basic.parser.exceptions;
+
+import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.parser.Line;
 
 /**
- * An expression, i.e. node that has a type
+ * The exception "Expected an 'OF' keyword"
  */
-public abstract class Expression extends Node {
-    /**
-     * @return type of the expression
-     */
-    public abstract DataType getType();
+public class ExpectedOfKeyword extends SyntaxError {
+    public ExpectedOfKeyword(Line line) {
+        super(line.getFragment());
+    }
 
-    /**
-     * @return constant value of the expression
-     */
-    public abstract Object calculate();
-
-    /**
-     * Set owner of the node
-     * @param owner owner
-     */
-    abstract void setOwner(ExpressionOwner owner);
+    @Override
+    protected String getErrorMessage() {
+        return "Expected an 'OF' keyword";
+    }
 }

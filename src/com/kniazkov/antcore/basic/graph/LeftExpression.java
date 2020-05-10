@@ -21,7 +21,7 @@ package com.kniazkov.antcore.basic.graph;
  */
 public abstract class LeftExpression extends Expression {
     @Override
-    public boolean isConstant() {
+    public Object calculate() {
         return false;
     }
 }

@@ -14,25 +14,25 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.graph;
+package com.kniazkov.antcore.basic.parser.exceptions;
+
+import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.parser.Line;
 
 /**
- * An expression, i.e. node that has a type
+ * The exception "Wrong number format"
  */
-public abstract class Expression extends Node {
-    /**
-     * @return type of the expression
-     */
-    public abstract DataType getType();
+public class WrongNumberFormat extends SyntaxError {
+    public WrongNumberFormat(Fragment fragment, String number) {
+        super(fragment);
+        this.number = number;
+    }
 
-    /**
-     * @return constant value of the expression
-     */
-    public abstract Object calculate();
+    @Override
+    protected String getErrorMessage() {
+        return "Wrong number format: '" + number + '\'';
+    }
 
-    /**
-     * Set owner of the node
-     * @param owner owner
-     */
-    abstract void setOwner(ExpressionOwner owner);
+    private String number;
 }

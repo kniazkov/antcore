@@ -17,22 +17,38 @@
 package com.kniazkov.antcore.basic.graph;
 
 /**
- * An expression, i.e. node that has a type
+ * The node represents an integer constant
  */
-public abstract class Expression extends Node {
-    /**
-     * @return type of the expression
-     */
-    public abstract DataType getType();
+public class IntegerNode extends Expression {
+    public IntegerNode(int value) {
+        this.value = value;
+    }
 
-    /**
-     * @return constant value of the expression
-     */
-    public abstract Object calculate();
+    @Override
+    public DataType getType() {
+        return IntegerType.getInstance();
+    }
 
-    /**
-     * Set owner of the node
-     * @param owner owner
-     */
-    abstract void setOwner(ExpressionOwner owner);
+    @Override
+    public Object calculate() {
+        return value;
+    }
+
+    @Override
+    void setOwner(ExpressionOwner owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public Node getOwner() {
+        return (Node)owner;
+    }
+
+    @Override
+    public void toSourceCode(StringBuilder buff, String i, String i0) {
+        buff.append(value);
+    }
+
+    private ExpressionOwner owner;
+    private int value;
 }

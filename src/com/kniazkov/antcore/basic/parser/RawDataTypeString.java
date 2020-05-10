@@ -14,25 +14,30 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.graph;
+package com.kniazkov.antcore.basic.parser;
+
+import com.kniazkov.antcore.basic.graph.DataType;
+import com.kniazkov.antcore.basic.graph.Pointer;
+import com.kniazkov.antcore.basic.graph.StringType;
+import com.kniazkov.antcore.basic.parser.tokens.TokenExpression;
 
 /**
- * An expression, i.e. node that has a type
+ * A data type represented as pointer to another type
  */
-public abstract class Expression extends Node {
-    /**
-     * @return type of the expression
-     */
-    public abstract DataType getType();
+public class RawDataTypeString extends RawDataType {
+    public RawDataTypeString(TokenExpression length) {
+        this.length = length;
+    }
 
-    /**
-     * @return constant value of the expression
-     */
-    public abstract Object calculate();
+    @Override
+    public String getName() {
+        return "STRING OF " + length.toString();
+    }
 
-    /**
-     * Set owner of the node
-     * @param owner owner
-     */
-    abstract void setOwner(ExpressionOwner owner);
+    @Override
+    public DataType toNode() {
+        return new StringType(length.toNode());
+    }
+
+    private TokenExpression length;
 }

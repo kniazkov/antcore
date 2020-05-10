@@ -14,25 +14,21 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.graph;
+package com.kniazkov.antcore.basic.exceptions;
+
+import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.SyntaxError;
 
 /**
- * An expression, i.e. node that has a type
+ * The exception "String length must be constant"
  */
-public abstract class Expression extends Node {
-    /**
-     * @return type of the expression
-     */
-    public abstract DataType getType();
+public class StringLengthMustBeConstant extends SyntaxError {
+    public StringLengthMustBeConstant(Fragment fragment) {
+        super(fragment);
+    }
 
-    /**
-     * @return constant value of the expression
-     */
-    public abstract Object calculate();
-
-    /**
-     * Set owner of the node
-     * @param owner owner
-     */
-    abstract void setOwner(ExpressionOwner owner);
+    @Override
+    protected String getErrorMessage() {
+        return "String length must be constant";
+    }
 }

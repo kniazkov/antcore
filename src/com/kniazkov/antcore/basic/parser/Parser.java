@@ -20,10 +20,12 @@ import com.kniazkov.antcore.basic.DataPrefix;
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
 import com.kniazkov.antcore.basic.graph.DataType;
+import com.kniazkov.antcore.basic.graph.IntegerNode;
 import com.kniazkov.antcore.basic.graph.Module;
 import com.kniazkov.antcore.basic.graph.Program;
 import com.kniazkov.antcore.basic.parser.exceptions.*;
 import com.kniazkov.antcore.basic.parser.tokens.*;
+import com.kniazkov.antcore.lib.Reference;
 
 import java.util.*;
 
@@ -143,6 +145,8 @@ public class Parser {
                     return KeywordAs.getInstance();
                 case "TO":
                     return KeywordTo.getInstance();
+                case "OF":
+                    return KeywordOf.getInstance();
                 case "POINTER":
                     return KeywordPointer.getInstance();
                 case "TYPE":
@@ -151,6 +155,22 @@ public class Parser {
                     return KeywordFunction.getInstance();
             }
             return new Identifier(name);
+        }
+
+        if (isDigit(c)) {
+            StringBuilder b = new StringBuilder();
+            do {
+                b.append(c);
+                c = src.next();
+            } while(isDigit(c));
+            String number = b.toString();
+            try {
+                int value = Integer.parseInt(number);
+                return new TokenExpression(new IntegerNode(value));
+            }
+            catch (NumberFormatException e) {
+                throw new WrongNumberFormat(fragment, number);
+            }
         }
 
         if (c == ',') {
@@ -444,8 +464,19 @@ public class Parser {
 
         Token first = iterator.next();
 
-        if (first instanceof Identifier)
-            return new RawDataTypeIdentifier(((Identifier) first).getName());
+        if (first instanceof Identifier) {
+            String name = ((Identifier) first).getName();
+            if (name.equals("STRING")) {
+                if (!iterator.hasNext())
+                    throw new ExpectedOfKeyword(line);
+                Token ofKeyword = iterator.next();
+                if (!(ofKeyword instanceof KeywordOf))
+                    throw new ExpectedOfKeyword(line);
+                TokenExpression length = parseExpression(line, iterator, null);
+                return new RawDataTypeString(length);
+            }
+            return new RawDataTypeIdentifier(name);
+        }
 
         if (first instanceof KeywordPointer) {
             if (!iterator.hasNext())
@@ -587,5 +618,22 @@ public class Parser {
             body.add(line);
         }
         throw new UnexpectedEndOfFile(line);
+    }
+
+    /**
+     * Parse an expression
+     * @param line the source code line
+     * @param iterator the iterator by tokens
+     * @param lastToken unused token taken from the iterator
+     */
+    private TokenExpression parseExpression(Line line, Iterator<Token> iterator, Reference<Token> lastToken) throws SyntaxError {
+        if (!iterator.hasNext())
+            throw new ExpectedAnExpression(line);
+
+        Token token = iterator.next();
+        if (!(token instanceof TokenExpression))
+            throw new ExpectedAnExpression(line);
+
+        return (TokenExpression) token;
     }
 }

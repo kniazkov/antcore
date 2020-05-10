@@ -29,7 +29,7 @@ import java.util.TreeMap;
 /**
  * The data set
  */
-public class DataSet extends Node {
+public class DataSet extends Node implements ExpressionOwner {
     public DataSet(Fragment fragment, DataPrefix prefix, List<Field> fields) {
         this.fragment = fragment;
         this.prefix = prefix;
