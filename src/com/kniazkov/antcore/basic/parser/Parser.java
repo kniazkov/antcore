@@ -25,7 +25,7 @@ import com.kniazkov.antcore.basic.graph.Module;
 import com.kniazkov.antcore.basic.graph.Program;
 import com.kniazkov.antcore.basic.parser.exceptions.*;
 import com.kniazkov.antcore.basic.parser.tokens.*;
-import com.kniazkov.antcore.lib.Reference;
+import com.kniazkov.antcore.lib.RollbackIterator;
 
 import java.util.*;
 
@@ -434,12 +434,12 @@ public class Parser {
             line = iterator.next();
             List<Token> content = line.getTokens();
             if (content.size() >= 3 && content.get(0) instanceof Identifier) {
-                tokens = content.iterator();
-                Identifier name = (Identifier)tokens.next();
-                Token asKeyword = tokens.next();
+                RollbackIterator<Token> lineIterator = new RollbackIterator<>(content.iterator());
+                Identifier name = (Identifier)lineIterator.next();
+                Token asKeyword = lineIterator.next();
                 if (!(asKeyword instanceof KeywordAs))
                     throw new ExpectedAsKeyword(line);
-                RawDataType type = parseDataType(line, tokens);
+                RawDataType type = parseDataType(line, lineIterator);
                 RawField field = new RawField(line.getFragment(), name.getName(), type);
                 dataSet.addField(field);
             }
@@ -458,7 +458,7 @@ public class Parser {
      * @param line the source code line
      * @param iterator the iterator by tokens
      */
-    private RawDataType parseDataType(Line line, Iterator<Token> iterator) throws SyntaxError {
+    private RawDataType parseDataType(Line line, RollbackIterator<Token> iterator) throws SyntaxError {
         if (!iterator.hasNext())
             throw new ExpectedDataType(line);
 
@@ -472,7 +472,7 @@ public class Parser {
                 Token ofKeyword = iterator.next();
                 if (!(ofKeyword instanceof KeywordOf))
                     throw new ExpectedOfKeyword(line);
-                TokenExpression length = parseExpression(line, iterator, null);
+                TokenExpression length = parseExpression(line, iterator);
                 return new RawDataTypeString(length);
             }
             return new RawDataTypeIdentifier(name);
@@ -519,12 +519,12 @@ public class Parser {
             line = iterator.next();
             List<Token> content = line.getTokens();
             if (content.size() >= 3 && content.get(0) instanceof Identifier) {
-                tokens = content.iterator();
-                Identifier fieldName = (Identifier)tokens.next();
-                Token asKeyword = tokens.next();
+                RollbackIterator<Token> lineIterator = new RollbackIterator<>(content.iterator());
+                Identifier fieldName = (Identifier)lineIterator.next();
+                Token asKeyword = lineIterator.next();
                 if (!(asKeyword instanceof KeywordAs))
                     throw new ExpectedAsKeyword(line);
-                RawDataType type = parseDataType(line, tokens);
+                RawDataType type = parseDataType(line, lineIterator);
                 RawField field = new RawField(line.getFragment(), fieldName.getName(), type);
                 struct.addField(field);
             }
@@ -545,7 +545,7 @@ public class Parser {
      * @param iterator the iterator by lines
      */
     private RawFunction parseFunction(Line declaration, Iterator<Line> iterator) throws SyntaxError {
-        Iterator<Token> tokens = declaration.getTokens().iterator();
+        RollbackIterator<Token> tokens = new RollbackIterator<>(declaration.getTokens().iterator());
         tokens.next();
 
         if (!tokens.hasNext())
@@ -560,7 +560,8 @@ public class Parser {
         if (tokens.hasNext()) {
             nextToken = tokens.next();
             if (nextToken instanceof RoundBracketsPair) {
-                Iterator<Token> argIterator = ((RoundBracketsPair) nextToken).getTokens().iterator();
+                RollbackIterator<Token> argIterator =
+                        new RollbackIterator<Token>(((RoundBracketsPair) nextToken).getTokens().iterator());
                 boolean oneMoreArg = false;
                 arguments = new ArrayList<>();
                 while(true) {
@@ -624,9 +625,8 @@ public class Parser {
      * Parse an expression
      * @param line the source code line
      * @param iterator the iterator by tokens
-     * @param lastToken unused token taken from the iterator
      */
-    private TokenExpression parseExpression(Line line, Iterator<Token> iterator, Reference<Token> lastToken) throws SyntaxError {
+    private TokenExpression parseExpression(Line line, RollbackIterator<Token> iterator) throws SyntaxError {
         if (!iterator.hasNext())
             throw new ExpectedAnExpression(line);
 
