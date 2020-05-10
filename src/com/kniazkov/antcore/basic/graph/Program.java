@@ -39,29 +39,8 @@ public class Program extends Node implements DataTypeOwner {
             entry.getValue().setOwner(this);
         }
 
-        types.put("INTEGER", new BuiltInType(this) {
-            @Override
-            public String getName() {
-                return "INTEGER";
-            }
-
-            @Override
-            public int getSize() {
-                return 4;
-            }
-        });
-
-        types.put("REAL", new BuiltInType(this) {
-            @Override
-            public String getName() {
-                return "REAL";
-            }
-
-            @Override
-            public int getSize() {
-                return 8;
-            }
-        });
+        types.put("INTEGER", IntegerType.getInstance());
+        types.put("REAL", RealType.getInstance());
 
         this.types = Collections.unmodifiableMap(types);
     }

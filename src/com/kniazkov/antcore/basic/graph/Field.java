@@ -23,7 +23,7 @@ import com.kniazkov.antcore.lib.Reference;
 /**
  * The node represents a field (of class, type, etc)
  */
-public class Field extends Expression implements DataTypeOwner {
+public class Field extends LeftExpression implements DataTypeOwner {
     public Field(Fragment fragment, String name, DataType type) {
         this.fragment = fragment;
         this.name = name;

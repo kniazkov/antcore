@@ -47,13 +47,18 @@ public class Analyzer {
     }
 
     /**
-     * Calculate offsets of all fields of all data types
+     * Calculate offsets of all fields of all data types, all arguments and
+     * local variables
      * @param root the root node
      */
     protected static void calculateOffsets(Program root) throws SyntaxError {
         class Calculator extends NodeVisitor {
             @Override
             public void visit(DataSet obj) throws SyntaxError {
+                obj.calculateOffsets();
+            }
+            @Override
+            public void visit(ArgumentsList obj) throws SyntaxError {
                 obj.calculateOffsets();
             }
         }

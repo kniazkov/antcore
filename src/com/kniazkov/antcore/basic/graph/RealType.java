@@ -16,17 +16,30 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-/**
- * An expression, i.e. node that has a type
- */
-public abstract class Expression extends Node {
-    /**
-     * @return type of the expression
-     */
-    public abstract DataType getType();
+import com.kniazkov.antcore.basic.SyntaxError;
 
-    /**
-     * @return true if the expression can't be changed
-     */
-    public abstract boolean isConstant();
+/**
+ * The REAL data type
+ */
+public class RealType extends BuiltInType {
+    @Override
+    public String getName() {
+        return "REAL";
+    }
+
+    @Override
+    public int getSize() throws SyntaxError {
+        return 8;
+    }
+
+    private RealType() {
+    }
+
+    private static RealType instance;
+
+    public static DataType getInstance() {
+        if (instance == null)
+            instance = new RealType();
+        return instance;
+    }
 }

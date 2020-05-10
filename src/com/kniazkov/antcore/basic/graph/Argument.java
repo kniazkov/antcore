@@ -22,7 +22,7 @@ import com.kniazkov.antcore.basic.SyntaxError;
 /**
  * The node represents an function (method) argument
  */
-public class Argument extends Expression implements DataTypeOwner {
+public class Argument extends LeftExpression implements DataTypeOwner {
     public Argument(String name, DataType type) {
         this.name = name;
         this.type = type;

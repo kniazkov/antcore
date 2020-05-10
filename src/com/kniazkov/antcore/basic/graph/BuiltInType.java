@@ -22,10 +22,6 @@ import com.kniazkov.antcore.basic.Fragment;
  * A built-in data type
  */
 public abstract class BuiltInType extends DataType {
-    BuiltInType(Program owner) {
-        this.owner = owner;
-    }
-
     @Override
     public boolean builtIn() {
         return true;
@@ -38,8 +34,6 @@ public abstract class BuiltInType extends DataType {
 
     @Override
     public Node getOwner() {
-        return owner;
+        return null;
     }
-
-    private Program owner;
 }

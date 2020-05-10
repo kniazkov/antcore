@@ -17,16 +17,11 @@
 package com.kniazkov.antcore.basic.graph;
 
 /**
- * An expression, i.e. node that has a type
+ * A left expression, i.e. expression that can be assigned
  */
-public abstract class Expression extends Node {
-    /**
-     * @return type of the expression
-     */
-    public abstract DataType getType();
-
-    /**
-     * @return true if the expression can't be changed
-     */
-    public abstract boolean isConstant();
+public abstract class LeftExpression extends Expression {
+    @Override
+    public boolean isConstant() {
+        return false;
+    }
 }

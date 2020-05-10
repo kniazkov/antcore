@@ -65,6 +65,9 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
             inputData.dfs(visitor);
         if (outputData != null)
             outputData.dfs(visitor);
+        for (Function function : functionList) {
+            function.dfs(visitor);
+        }
         accept(visitor);
     }
 
