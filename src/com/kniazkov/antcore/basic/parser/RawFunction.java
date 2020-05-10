@@ -29,10 +29,12 @@ import java.util.List;
  * Entity represents function
  */
 public class RawFunction extends Entity {
-    public RawFunction(Fragment fragment, String name, List<RawArgument> arguments, List<Line> body) {
+    public RawFunction(Fragment fragment, String name, List<RawArgument> arguments,
+                       RawDataType returnType, List<Line> body) {
         this.fragment = fragment;
         this.name = name;
         this.rawArguments = arguments != null ? Collections.unmodifiableList(arguments) : null;
+        this.returnType = returnType;
         this.rawBody = Collections.unmodifiableList(body);
     }
 
@@ -58,11 +60,13 @@ public class RawFunction extends Entity {
             }
         }
         return new Function(fragment, name,
-                arguments != null ? new ArgumentsList(arguments) : null);
+                arguments != null ? new ArgumentsList(arguments) : null,
+                returnType != null ? returnType.toNode() : null);
     }
 
     private Fragment fragment;
     private String name;
     private List<RawArgument> rawArguments;
+    private RawDataType returnType;
     private List<Line> rawBody;
 }

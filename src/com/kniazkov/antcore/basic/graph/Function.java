@@ -22,11 +22,16 @@ import com.kniazkov.antcore.basic.SyntaxError;
 /**
  * The function
  */
-public class Function extends Node {
-    public Function(Fragment fragment, String name, ArgumentsList arguments) {
+public class Function extends Node implements DataTypeOwner {
+    public Function(Fragment fragment, String name, ArgumentsList arguments, DataType returnType) {
         this.fragment = fragment;
         this.name = name;
         this.arguments = arguments;
+        if (arguments != null)
+            arguments.setOwner(this);
+        this.returnType = returnType;
+        if (returnType != null)
+            returnType.setOwner(this);
     }
 
     @Override
@@ -36,6 +41,10 @@ public class Function extends Node {
 
     @Override
     public void dfs(NodeVisitor visitor) throws SyntaxError {
+        if (arguments != null)
+            arguments.dfs(visitor);
+        if (returnType != null)
+            returnType.dfs(visitor);
         accept(visitor);
     }
 
@@ -62,6 +71,10 @@ public class Function extends Node {
         buff.append(i).append("FUNCTION ").append(name);
         if (arguments != null)
             arguments.toSourceCode(buff, i, i0);
+        if (returnType != null) {
+            buff.append(" AS ");
+            returnType.toSourceCode(buff, i, i0);
+        }
         buff.append('\n');
 
         buff.append(i).append("END FUNCTION\n");
@@ -71,4 +84,5 @@ public class Function extends Node {
     private Fragment fragment;
     private String name;
     private ArgumentsList arguments;
+    private DataType returnType;
 }

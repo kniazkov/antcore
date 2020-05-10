@@ -564,8 +564,14 @@ public class Parser {
             }
         }
 
-        if (nextToken != null)
-            throw new UnrecognizedSequence(declaration);
+        RawDataType returnType = null;
+        if (nextToken != null) {
+            if (!(nextToken instanceof KeywordAs))
+                throw new ExpectedReturnType(declaration);
+            returnType = parseDataType(declaration, tokens);
+            if (tokens.hasNext())
+                throw new UnrecognizedSequence(declaration);
+        }
 
         Line line = declaration;
         List<Line> body = new ArrayList<>();
@@ -576,7 +582,7 @@ public class Parser {
                     && content.get(0) instanceof KeywordEnd && content.get(1) instanceof KeywordFunction) {
                 if (content.size() > 2)
                     throw new UnrecognizedSequence(line);
-                return new RawFunction(declaration.getFragment(), name, arguments, body);
+                return new RawFunction(declaration.getFragment(), name, arguments, returnType, body);
             }
             body.add(line);
         }
