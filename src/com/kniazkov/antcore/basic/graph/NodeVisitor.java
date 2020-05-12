@@ -26,6 +26,8 @@ public abstract class NodeVisitor {
     }
     public void visit(ArgumentsList obj) throws SyntaxError {
     }
+    public void visit(BinaryOperation obj) throws SyntaxError {
+    }
     public void visit(DataSet obj) throws SyntaxError {
     }
     public void visit(DataTypeReference obj) throws SyntaxError {

@@ -19,10 +19,7 @@ package com.kniazkov.antcore.basic.parser;
 import com.kniazkov.antcore.basic.DataPrefix;
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
-import com.kniazkov.antcore.basic.graph.DataType;
-import com.kniazkov.antcore.basic.graph.IntegerNode;
-import com.kniazkov.antcore.basic.graph.Module;
-import com.kniazkov.antcore.basic.graph.Program;
+import com.kniazkov.antcore.basic.graph.*;
 import com.kniazkov.antcore.basic.parser.exceptions.*;
 import com.kniazkov.antcore.basic.parser.tokens.*;
 import com.kniazkov.antcore.lib.RollbackIterator;
@@ -173,6 +170,20 @@ public class Parser {
             }
         }
 
+        if (isOperator(c)) {
+            StringBuilder b = new StringBuilder();
+            do {
+                b.append(c);
+                c = src.next();
+            } while(isOperator(c));
+            String operator = b.toString();
+            switch (operator) {
+                case "+":
+                    return OperatorPlus.getInstance();
+            }
+            throw new UnknownOperator(fragment, operator);
+        }
+
         if (c == ',') {
             src.next();
             return Comma.getInstance();
@@ -238,6 +249,20 @@ public class Parser {
 
     private static boolean isSpace(char c) {
         return (c == ' ' || c == '\t');
+    }
+
+    private static boolean isOperator(char c) {
+        switch(c) {
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+            case '<':
+            case '>':
+            case '=':
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -630,10 +655,56 @@ public class Parser {
         if (!iterator.hasNext())
             throw new ExpectedAnExpression(line);
 
-        Token token = iterator.next();
-        if (!(token instanceof TokenExpression))
+        LinkedList<Token> sequence = new LinkedList<>();
+        while(iterator.hasNext()) {
+            Token token = iterator.next();
+            if (token instanceof TokenExpression || token instanceof Operator)
+                sequence.add(token);
+            else
+                break;
+        }
+
+        if (sequence.isEmpty())
             throw new ExpectedAnExpression(line);
 
-        return (TokenExpression) token;
+        sequence = parseBinaryOperator(line, sequence, new Class<?>[]{OperatorPlus.class});
+
+        if (sequence.size() != 1)
+            throw new UnrecognizedSequence(line);
+        Token result = sequence.get(0);
+        if (!(result instanceof TokenExpression))
+            throw new ExpectedAnExpression(line);
+        return (TokenExpression) result;
+    }
+
+    private LinkedList<Token> parseBinaryOperator(Line line, LinkedList<Token> rightSequence, Class<?>[] operators) throws SyntaxError {
+        LinkedList<Token> leftSequence = new LinkedList<>();
+        while(!rightSequence.isEmpty()) {
+            Token token = rightSequence.removeFirst();
+            boolean flag = false;
+            for (Class<?> operator : operators) {
+                if (operator.isInstance(token)) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (!flag) {
+                leftSequence.addLast(token);
+            }
+            else {
+                Operator operator = (Operator)token;
+                Token leftOperand = leftSequence.removeLast();
+                if (!(leftOperand instanceof TokenExpression))
+                    throw new ExpectedLeftExpOper(line, operator.toString());
+                Token rightOperand = rightSequence.removeFirst();
+                if (!(rightOperand instanceof TokenExpression))
+                    throw new ExpectedLeftExpOper(line, operator.toString());
+
+                BinaryOperation binaryOperation = operator.createBinaryOperation(((TokenExpression) leftOperand).toNode(),
+                        ((TokenExpression) rightOperand).toNode());
+                leftSequence.addLast(new TokenExpression(binaryOperation));
+            }
+        }
+        return leftSequence;
     }
 }

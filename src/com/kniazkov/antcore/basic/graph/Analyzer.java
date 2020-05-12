@@ -28,6 +28,7 @@ public class Analyzer {
      */
     public static void analyze(Program root) throws SyntaxError {
         bindTypes(root);
+        defineTypes(root);
         calculateOffsets(root);
     }
 
@@ -44,6 +45,21 @@ public class Analyzer {
         }
 
         root.dfs(new Binder());
+    }
+
+    /**
+     * Define data types for operations
+     * @param root the root node
+     */
+    protected static void defineTypes(Program root) throws SyntaxError {
+        class Calculator extends NodeVisitor {
+            @Override
+            public void visit(BinaryOperation obj) throws SyntaxError {
+                obj.defineType();
+            }
+        }
+
+        root.dfs(new Calculator());
     }
 
     /**
