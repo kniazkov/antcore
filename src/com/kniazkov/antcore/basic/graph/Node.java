@@ -61,6 +61,15 @@ public abstract class Node {
     }
 
     /**
+     * Finds a variable by its name
+     * @param name the name
+     * @return a variable or null if not found
+     */
+    protected Expression findVariableByName(String name) {
+        return getOwner().findVariableByName(name);
+    }
+
+    /**
      * Generate program source code from the node
      * @param buff destination buffer
      * @param i current indentation

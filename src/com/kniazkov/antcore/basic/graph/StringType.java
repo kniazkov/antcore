@@ -29,6 +29,17 @@ public class StringType extends DataType implements ExpressionOwner {
     }
 
     @Override
+    public void accept(NodeVisitor visitor) throws SyntaxError {
+        visitor.visit(this);
+    }
+
+    @Override
+    public void dfs(NodeVisitor visitor) throws SyntaxError {
+        length.dfs(visitor);
+        accept(visitor);
+    }
+
+    @Override
     public String getName() {
         return "STRING OF " + length.calculate();
     }

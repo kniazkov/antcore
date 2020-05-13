@@ -16,19 +16,24 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
- * The list of arguments
+ * The list of constants
  */
-public class ArgumentsList extends Node implements ExpressionOwner {
-    public ArgumentsList(List<Argument> arguments) {
-        this.arguments = Collections.unmodifiableList(arguments);
-        for (Argument argument : arguments) {
-            argument.setOwner(this);
+public class ConstantList extends Node implements ExpressionOwner {
+    public ConstantList(List<Constant> constants) {
+        this.constantList = Collections.unmodifiableList(constants);
+        this.constantMap = new TreeMap<>();
+        for (Constant constant : constants) {
+            constant.setOwner(this);
+            constantMap.put(constant.getName(), constant);
         }
     }
 
@@ -39,13 +44,13 @@ public class ArgumentsList extends Node implements ExpressionOwner {
 
     @Override
     public void dfs(NodeVisitor visitor) throws SyntaxError {
-        for (Argument argument : arguments) {
-            argument.dfs(visitor);
+        for (Constant constant : constantList) {
+            constant.dfs(visitor);
         }
         accept(visitor);
     }
 
-    void setOwner(Function owner) {
+    void setOwner(ConstantListOwner owner) {
         this.owner = owner;
     }
 
@@ -56,28 +61,16 @@ public class ArgumentsList extends Node implements ExpressionOwner {
 
     @Override
     public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append('(');
-        boolean flag = false;
-        for (Argument argument : arguments) {
-            if (flag)
-                buff.append(", ");
-            flag = true;
-            argument.toSourceCode(buff, i, i0);
-        }
-        buff.append(')');
-    }
-
-    /**
-     * Calculate offsets of all arguments
-     */
-    void calculateOffsets() throws SyntaxError {
-        int offset = 0;
-        for (Argument argument : arguments) {
-            argument.setOffset(offset);
-            offset += argument.getType().getSize();
+        for (Constant constant : constantList) {
+            constant.toSourceCode(buff, i, i0);
         }
     }
 
-    private Function owner;
-    private List<Argument> arguments;
+    Constant findConstantByName(String name) {
+        return constantMap.get(name);
+    }
+
+    private ConstantListOwner owner;
+    private List<Constant> constantList;
+    private Map<String, Constant> constantMap;
 }

@@ -20,18 +20,16 @@ import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
 
 /**
- * The function
+ * The node represents a constant
  */
-public class Function extends Node implements DataTypeOwner {
-    public Function(Fragment fragment, String name, ArgumentList arguments, DataType returnType) {
+public class Constant extends Expression implements DataTypeOwner, ExpressionOwner {
+    public Constant(Fragment fragment, String name, Expression value, DataType type) {
         this.fragment = fragment;
         this.name = name;
-        this.arguments = arguments;
-        if (arguments != null)
-            arguments.setOwner(this);
-        this.returnType = returnType;
-        if (returnType != null)
-            returnType.setOwner(this);
+        this.value = value;
+        value.setOwner(this);
+        this.type = type;
+        type.setOwner(this);
     }
 
     @Override
@@ -41,20 +39,9 @@ public class Function extends Node implements DataTypeOwner {
 
     @Override
     public void dfs(NodeVisitor visitor) throws SyntaxError {
-        if (arguments != null)
-            arguments.dfs(visitor);
-        if (returnType != null)
-            returnType.dfs(visitor);
+        value.dfs(visitor);
+        type.dfs(visitor);
         accept(visitor);
-    }
-
-    void setOwner(FunctionOwner owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public Node getOwner() {
-        return (Node)owner;
     }
 
     @Override
@@ -67,22 +54,41 @@ public class Function extends Node implements DataTypeOwner {
     }
 
     @Override
-    public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append(i).append("FUNCTION ").append(name);
-        if (arguments != null)
-            arguments.toSourceCode(buff, i, i0);
-        if (returnType != null) {
-            buff.append(" AS ");
-            returnType.toSourceCode(buff, i, i0);
-        }
-        buff.append('\n');
-
-        buff.append(i).append("END FUNCTION\n");
+    void setOwner(ExpressionOwner owner) {
+        this.owner = (ConstantList) owner;
     }
 
-    private FunctionOwner owner;
+    void setOwner(ConstantList owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public Node getOwner() {
+        return owner;
+    }
+    
+    @Override
+    public DataType getType() {
+        return type;
+    }
+
+    @Override
+    public Object calculate() {
+        return value.calculate();
+    }
+
+    @Override
+    public void toSourceCode(StringBuilder buff, String i, String i0) {
+        buff.append("CONST ").append(name).append(" = ");
+        value.toSourceCode(buff, i, i0);
+        buff.append(" AS ");
+        type.toSourceCode(buff, i, i0);
+        buff.append('\n');
+    }
+
+    private ConstantList owner;
     private Fragment fragment;
     private String name;
-    private ArgumentList arguments;
-    private DataType returnType;
+    private Expression value;
+    private DataType type;
 }

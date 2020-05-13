@@ -18,15 +18,18 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.SyntaxError;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
- * The node represents an function (method) argument
+ * The list of arguments
  */
-public class Argument extends LeftExpression implements DataTypeOwner {
-    public Argument(String name, DataType type) {
-        this.name = name;
-        this.type = type;
-        type.setOwner(this);
-        this.offset = -1;
+public class ArgumentList extends Node implements ExpressionOwner {
+    public ArgumentList(List<Argument> arguments) {
+        this.arguments = Collections.unmodifiableList(arguments);
+        for (Argument argument : arguments) {
+            argument.setOwner(this);
+        }
     }
 
     @Override
@@ -36,20 +39,13 @@ public class Argument extends LeftExpression implements DataTypeOwner {
 
     @Override
     public void dfs(NodeVisitor visitor) throws SyntaxError {
-        type.dfs(visitor);
+        for (Argument argument : arguments) {
+            argument.dfs(visitor);
+        }
         accept(visitor);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    void setOwner(ExpressionOwner owner) {
-        this.owner = (ArgumentList) owner;
-    }
-
-    void setOwner(ArgumentList owner) {
+    void setOwner(Function owner) {
         this.owner = owner;
     }
 
@@ -57,29 +53,31 @@ public class Argument extends LeftExpression implements DataTypeOwner {
     public Node getOwner() {
         return owner;
     }
-    
-    @Override
-    public DataType getType() {
-        return type;
-    }
 
     @Override
     public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append(name).append(" AS ");
-        type.toSourceCode(buff, i, i0);
+        buff.append('(');
+        boolean flag = false;
+        for (Argument argument : arguments) {
+            if (flag)
+                buff.append(", ");
+            flag = true;
+            argument.toSourceCode(buff, i, i0);
+        }
+        buff.append(')');
     }
 
-    public int getOffset() {
-        return offset;
+    /**
+     * Calculate offsets of all arguments
+     */
+    void calculateOffsets() throws SyntaxError {
+        int offset = 0;
+        for (Argument argument : arguments) {
+            argument.setOffset(offset);
+            offset += argument.getType().getSize();
+        }
     }
 
-    void setOffset(int offset) {
-        assert(offset == -1);
-        this.offset = offset;
-    }
-
-    private ArgumentList owner;
-    private String name;
-    private DataType type;
-    private int offset;
+    private Function owner;
+    private List<Argument> arguments;
 }

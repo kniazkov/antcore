@@ -17,16 +17,16 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.exceptions.CannotResolveSymbol;
+import com.kniazkov.antcore.basic.exceptions.UnknownType;
 
 /**
- * The node represents an function (method) argument
+ * The reference to variable (local variable, field of data set, argument)
  */
-public class Argument extends LeftExpression implements DataTypeOwner {
-    public Argument(String name, DataType type) {
+public class VariableReference extends Expression implements ExpressionOwner {
+    public VariableReference(String name, Expression expression) {
         this.name = name;
-        this.type = type;
-        type.setOwner(this);
-        this.offset = -1;
+        this.expression = expression;
     }
 
     @Override
@@ -35,51 +35,44 @@ public class Argument extends LeftExpression implements DataTypeOwner {
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        type.dfs(visitor);
-        accept(visitor);
-    }
-
-    public String getName() {
-        return name;
+    public DataType getType() {
+        return expression.getType();
     }
 
     @Override
-    void setOwner(ExpressionOwner owner) {
-        this.owner = (ArgumentList) owner;
+    public Object calculate() {
+        return expression.calculate();
     }
 
-    void setOwner(ArgumentList owner) {
+    void setOwner(ExpressionOwner owner) {
         this.owner = owner;
     }
 
     @Override
     public Node getOwner() {
-        return owner;
-    }
-    
-    @Override
-    public DataType getType() {
-        return type;
+        return (Node)owner;
     }
 
     @Override
     public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append(name).append(" AS ");
-        type.toSourceCode(buff, i, i0);
+        if (expression != null)
+            expression.toSourceCode(buff, i, i0);
+        else
+            buff.append(name);
     }
 
-    public int getOffset() {
-        return offset;
+    /**
+     * Bind variable by name
+     */
+    void bindName() throws SyntaxError {
+        if (expression != null)
+            return;
+        expression = findVariableByName(name);
+        if (expression == null)
+            throw new CannotResolveSymbol(getFragment(), name);
     }
 
-    void setOffset(int offset) {
-        assert(offset == -1);
-        this.offset = offset;
-    }
-
-    private ArgumentList owner;
+    private ExpressionOwner owner;
     private String name;
-    private DataType type;
-    private int offset;
+    private Expression expression;
 }

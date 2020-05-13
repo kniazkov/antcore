@@ -18,7 +18,7 @@ package com.kniazkov.antcore.basic.parser;
 
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.graph.Argument;
-import com.kniazkov.antcore.basic.graph.ArgumentsList;
+import com.kniazkov.antcore.basic.graph.ArgumentList;
 import com.kniazkov.antcore.basic.graph.Function;
 
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class RawFunction extends Entity {
             }
         }
         return new Function(fragment, name,
-                arguments != null ? new ArgumentsList(arguments) : null,
+                arguments != null ? new ArgumentList(arguments) : null,
                 returnType != null ? returnType.toNode() : null);
     }
 

@@ -25,8 +25,12 @@ import java.util.TreeMap;
 /**
  * The node that represents a whole program
  */
-public class Program extends Node implements DataTypeOwner {
-    public Program(Map<String, Module> modules, Map<String, DataType> customTypes) {
+public class Program extends Node implements DataTypeOwner, ConstantListOwner {
+    public Program(ConstantList constants, Map<String, Module> modules, Map<String, DataType> customTypes) {
+        this.constants = constants;
+        if (constants != null)
+            constants.setOwner(this);
+
         this.modules = Collections.unmodifiableMap(modules);
         for (Map.Entry<String, Module> entry : modules.entrySet()) {
             entry.getValue().setOwner(this);
@@ -52,6 +56,8 @@ public class Program extends Node implements DataTypeOwner {
 
     @Override
     public void dfs(NodeVisitor visitor) throws SyntaxError {
+        if (constants != null)
+            constants.dfs(visitor);
         for (Map.Entry<String, DataType> entry : types.entrySet()) {
             entry.getValue().dfs(visitor);
         }
@@ -75,6 +81,11 @@ public class Program extends Node implements DataTypeOwner {
     @Override
     public void toSourceCode(StringBuilder buff, String i, String i0) {
         boolean flag = false;
+
+        if (constants != null) {
+            constants.toSourceCode(buff, i, i0);
+            flag = true;
+        }
 
         for (Map.Entry<String, DataType> entry : types.entrySet()) {
             DataType type = entry.getValue();
@@ -101,6 +112,14 @@ public class Program extends Node implements DataTypeOwner {
         return null;
     }
 
+    @Override
+    protected Expression findVariableByName(String name) {
+        if (constants != null)
+            return constants.findConstantByName(name);
+        return null;
+    }
+
+    private ConstantList constants;
     private Map<String, Module> modules;
     private Map<String, DataType> types;
 }

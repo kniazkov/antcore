@@ -24,9 +24,13 @@ import com.kniazkov.antcore.basic.SyntaxError;
 public abstract class NodeVisitor {
     public void visit(Argument obj) throws SyntaxError {
     }
-    public void visit(ArgumentsList obj) throws SyntaxError {
+    public void visit(ArgumentList obj) throws SyntaxError {
     }
     public void visit(BinaryOperation obj) throws SyntaxError {
+    }
+    public void visit(Constant obj) throws SyntaxError {
+    }
+    public void visit(ConstantList obj) throws SyntaxError {
     }
     public void visit(DataSet obj) throws SyntaxError {
     }
@@ -42,6 +46,10 @@ public abstract class NodeVisitor {
     }
     public void visit(Program obj)  throws SyntaxError {
     }
+    public void visit(StringType obj)  throws SyntaxError {
+    }
     public void visit(Struct obj)  throws SyntaxError {
+    }
+    public void visit(VariableReference obj)  throws SyntaxError {
     }
 }
