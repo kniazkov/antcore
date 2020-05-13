@@ -24,9 +24,13 @@ import com.kniazkov.antcore.basic.exceptions.StringLengthMustBeConstant;
  */
 public class StringType extends DataType implements ExpressionOwner {
     public StringType(Expression length) {
-        this.length = length;
-        this.lengthCache = -1;
+        this.lengthNode = length;
         length.setOwner(this);
+        this.lenghtValue = -1;
+    }
+
+    public StringType(int length) {
+        this.lenghtValue = length;
     }
 
     @Override
@@ -36,26 +40,32 @@ public class StringType extends DataType implements ExpressionOwner {
 
     @Override
     public void dfs(NodeVisitor visitor) throws SyntaxError {
-        length.dfs(visitor);
+        if (lengthNode != null)
+            lengthNode.dfs(visitor);
         accept(visitor);
     }
 
     @Override
     public String getName() {
-        return "STRING OF " + length.calculate();
+        try {
+            int length = getStringLength();
+            return "STRING OF " + length;
+        } catch (SyntaxError syntaxError) {
+            return "STRING OF ?";
+        }
     }
 
     public int getStringLength() throws SyntaxError {
-        if (lengthCache < 0) {
-            Object value = length.calculate();
+        if (lenghtValue < 0) {
+            Object value = lengthNode.calculate();
             if (value instanceof Short)
-                lengthCache = ((Short) value).intValue();
+                lenghtValue = ((Short) value).intValue();
             else if (value instanceof Integer)
-                lengthCache = (Integer) value;
+                lenghtValue = (Integer) value;
             else
                 throw new StringLengthMustBeConstant(getFragment());
         }
-        return lengthCache;
+        return lenghtValue;
     }
 
     @Override
@@ -90,6 +100,6 @@ public class StringType extends DataType implements ExpressionOwner {
     }
 
     private DataTypeOwner owner;
-    private Expression length;
-    private int lengthCache;
+    private Expression lengthNode;
+    private int lenghtValue;
 }

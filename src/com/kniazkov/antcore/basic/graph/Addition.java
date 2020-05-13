@@ -44,6 +44,14 @@ public class Addition extends BinaryOperation {
             return;
         }
 
+        if (leftType instanceof StringType && rightType instanceof StringType) {
+            StringType leftTypeString = (StringType) leftType;
+            StringType rightTypeString = (StringType) rightType;
+            int length = leftTypeString.getStringLength() + rightTypeString.getStringLength();
+            setType(new StringType(length));
+            return;
+        }
+
         throw new OperatorNotApplicable(getFragment(), getOperator(), leftType.getName(), rightType.getName());
     }
 

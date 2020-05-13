@@ -174,6 +174,28 @@ public class Parser {
             }
         }
 
+        if (c == '"') {
+            StringBuilder b = new StringBuilder();
+            boolean flag = false;
+            do {
+                c = src.next();
+                while (c != '"') {
+                    b.append(c);
+                    c = src.next();
+                    if (!src.valid())
+                        throw new MissedClosingQuote(fragment);
+                }
+                c = src.next();
+                if (c != '"')
+                    flag = false;
+                else {
+                    b.append('"');
+                    flag = true;
+                }
+            } while(flag);
+            return new TokenExpression(new StringNode(b.toString()));
+        }
+
         if (isOperator(c)) {
             StringBuilder b = new StringBuilder();
             do {
