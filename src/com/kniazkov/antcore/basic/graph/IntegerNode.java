@@ -45,7 +45,12 @@ public class IntegerNode extends Expression {
     }
 
     @Override
-    public void toSourceCode(StringBuilder buff, String i, String i0) {
+    public void toDeclarationSourceCode(StringBuilder buff, String i) {
+        buff.append(value);
+    }
+
+    @Override
+    public void toUsageSourceCode(StringBuilder buff) {
         buff.append(value);
     }
 

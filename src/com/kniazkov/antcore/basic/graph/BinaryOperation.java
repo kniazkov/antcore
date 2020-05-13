@@ -64,10 +64,15 @@ public abstract class BinaryOperation extends Expression implements ExpressionOw
     abstract void defineType() throws SyntaxError;
 
     @Override
-    public void toSourceCode(StringBuilder buff, String i, String i0) {
-        left.toSourceCode(buff, i, i0);
+    public void toDeclarationSourceCode(StringBuilder buff, String i) {
+        toUsageSourceCode(buff);
+    }
+
+    @Override
+    public void toUsageSourceCode(StringBuilder buff) {
+        left.toUsageSourceCode(buff);
         buff.append(" ").append(getOperator()).append(" ");
-        right.toSourceCode(buff, i, i0);
+        right.toUsageSourceCode(buff);
     }
 
     private DataType type;

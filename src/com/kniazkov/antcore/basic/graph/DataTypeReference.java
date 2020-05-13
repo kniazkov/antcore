@@ -59,6 +59,11 @@ public class DataTypeReference extends DataType {
         return (Node)owner;
     }
 
+    @Override
+    public DataType getPureType() {
+        return type;
+    }
+
     /**
      * Bind data type by name
      */

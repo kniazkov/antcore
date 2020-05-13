@@ -36,8 +36,8 @@ public class Addition extends BinaryOperation {
 
     @Override
     void defineType() throws SyntaxError {
-        DataType leftType = left.getType();
-        DataType rightType = right.getType();
+        DataType leftType = left.getType().getPureType();
+        DataType rightType = right.getType().getPureType();
 
         if (leftType instanceof IntegerType && rightType instanceof IntegerType) {
             setType(leftType);

@@ -54,4 +54,11 @@ public abstract class DataType extends Node {
     public String toString() {
         return getName();
     }
+
+    /**
+     * @return a type that not a wrapper of another type
+     */
+    public DataType getPureType() {
+        return this;
+    }
 }

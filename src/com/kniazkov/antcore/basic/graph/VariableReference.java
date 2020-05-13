@@ -54,9 +54,14 @@ public class VariableReference extends Expression implements ExpressionOwner {
     }
 
     @Override
-    public void toSourceCode(StringBuilder buff, String i, String i0) {
+    public void toDeclarationSourceCode(StringBuilder buff, String i) {
+        toUsageSourceCode(buff);
+    }
+
+    @Override
+    public void toUsageSourceCode(StringBuilder buff) {
         if (expression != null)
-            expression.toSourceCode(buff, i, i0);
+            expression.toUsageSourceCode(buff);
         else
             buff.append(name);
     }

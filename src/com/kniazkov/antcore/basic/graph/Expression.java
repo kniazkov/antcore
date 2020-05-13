@@ -35,4 +35,22 @@ public abstract class Expression extends Node {
      * @param owner owner
      */
     abstract void setOwner(ExpressionOwner owner);
+
+    @Override
+    public void toSourceCode(StringBuilder buff, String i, String i0) {
+        toDeclarationSourceCode(buff, i);
+    }
+
+    /**
+     * Generate source code for expression declaration
+     * @param buff destination buffer
+     * @param i indentation
+     */
+    public abstract void toDeclarationSourceCode(StringBuilder buff, String i);
+
+    /**
+     * Generate source code for expression usage
+     * @param buff destination buffer
+     */
+    public abstract void toUsageSourceCode(StringBuilder buff);
 }

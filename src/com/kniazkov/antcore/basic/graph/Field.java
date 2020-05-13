@@ -71,10 +71,13 @@ public class Field extends LeftExpression implements DataTypeOwner {
     }
 
     @Override
-    public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append(i).append(name).append(" AS ");
-        type.toSourceCode(buff, i, i0);
-        buff.append("\n");
+    public void toDeclarationSourceCode(StringBuilder buff, String i) {
+        buff.append(i).append(name).append(" AS ").append(type.getName()).append('\n');
+    }
+
+    @Override
+    public void toUsageSourceCode(StringBuilder buff) {
+        buff.append(name);
     }
 
     public int getOffset() {

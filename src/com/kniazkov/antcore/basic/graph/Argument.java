@@ -64,9 +64,13 @@ public class Argument extends LeftExpression implements DataTypeOwner {
     }
 
     @Override
-    public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append(name).append(" AS ");
-        type.toSourceCode(buff, i, i0);
+    public void toDeclarationSourceCode(StringBuilder buff, String i) {
+        buff.append(name).append(" AS ").append(type.getName());
+    }
+
+    @Override
+    public void toUsageSourceCode(StringBuilder buff) {
+        buff.append(name);
     }
 
     public int getOffset() {

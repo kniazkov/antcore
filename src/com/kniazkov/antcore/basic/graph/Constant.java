@@ -78,12 +78,15 @@ public class Constant extends Expression implements DataTypeOwner, ExpressionOwn
     }
 
     @Override
-    public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append("CONST ").append(name).append(" = ");
-        value.toSourceCode(buff, i, i0);
-        buff.append(" AS ");
-        type.toSourceCode(buff, i, i0);
-        buff.append('\n');
+    public void toDeclarationSourceCode(StringBuilder buff, String i) {
+        buff.append(i).append("CONST ").append(name).append(" = ");
+        value.toUsageSourceCode(buff);
+        buff.append(" AS ").append(type.getName()).append('\n');
+    }
+
+    @Override
+    public void toUsageSourceCode(StringBuilder buff) {
+        buff.append(name);
     }
 
     private ConstantList owner;
