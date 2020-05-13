@@ -75,6 +75,11 @@ public class DataTypeReference extends DataType {
             throw new UnknownType(getFragment(), name);
     }
 
+    @Override
+    public boolean canBeCastTo(DataType otherType) throws SyntaxError {
+        return type.canBeCastTo(otherType);
+    }
+
     private DataTypeOwner owner;
     private String name;
     private DataType type;

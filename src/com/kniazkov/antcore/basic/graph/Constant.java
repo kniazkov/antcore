@@ -18,6 +18,8 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.exceptions.IncompatibleTypes;
+import com.kniazkov.antcore.basic.exceptions.UnknownType;
 
 /**
  * The node represents a constant
@@ -29,7 +31,8 @@ public class Constant extends Expression implements DataTypeOwner, ExpressionOwn
         this.value = value;
         value.setOwner(this);
         this.type = type;
-        type.setOwner(this);
+        if (type != null)
+            type.setOwner(this);
     }
 
     @Override
@@ -40,7 +43,8 @@ public class Constant extends Expression implements DataTypeOwner, ExpressionOwn
     @Override
     public void dfs(NodeVisitor visitor) throws SyntaxError {
         value.dfs(visitor);
-        type.dfs(visitor);
+        if (type != null)
+            type.dfs(visitor);
         accept(visitor);
     }
 
@@ -69,7 +73,7 @@ public class Constant extends Expression implements DataTypeOwner, ExpressionOwn
     
     @Override
     public DataType getType() {
-        return type;
+        return type != null ? type : value.getType();
     }
 
     @Override
@@ -81,12 +85,28 @@ public class Constant extends Expression implements DataTypeOwner, ExpressionOwn
     public void toDeclarationSourceCode(StringBuilder buff, String i) {
         buff.append(i).append("CONST ").append(name).append(" = ");
         value.toUsageSourceCode(buff);
-        buff.append(" AS ").append(type.getName()).append('\n');
+        if (type != null) {
+            buff.append(" AS ").append(type.getName());
+        }
+        buff.append('\n');
     }
 
     @Override
     public void toUsageSourceCode(StringBuilder buff) {
         buff.append(name);
+    }
+
+    /**
+     * Check data type or inference it
+     */
+    void checkType() throws SyntaxError {
+        if (type == null) {
+            type = value.getType();
+        }
+        else {
+            if (!value.getType().getPureType().canBeCastTo(type.getPureType()))
+                throw new IncompatibleTypes(getFragment(), value.getType().getName(), type.getName());
+        }
     }
 
     private ConstantList owner;

@@ -25,6 +25,7 @@ import com.kniazkov.antcore.basic.exceptions.StringLengthMustBeConstant;
 public class StringType extends DataType implements ExpressionOwner {
     public StringType(Expression length) {
         this.length = length;
+        this.lengthCache = -1;
         length.setOwner(this);
     }
 
@@ -44,14 +45,22 @@ public class StringType extends DataType implements ExpressionOwner {
         return "STRING OF " + length.calculate();
     }
 
+    public int getStringLength() throws SyntaxError {
+        if (lengthCache < 0) {
+            Object value = length.calculate();
+            if (value instanceof Short)
+                lengthCache = ((Short) value).intValue();
+            else if (value instanceof Integer)
+                lengthCache = (Integer) value;
+            else
+                throw new StringLengthMustBeConstant(getFragment());
+        }
+        return lengthCache;
+    }
+
     @Override
     public int getSize() throws SyntaxError {
-        Object value = length.calculate();
-        if (value instanceof Short)
-            return 1 + ((Short) value).intValue();
-        if (value instanceof Integer)
-            return 1 + (Integer) value;
-        throw new StringLengthMustBeConstant(getFragment());
+        return (1 + getStringLength()) * 2;
     }
 
     @Override
@@ -65,10 +74,22 @@ public class StringType extends DataType implements ExpressionOwner {
     }
 
     @Override
+    public boolean canBeCastTo(DataType type) throws SyntaxError {
+        if (type instanceof StringType) {
+            StringType otherStringType = (StringType) type;
+            int thisLength = getStringLength();
+            int otherLength = otherStringType.getStringLength();
+            return otherLength >= thisLength;
+        }
+        return false;
+    }
+
+    @Override
     public Node getOwner() {
         return (Node)owner;
     }
 
     private DataTypeOwner owner;
     private Expression length;
+    private int lengthCache;
 }

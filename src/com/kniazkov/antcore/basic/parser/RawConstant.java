@@ -40,7 +40,7 @@ public class RawConstant extends Entity {
     }
 
     public Constant toNode() {
-        return new Constant(fragment, name, value.toNode(), type.toNode());
+        return new Constant(fragment, name, value.toNode(), type != null ? type.toNode() : null);
     }
 
     private Fragment fragment;

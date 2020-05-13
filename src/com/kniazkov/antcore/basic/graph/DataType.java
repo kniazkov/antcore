@@ -61,4 +61,10 @@ public abstract class DataType extends Node {
     public DataType getPureType() {
         return this;
     }
+
+    /**
+     * @param type another type
+     * @return true if the type can be cast to another
+     */
+    public abstract boolean canBeCastTo(DataType type) throws SyntaxError;
 }

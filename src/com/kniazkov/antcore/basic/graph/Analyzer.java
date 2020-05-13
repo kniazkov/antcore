@@ -55,6 +55,11 @@ public class Analyzer {
     protected static void defineTypes(Program root) throws SyntaxError {
         class Calculator extends NodeVisitor {
             @Override
+            public void visit(Constant obj) throws SyntaxError {
+                obj.checkType();
+            }
+
+            @Override
             public void visit(BinaryOperation obj) throws SyntaxError {
                 obj.defineType();
             }

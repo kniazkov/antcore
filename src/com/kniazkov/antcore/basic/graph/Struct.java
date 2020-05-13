@@ -83,6 +83,11 @@ public class Struct extends DataType implements DataSetOwner {
         buff.append(i).append("END TYPE").append('\n');
     }
 
+    @Override
+    public boolean canBeCastTo(DataType otherType) throws SyntaxError {
+        return this == otherType;
+    }
+
     private DataTypeOwner owner;
     private String name;
     private DataSet dataSet;

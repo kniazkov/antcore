@@ -64,6 +64,15 @@ public class Pointer extends DataType implements DataTypeOwner {
         return (Node)owner;
     }
 
+    @Override
+    public boolean canBeCastTo(DataType otherType) throws SyntaxError {
+        if (otherType instanceof Pointer) {
+            Pointer otherTypePointer = (Pointer) otherType;
+            return type.canBeCastTo(otherTypePointer.type);
+        }
+        return false;
+    }
+
     private DataTypeOwner owner;
     private DataType type;
 }

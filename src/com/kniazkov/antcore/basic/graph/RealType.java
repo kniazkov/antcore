@@ -32,6 +32,11 @@ public class RealType extends BuiltInType {
         return 8;
     }
 
+    @Override
+    public boolean canBeCastTo(DataType otherType) throws SyntaxError {
+        return otherType == this;
+    }
+
     private RealType() {
     }
 

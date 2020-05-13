@@ -602,16 +602,17 @@ public class Parser {
 
         TokenExpression value = parseExpression(declaration, tokens);
 
-        if (!tokens.hasNext())
-            throw new ExpectedAsKeyword(declaration);
-        token = tokens.next();
-        if (!(token instanceof KeywordAs))
-            throw new ExpectedAsKeyword(declaration);
+        RawDataType type = null;
+        if (tokens.hasNext()) {
+            token = tokens.next();
+            if (!(token instanceof KeywordAs))
+                throw new ExpectedAsKeyword(declaration);
 
-        RawDataType type = parseDataType(declaration, tokens);
+            type = parseDataType(declaration, tokens);
 
-        if (tokens.hasNext())
-            throw new UnexpectedSequence(declaration);
+            if (tokens.hasNext())
+                throw new UnexpectedSequence(declaration);
+        }
 
         return new RawConstant(declaration.getFragment(), name, value, type);
     }

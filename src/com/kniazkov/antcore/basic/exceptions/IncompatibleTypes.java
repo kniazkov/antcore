@@ -14,37 +14,27 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.graph;
+package com.kniazkov.antcore.basic.exceptions;
 
+import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
 
 /**
- * The INTEGER data type
+ * The exception "Incompatible types"
  */
-public class IntegerType extends BuiltInType {
-    @Override
-    public String getName() {
-        return "INTEGER";
+public class IncompatibleTypes extends SyntaxError {
+    public IncompatibleTypes(Fragment fragment, String leftType, String rightType) {
+        super(fragment);
+        this.leftType = leftType;
+        this.rightType = rightType;
     }
 
     @Override
-    public int getSize() throws SyntaxError {
-        return 4;
+    protected String getErrorMessage() {
+        return "Incompatible types, '" + leftType + "' cannot be converted to '" + rightType + '\'';
     }
 
-    @Override
-    public boolean canBeCastTo(DataType otherType) throws SyntaxError {
-        return this == otherType || otherType instanceof RealType;
-    }
-
-    private IntegerType() {
-    }
-
-    private static IntegerType instance;
-
-    public static DataType getInstance() {
-        if (instance == null)
-            instance = new IntegerType();
-        return instance;
-    }
+    private String operator;
+    private String leftType;
+    private String rightType;
 }
