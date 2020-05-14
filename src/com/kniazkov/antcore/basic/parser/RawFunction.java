@@ -17,9 +17,7 @@
 package com.kniazkov.antcore.basic.parser;
 
 import com.kniazkov.antcore.basic.Fragment;
-import com.kniazkov.antcore.basic.graph.Argument;
-import com.kniazkov.antcore.basic.graph.ArgumentList;
-import com.kniazkov.antcore.basic.graph.Function;
+import com.kniazkov.antcore.basic.graph.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,8 +44,12 @@ public class RawFunction extends Entity {
         return name;
     }
 
-    public List<Line> getBody() {
+    public List<Line> getRawBody() {
         return rawBody;
+    }
+
+    public void setRawStatementList(List<RawStatement> rawStatements) {
+        this.rawStatements = rawStatements;
     }
 
     public Function toNode() {
@@ -59,9 +61,15 @@ public class RawFunction extends Entity {
                 arguments.add(argument);
             }
         }
+        List<Statement> body = new ArrayList<>();
+        for (RawStatement rawStatement : rawStatements) {
+            Statement statement = rawStatement.toNode();
+            body.add(statement);
+        }
         return new Function(fragment, name,
                 arguments != null ? new ArgumentList(arguments) : null,
-                returnType != null ? returnType.toNode() : null);
+                returnType != null ? returnType.toNode() : null,
+                new StatementList(body));
     }
 
     private Fragment fragment;
@@ -69,4 +77,5 @@ public class RawFunction extends Entity {
     private List<RawArgument> rawArguments;
     private RawDataType returnType;
     private List<Line> rawBody;
+    private List<RawStatement> rawStatements;
 }

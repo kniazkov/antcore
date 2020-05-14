@@ -53,4 +53,12 @@ public abstract class Expression extends Node {
      * @param buff destination buffer
      */
     public abstract void toUsageSourceCode(StringBuilder buff);
+
+    /**
+     * Converts the expression to left expression, if possible
+     * @return a left expression
+     */
+    public LeftExpression toLeftExpression() {
+        return null;
+    }
 }

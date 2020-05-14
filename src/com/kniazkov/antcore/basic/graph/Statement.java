@@ -16,17 +16,30 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.Fragment;
+
 /**
- * A left expression, i.e. expression that can be assigned
+ * The node represents statement, i.e. an instruction
  */
-public abstract class LeftExpression extends Expression {
-    @Override
-    public Object calculate() {
-        return false;
+public abstract class Statement extends Node {
+    public Statement(Fragment fragment) {
+        this.fragment = fragment;
     }
 
     @Override
-    public LeftExpression toLeftExpression() {
-        return this;
+    public Node getOwner() {
+        return owner;
     }
+
+    @Override
+    public Fragment getFragment() {
+        return fragment;
+    }
+
+    void setOwner(StatementList owner) {
+        this.owner = owner;
+    }
+
+    private StatementList owner;
+    private Fragment fragment;
 }

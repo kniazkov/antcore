@@ -122,6 +122,10 @@ public class DataSet extends Node implements ExpressionOwner {
         return newSize;
     }
 
+    public Field getFieldByName(String name) {
+        return fieldMap.get(name);
+    }
+
     private DataSetOwner owner;
     private Fragment fragment;
     private DataPrefix prefix;

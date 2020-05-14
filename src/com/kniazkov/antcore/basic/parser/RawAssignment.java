@@ -14,19 +14,28 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.graph;
+package com.kniazkov.antcore.basic.parser;
+
+import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.graph.Assignment;
+import com.kniazkov.antcore.basic.graph.Statement;
+import com.kniazkov.antcore.basic.parser.tokens.TokenExpression;
 
 /**
- * A left expression, i.e. expression that can be assigned
+ * The assignment, i.e. '=' operation
  */
-public abstract class LeftExpression extends Expression {
-    @Override
-    public Object calculate() {
-        return false;
+public class RawAssignment extends RawStatement {
+    public RawAssignment(Fragment fragment, TokenExpression left, TokenExpression right) {
+        super(fragment);
+        this.left = left;
+        this.right = right;
     }
 
     @Override
-    public LeftExpression toLeftExpression() {
-        return this;
+    public Statement toNode() {
+        return new Assignment(getFragment(), left.toNode(), right.toNode());
     }
+
+    private TokenExpression left;
+    private TokenExpression right;
 }

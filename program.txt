@@ -1,8 +1,15 @@
-CONST s = "Привет" + " " + "мир"
+'CODE
+'	DECLARE FUNCTION print ( text AS POINTER TO STRING )
+'END CODE
 
 MODULE SERVER LOCAL
 	DATA
+		i AS INTEGER
+		j AS INTEGER
 	END DATA
 	FUNCTION MAIN
+		i = 7
+		j = i
+		'print("Hello, world")
 	END FUNCTION
 END MODULE

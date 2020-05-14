@@ -14,19 +14,24 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.graph;
+package com.kniazkov.antcore.basic.parser;
+
+import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.graph.Statement;
 
 /**
- * A left expression, i.e. expression that can be assigned
+ * A parsed statement, i.e. an instruction
  */
-public abstract class LeftExpression extends Expression {
-    @Override
-    public Object calculate() {
-        return false;
+public abstract class RawStatement extends Entity {
+    public RawStatement(Fragment fragment) {
+        this.fragment = fragment;
     }
 
-    @Override
-    public LeftExpression toLeftExpression() {
-        return this;
+    protected Fragment getFragment() {
+        return fragment;
     }
+
+    public abstract Statement toNode();
+
+    private Fragment fragment;
 }

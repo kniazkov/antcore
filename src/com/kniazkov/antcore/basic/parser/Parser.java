@@ -358,6 +358,9 @@ public class Parser {
         for (Map.Entry<String, RawModule> entry : rawModules.entrySet()) {
             parseModuleBody(entry.getValue());
         }
+        for (RawFunction function : rawFunctions) {
+            parseFunctionBody(function);
+        }
     }
 
     /**
@@ -533,7 +536,7 @@ public class Parser {
                 Token ofKeyword = iterator.next();
                 if (!(ofKeyword instanceof KeywordOf))
                     throw new ExpectedOfKeyword(line);
-                TokenExpression length = parseExpression(line, iterator);
+                TokenExpression length = parseExpression(line, iterator, false);
                 return new RawDataTypeString(length);
             }
             return new RawDataTypeIdentifier(name);
@@ -622,7 +625,7 @@ public class Parser {
         if (!(token instanceof OperatorAssignEquals))
             throw new ExpectedAssignmentOperator(declaration);
 
-        TokenExpression value = parseExpression(declaration, tokens);
+        TokenExpression value = parseExpression(declaration, tokens, false);
 
         RawDataType type = null;
         if (tokens.hasNext()) {
@@ -726,16 +729,25 @@ public class Parser {
      * Parse an expression
      * @param line the line of source code
      * @param iterator the iterator by tokens
+     * @param ignoreAssignment do not parse assignment operator
      */
-    private TokenExpression parseExpression(Line line, RollbackIterator<Token> iterator) throws SyntaxError {
+    private TokenExpression parseExpression(Line line, RollbackIterator<Token> iterator, boolean ignoreAssignment) throws SyntaxError {
         if (!iterator.hasNext())
             throw new ExpectedAnExpression(line);
 
         LinkedList<Token> sequence = new LinkedList<>();
         while(iterator.hasNext()) {
             Token token = iterator.next();
-            if (token instanceof Identifier || token instanceof TokenExpression || token instanceof Operator)
+            if (token instanceof OperatorAssignEquals) {
+                if (ignoreAssignment) {
+                    iterator.rollback(token);
+                    break;
+                }
                 sequence.add(token);
+            }
+            else if (token instanceof Identifier || token instanceof TokenExpression || token instanceof Operator) {
+                sequence.add(token);
+            }
             else {
                 iterator.rollback(token);
                 break;
@@ -777,7 +789,7 @@ public class Parser {
     }
 
     /**
-     * Pars binary operators
+     * Parse binary operators
      * @param line the line of source code
      * @param rightSequence the sequence of tokens that possibly contains an operator
      * @param operators the list of operators
@@ -815,4 +827,57 @@ public class Parser {
         }
         return leftSequence;
     }
+
+    /**
+     * Parse a function body
+     * @param function the function
+     */
+    private void parseFunctionBody(RawFunction function) throws SyntaxError {
+        List<RawStatement> statements = new ArrayList<>();
+        parseStatementList(function.getRawBody().iterator(), statements);
+        function.setRawStatementList(statements);
+    }
+
+    /**
+     * Parse a list of statements (function/cycle/condition body)
+     * @param iterator the iterator by lines
+     * @param result the destination list
+     */
+    private void parseStatementList(Iterator<Line> iterator, List<RawStatement> result) throws SyntaxError {
+        while(iterator.hasNext()) {
+            Line line = iterator.next();
+            List<Token> tokens = line.getTokens();
+            assert (tokens.size() > 0);
+            Token firstToken = tokens.get(0);
+            if (firstToken instanceof Identifier) {
+                RawStatement statement = parseStatementExpression(line);
+                result.add(statement);
+            }
+            else
+                throw new UnrecognizedSequence(line);
+        }
+    }
+
+    /**
+     * Parse statement expression, i.e. statement contains only one expression
+     * @param line the line of source code
+     * @return a parsed statement
+     */
+    private RawStatement parseStatementExpression(Line line) throws SyntaxError {
+        RollbackIterator<Token> tokens = new RollbackIterator<>(line.getTokens().iterator());
+
+        TokenExpression left = parseExpression(line, tokens, true);
+        if (!tokens.hasNext())
+            throw new ExpectedAssignmentOperator(line);
+        Token token = tokens.next();
+        if (!(token instanceof OperatorAssignEquals))
+            throw new ExpectedAssignmentOperator(line);
+
+        TokenExpression right = parseExpression(line, tokens, false);
+        if (tokens.hasNext())
+            throw new UnexpectedSequence(line);
+
+        return new RawAssignment(line.getFragment(), left, right);
+    }
+
 }

@@ -26,6 +26,8 @@ public abstract class NodeVisitor {
     }
     public void visit(ArgumentList obj) throws SyntaxError {
     }
+    public void visit(Assignment obj) throws SyntaxError {
+    }
     public void visit(BinaryOperation obj) throws SyntaxError {
     }
     public void visit(Constant obj) throws SyntaxError {
@@ -45,6 +47,8 @@ public abstract class NodeVisitor {
     public void visit(Pointer obj) throws SyntaxError {
     }
     public void visit(Program obj)  throws SyntaxError {
+    }
+    public void visit(StatementList obj)  throws SyntaxError {
     }
     public void visit(StringType obj)  throws SyntaxError {
     }

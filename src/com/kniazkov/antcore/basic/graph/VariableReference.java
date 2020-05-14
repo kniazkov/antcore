@@ -77,6 +77,11 @@ public class VariableReference extends Expression implements ExpressionOwner {
             throw new CannotResolveSymbol(getFragment(), name);
     }
 
+    @Override
+    public LeftExpression toLeftExpression() {
+        return expression.toLeftExpression();
+    }
+
     private ExpressionOwner owner;
     private String name;
     private Expression expression;

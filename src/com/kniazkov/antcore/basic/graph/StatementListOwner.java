@@ -17,16 +17,7 @@
 package com.kniazkov.antcore.basic.graph;
 
 /**
- * A left expression, i.e. expression that can be assigned
+ * Marker interface for statement list owners
  */
-public abstract class LeftExpression extends Expression {
-    @Override
-    public Object calculate() {
-        return false;
-    }
-
-    @Override
-    public LeftExpression toLeftExpression() {
-        return this;
-    }
+public interface StatementListOwner {
 }
