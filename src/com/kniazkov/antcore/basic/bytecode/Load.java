@@ -14,27 +14,29 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.lib;
-
-import java.io.IOException;
-import java.nio.file.Files;
+package com.kniazkov.antcore.basic.bytecode;
 
 /**
- * File input/output routines
+ * Load a value to the stack
  */
-public final class FileIO {
-    public static String readFileToString(String path) {
-        java.io.File file = new java.io.File(path);
-        if (file.exists()) {
-            try {
-                byte[] data = Files.readAllBytes(file.toPath());
-                return new String(data);
-            } catch (IOException e) {
-                System.err.println("Can't read '" + path + '\'');
-            }
-        } else {
-            System.err.println("Can't find file specified '" + path + '\'');
-        }
-        return null;
+public class Load extends Instruction {
+    public Load(DataSelector selector, int address, int size) {
+        this.selector = selector;
+        this.address = address;
+        this.size = size;
     }
+
+    @Override
+    public Code getCode() {
+        Code c = new Code();
+        c.opcode = OpCode.LOAD.getValue();
+        c.p0 = selector.getValue();
+        c.x0 = address;
+        c.x1 = size;
+        return c;
+    }
+
+    private DataSelector selector;
+    private int address;
+    private int size;
 }
