@@ -67,6 +67,10 @@ public class ArgumentList extends Node implements ExpressionOwner {
         buff.append(')');
     }
 
+    public int getCount() {
+        return arguments.size();
+    }
+
     /**
      * Calculate offsets of all arguments
      */

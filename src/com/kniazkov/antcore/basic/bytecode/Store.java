@@ -22,16 +22,18 @@ import com.kniazkov.antcore.lib.Reference;
  * Store a value to the memory
  */
 public class Store extends Instruction {
-    public Store(DataSelector selector, int size) {
+    public Store(DataSelector selector, int size, Reference<Integer> offset) {
         this.selector = selector;
-        this.address = new Reference<>();
         this.size = size;
+        this.offset = offset;
+        this.address = new Reference<>();
     }
 
-    public Store(DataSelector selector, int address, int size) {
+    public Store(DataSelector selector, int size, Reference<Integer> offset, int address) {
         this.selector = selector;
-        this.address = new Reference<>(address);
         this.size = size;
+        this.offset = offset;
+        this.address = new Reference<>(address);
     }
 
     @Override
@@ -40,7 +42,7 @@ public class Store extends Instruction {
         c.opcode = OpCode.STORE.getValue();
         c.p0 = selector.getValue();
         c.x0 = size;
-        c.x1 = address.value;
+        c.x1 = offset.value + address.value;
         return c;
     }
 
@@ -49,6 +51,7 @@ public class Store extends Instruction {
     }
 
     private DataSelector selector;
-    private Reference<Integer> address;
     private int size;
+    private Reference<Integer> offset;
+    private Reference<Integer> address;
 }

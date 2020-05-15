@@ -16,21 +16,31 @@
  */
 package com.kniazkov.antcore.basic.bytecode;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.kniazkov.antcore.lib.ByteList;
 
 /**
- * The whole compiled module
+ * The compiled module
  */
 public class CompiledModule {
-    public CompiledModule() {
-        instructions = new ArrayList<>();
+    public CompiledModule(String executor, String name, ByteList bytecode) {
+        this.executor = executor;
+        this.name = name;
+        this.bytecode = bytecode;
     }
 
-    public void addInstruction(Instruction item) {
-        instructions.add(item);
-        item.setIndex(instructions.size());
+    public String getExecutor() {
+        return executor;
     }
 
-    private List<Instruction> instructions;
+    public String  getName() {
+        return name;
+    }
+
+    public ByteList getBytecode() {
+        return bytecode;
+    }
+
+    private String executor;
+    private String name;
+    private ByteList bytecode;
 }

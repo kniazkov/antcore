@@ -30,6 +30,7 @@ public class Struct extends DataType implements DataSetOwner {
         this.name = name;
         this.dataSet = new DataSet(fragment, DataPrefix.DEFAULT, fields);
         dataSet.setOwner(this);
+        dataSet.setOffset(0);
     }
 
     @Override
@@ -86,6 +87,11 @@ public class Struct extends DataType implements DataSetOwner {
     @Override
     public boolean canBeCastTo(DataType otherType) throws SyntaxError {
         return this == otherType;
+    }
+
+    @Override
+    public void calculateOffsets() throws SyntaxError {
+        // do nothing
     }
 
     private DataTypeOwner owner;

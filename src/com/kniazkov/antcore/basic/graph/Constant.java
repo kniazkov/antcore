@@ -18,9 +18,8 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
-import com.kniazkov.antcore.basic.bytecode.CompiledModule;
+import com.kniazkov.antcore.basic.bytecode.CompilationUnit;
 import com.kniazkov.antcore.basic.exceptions.IncompatibleTypes;
-import com.kniazkov.antcore.basic.exceptions.UnknownType;
 
 /**
  * The node represents a constant
@@ -111,8 +110,8 @@ public class Constant extends Expression implements DataTypeOwner, ExpressionOwn
     }
 
     @Override
-    public void compile(CompiledModule module) {
-        value.compile(module);
+    public void load(CompilationUnit cu) throws SyntaxError {
+        value.load(cu);
     }
 
     private ConstantList owner;

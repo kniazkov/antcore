@@ -14,28 +14,25 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.graph;
-
-import com.kniazkov.antcore.basic.SyntaxError;
-import com.kniazkov.antcore.basic.bytecode.CompilationUnit;
+package com.kniazkov.antcore.lib;
 
 /**
- * A left expression, i.e. expression that can be assigned
+ * The list of bytes
  */
-public abstract class LeftExpression extends Expression {
-    @Override
-    public Object calculate() {
-        return false;
-    }
-
-    @Override
-    public LeftExpression toLeftExpression() {
-        return this;
-    }
+public interface ByteList {
+    /**
+     * @return size of the list
+     */
+    int size();
 
     /**
-     * Generate instructions for storing value to the memory
-     * @param cu the compilation unit
+     * @param index the index
+     * @return an item by index or 0 if index is incorrect
      */
-    public abstract void store(CompilationUnit cu) throws SyntaxError;
+    byte get(int index);
+
+    /**
+     * @return a copy of the list represented as an array
+     */
+    byte[] toArray();
 }

@@ -18,8 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
-import com.kniazkov.antcore.basic.bytecode.CompiledModule;
-import com.kniazkov.antcore.lib.Reference;
+import com.kniazkov.antcore.basic.bytecode.*;
 
 /**
  * The node represents a field (of class, type, etc)
@@ -30,7 +29,6 @@ public class Field extends LeftExpression implements DataTypeOwner {
         this.name = name;
         this.type = type;
         type.setOwner(this);
-        this.offset = -1;
     }
 
     @Override
@@ -81,23 +79,32 @@ public class Field extends LeftExpression implements DataTypeOwner {
         buff.append(name);
     }
 
-    public int getOffset() {
-        return offset;
+    public int getAbsoluteOffset() {
+        return owner.getOffset() + offset;
     }
 
     void setOffset(int offset) {
-        assert(offset == -1);
+        assert(this.offset == null);
         this.offset = offset;
     }
 
     @Override
-    public void compile(CompiledModule module) {
-        assert(false);
+    public void load(CompilationUnit cu) throws SyntaxError {
+        Instruction load = new Load(DataSelector.GLOBAL,
+                type.getSize(), cu.getDataOffset(), getAbsoluteOffset());
+        cu.addInstruction(load);
+    }
+
+    @Override
+    public void store(CompilationUnit cu) throws SyntaxError {
+        Instruction store = new Store(DataSelector.GLOBAL,
+                type.getSize(), cu.getDataOffset(), getAbsoluteOffset());
+        cu.addInstruction(store);
     }
 
     private DataSet owner;
     private Fragment fragment;
     private String name;
     private DataType type;
-    private int offset;
+    private Integer offset;
 }

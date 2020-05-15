@@ -16,7 +16,7 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.bytecode.CompiledModule;
+import com.kniazkov.antcore.basic.bytecode.CompilationUnit;
 
 /**
  * The node represents a string constant
@@ -80,7 +80,7 @@ public class StringNode extends Expression {
     }
 
     @Override
-    public void compile(CompiledModule module) {
+    public void load(CompilationUnit cu) {
         assert(false);
     }
 

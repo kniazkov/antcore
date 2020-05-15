@@ -18,6 +18,9 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.bytecode.CompilationUnit;
+import com.kniazkov.antcore.basic.exceptions.ExpressionCannotBeAssigned;
+import com.kniazkov.antcore.basic.exceptions.IncompatibleTypes;
 
 /**
  * The assignment, i.e. '=' operation
@@ -51,6 +54,23 @@ public class Assignment extends Statement implements ExpressionOwner {
         buff.append('\n');
     }
 
+    /**
+     * Check data type or inference it
+     */
+    void checkType() throws SyntaxError {
+        if (!right.getType().getPureType().canBeCastTo(left.getType().getPureType()))
+            throw new IncompatibleTypes(getFragment(), right.getType().getName(), left.getType().getName());
+    }
+
     private Expression left;
     private Expression right;
+
+    @Override
+    public void compile(CompilationUnit cu) throws SyntaxError {
+        LeftExpression assignableExpression = left.toLeftExpression();
+        if (assignableExpression == null)
+            throw new ExpressionCannotBeAssigned(getFragment(), left.toString(), right.toString());
+        right.load(cu);
+        assignableExpression.store(cu);
+    }
 }

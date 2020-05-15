@@ -16,8 +16,11 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.SyntaxError;
+
 /**
- * Marker interface for data set owners
+ * Interface for data set owners
  */
 public interface DataSetOwner {
+    void calculateOffsets() throws SyntaxError;
 }

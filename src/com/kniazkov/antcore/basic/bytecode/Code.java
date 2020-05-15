@@ -29,4 +29,31 @@ public class Code {
     public int x0;
     public int x1;
     public int x2;
+
+    /**
+     * Write bytecode to the buffer
+     * @param buff the buffer
+     * @param index the starting index
+     */
+    public void write(byte[] buff, int index) {
+        buff[index] =      opcode;
+        buff[index + 1] =  p0;
+        buff[index + 2] =  p1;
+        buff[index + 3] =  p2;
+
+        buff[index + 4] =  (byte)(x0);
+        buff[index + 5] =  (byte)(x0 >> 8);
+        buff[index + 6] =  (byte)(x0 >> 16);
+        buff[index + 7] =  (byte)(x0 >> 24);
+
+        buff[index + 8] =  (byte)(x1);
+        buff[index + 9] =  (byte)(x1 >> 8);
+        buff[index + 10] = (byte)(x1 >> 16);
+        buff[index + 11] = (byte)(x1 >> 24);
+
+        buff[index + 12] = (byte)(x2);
+        buff[index + 13] = (byte)(x2 >> 8);
+        buff[index + 14] = (byte)(x2 >> 16);
+        buff[index + 15] = (byte)(x2 >> 24);
+    }
 }

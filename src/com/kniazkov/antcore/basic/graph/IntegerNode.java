@@ -16,7 +16,7 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.bytecode.CompiledModule;
+import com.kniazkov.antcore.basic.bytecode.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecode.PushInteger;
 
 /**
@@ -58,8 +58,8 @@ public class IntegerNode extends Expression {
     }
 
     @Override
-    public void compile(CompiledModule module) {
-        module.addInstruction(new PushInteger(value));
+    public void load(CompilationUnit cu) {
+        cu.addInstruction(new PushInteger(value));
     }
 
     private ExpressionOwner owner;

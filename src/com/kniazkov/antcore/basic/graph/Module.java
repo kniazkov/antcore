@@ -19,6 +19,10 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.bytecode.CompilationUnit;
+import com.kniazkov.antcore.basic.bytecode.CompiledModule;
+import com.kniazkov.antcore.basic.exceptions.FunctionMainNotFound;
+import com.kniazkov.antcore.basic.exceptions.IncorrectFunctionMain;
 
 import java.util.Collections;
 import java.util.List;
@@ -154,6 +158,37 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
                 return ex;
         }
         return owner.findVariableByName(name);
+    }
+
+    @Override
+    public void calculateOffsets() throws SyntaxError {
+        int offset = 0;
+        if (localData != null) {
+            localData.setOffset(0);
+            offset = localData.getSize();
+        }
+        if (inputData != null) {
+            inputData.setOffset(offset);
+            offset += inputData.getSize();
+        }
+        if (outputData != null) {
+            outputData.setOffset(offset);
+        }
+    }
+
+    /**
+     * Compiling the module
+     * @return a bytecode
+     */
+    public CompiledModule compile() throws SyntaxError {
+        Function mainFunction = functionMap.get("MAIN");
+        if (mainFunction == null)
+            throw new FunctionMainNotFound(fragment, name);
+        if (mainFunction.getArgumentsCount() != 0 || mainFunction.getReturnType() != null)
+            throw new IncorrectFunctionMain(fragment);
+        CompilationUnit unit = new CompilationUnit();
+        mainFunction.compile(unit);
+        return new CompiledModule(executor, name, unit.getBytecode());
     }
 
     private Program owner;

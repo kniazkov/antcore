@@ -22,16 +22,18 @@ import com.kniazkov.antcore.lib.Reference;
  * Load a value to the stack
  */
 public class Load extends Instruction {
-    public Load(DataSelector selector, int size) {
+    public Load(DataSelector selector, int size, Reference<Integer> offset) {
         this.selector = selector;
-        this.address = new Reference<>();
         this.size = size;
+        this.offset = offset;
+        this.address = new Reference<>();
     }
 
-    public Load(DataSelector selector, int address, int size) {
+    public Load(DataSelector selector, int size, Reference<Integer> offset, int address) {
         this.selector = selector;
-        this.address = new Reference<>(address);
         this.size = size;
+        this.offset = offset;
+        this.address = new Reference<>(address);
     }
 
     @Override
@@ -40,7 +42,7 @@ public class Load extends Instruction {
         c.opcode = OpCode.LOAD.getValue();
         c.p0 = selector.getValue();
         c.x0 = size;
-        c.x1 = address.value;
+        c.x1 = offset.value + address.value;
         return c;
     }
 
@@ -49,6 +51,7 @@ public class Load extends Instruction {
     }
 
     private DataSelector selector;
-    private Reference<Integer> address;
     private int size;
+    private Reference<Integer> offset;
+    private Reference<Integer> address;
 }

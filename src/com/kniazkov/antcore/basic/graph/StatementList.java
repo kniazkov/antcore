@@ -17,6 +17,7 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.bytecode.CompilationUnit;
 
 import java.util.Collections;
 import java.util.List;
@@ -58,6 +59,12 @@ public class StatementList extends Node {
     public void toSourceCode(StringBuilder buff, String i, String i0) {
         for (Statement statement : statements) {
             statement.toSourceCode(buff, i, i0);
+        }
+    }
+
+    public void compile(CompilationUnit cu) throws SyntaxError {
+        for (Statement statement : statements) {
+            statement.compile(cu);
         }
     }
 

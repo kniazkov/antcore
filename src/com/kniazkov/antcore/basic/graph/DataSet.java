@@ -122,6 +122,15 @@ public class DataSet extends Node implements ExpressionOwner {
         return newSize;
     }
 
+    public int getOffset() {
+        return offset;
+    }
+
+    void setOffset(int offset) {
+        assert(this.offset == null);
+        this.offset = offset;
+    }
+
     public Field getFieldByName(String name) {
         return fieldMap.get(name);
     }
@@ -132,6 +141,7 @@ public class DataSet extends Node implements ExpressionOwner {
     private Map<String, Field> fieldMap;
     private List<Field> fieldList;
     private int size;
+    private Integer offset;
 
     private static final int UNKNOWN_SIZE = -1;
     private static final int INVALID_SIZE = -2;

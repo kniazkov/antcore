@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.bytecode.CompilationUnit;
 
 /**
  * The function
@@ -82,6 +83,18 @@ public class Function extends Node implements DataTypeOwner, StatementListOwner 
         String i1 = i + i0;
         body.toSourceCode(buff, i1, i0);
         buff.append(i).append("END FUNCTION\n");
+    }
+
+    public int getArgumentsCount() {
+        return arguments != null ? arguments.getCount() : 0;
+    }
+
+    public DataType getReturnType() {
+        return returnType;
+    }
+
+    public void compile(CompilationUnit cu) throws SyntaxError {
+        body.compile(cu);
     }
 
     private FunctionOwner owner;

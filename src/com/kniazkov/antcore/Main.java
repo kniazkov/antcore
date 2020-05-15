@@ -17,6 +17,7 @@
 
 package com.kniazkov.antcore;
 
+import com.kniazkov.antcore.basic.bytecode.CompiledProgram;
 import com.kniazkov.antcore.basic.graph.Analyzer;
 import com.kniazkov.antcore.basic.graph.Program;
 import com.kniazkov.antcore.basic.SyntaxError;
@@ -30,6 +31,7 @@ public class Main {
             try {
                 Program program = Parser.parse(null, source);
                 Analyzer.analyze(program);
+                CompiledProgram compiledProgram = program.compile();
                 System.out.println(program.toSourceCode());
             } catch (SyntaxError syntaxError) {
                 syntaxError.printStackTrace();

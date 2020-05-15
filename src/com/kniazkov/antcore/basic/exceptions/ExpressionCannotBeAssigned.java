@@ -14,40 +14,26 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.graph;
+package com.kniazkov.antcore.basic.exceptions;
 
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
-import com.kniazkov.antcore.basic.bytecode.CompilationUnit;
 
 /**
- * The node represents statement, i.e. an instruction
+ * The exception "Incompatible types"
  */
-public abstract class Statement extends Node {
-    public Statement(Fragment fragment) {
-        this.fragment = fragment;
+public class ExpressionCannotBeAssigned extends SyntaxError {
+    public ExpressionCannotBeAssigned(Fragment fragment, String left, String right) {
+        super(fragment);
+        this.left = left;
+        this.right = right;
     }
 
     @Override
-    public Node getOwner() {
-        return owner;
+    protected String getErrorMessage() {
+        return "Cannot assign '" + right + "' to '" + left + '\'';
     }
 
-    @Override
-    public Fragment getFragment() {
-        return fragment;
-    }
-
-    void setOwner(StatementList owner) {
-        this.owner = owner;
-    }
-
-    /**
-     * Generate instructions
-     * @param cu the compilation unit
-     */
-    public abstract void compile(CompilationUnit cu) throws SyntaxError;
-
-    private StatementList owner;
-    private Fragment fragment;
+    private String left;
+    private String right;
 }

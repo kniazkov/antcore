@@ -16,7 +16,8 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.bytecode.CompiledModule;
+import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.bytecode.CompilationUnit;
 
 /**
  * An expression, i.e. node that has a type
@@ -64,9 +65,19 @@ public abstract class Expression extends Node {
         return null;
     }
 
+    @Override
+    public String toString() {
+        Object value = calculate();
+        if (value != null)
+            return value.toString();
+        StringBuilder buff = new StringBuilder();
+        toUsageSourceCode(buff);
+        return buff.toString();
+    }
+
     /**
-     * Compile an expression
-     * @param module the compilation unit
+     * Generate instructions for loading (calculating) value to the stack
+     * @param cu the compilation unit
      */
-    public abstract void compile(CompiledModule module);
+    public abstract void load(CompilationUnit cu) throws SyntaxError;
 }

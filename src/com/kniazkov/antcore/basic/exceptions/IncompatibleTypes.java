@@ -34,7 +34,6 @@ public class IncompatibleTypes extends SyntaxError {
         return "Incompatible types, '" + leftType + "' cannot be converted to '" + rightType + '\'';
     }
 
-    private String operator;
     private String leftType;
     private String rightType;
 }

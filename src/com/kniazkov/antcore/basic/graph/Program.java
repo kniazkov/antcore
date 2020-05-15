@@ -17,10 +17,10 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.bytecode.CompiledModule;
+import com.kniazkov.antcore.basic.bytecode.CompiledProgram;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * The node that represents a whole program
@@ -117,6 +117,14 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
         if (constants != null)
             return constants.findConstantByName(name);
         return null;
+    }
+
+    public CompiledProgram compile() throws SyntaxError {
+        List<CompiledModule> list = new ArrayList<>();
+        for (Map.Entry<String, Module> entry : modules.entrySet()) {
+            list.add(entry.getValue().compile());
+        }
+        return new CompiledProgram(list);
     }
 
     private ConstantList constants;

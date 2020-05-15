@@ -55,10 +55,13 @@ public class Analyzer {
     protected static void defineTypes(Program root) throws SyntaxError {
         class Calculator extends NodeVisitor {
             @Override
+            public void visit(Assignment obj) throws SyntaxError {
+                obj.checkType();
+            }
+            @Override
             public void visit(Constant obj) throws SyntaxError {
                 obj.checkType();
             }
-
             @Override
             public void visit(BinaryOperation obj) throws SyntaxError {
                 obj.defineType();
@@ -91,11 +94,15 @@ public class Analyzer {
     protected static void calculateOffsets(Program root) throws SyntaxError {
         class Calculator extends NodeVisitor {
             @Override
+            public void visit(ArgumentList obj) throws SyntaxError {
+                obj.calculateOffsets();
+            }
+            @Override
             public void visit(DataSet obj) throws SyntaxError {
                 obj.calculateOffsets();
             }
             @Override
-            public void visit(ArgumentList obj) throws SyntaxError {
+            public void visit(Module obj) throws SyntaxError {
                 obj.calculateOffsets();
             }
         }

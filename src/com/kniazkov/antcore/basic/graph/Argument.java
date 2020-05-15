@@ -17,7 +17,7 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.SyntaxError;
-import com.kniazkov.antcore.basic.bytecode.CompiledModule;
+import com.kniazkov.antcore.basic.bytecode.CompilationUnit;
 
 /**
  * The node represents an function (method) argument
@@ -84,7 +84,12 @@ public class Argument extends LeftExpression implements DataTypeOwner {
     }
 
     @Override
-    public void compile(CompiledModule module) {
+    public void load(CompilationUnit cu) {
+        assert(false);
+    }
+
+    @Override
+    public void store(CompilationUnit cu) throws SyntaxError {
         assert(false);
     }
 
