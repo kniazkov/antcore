@@ -19,6 +19,10 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
 import com.kniazkov.antcore.basic.bytecode.*;
+import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
+import com.kniazkov.antcore.basic.bytecodebuilder.RawInstruction;
+import com.kniazkov.antcore.basic.bytecodebuilder.Load;
+import com.kniazkov.antcore.basic.bytecodebuilder.Store;
 
 /**
  * The node represents a field (of class, type, etc)
@@ -90,14 +94,14 @@ public class Field extends LeftExpression implements DataTypeOwner {
 
     @Override
     public void load(CompilationUnit cu) throws SyntaxError {
-        Instruction load = new Load(DataSelector.GLOBAL,
+        RawInstruction load = new Load(DataSelector.GLOBAL,
                 type.getSize(), cu.getDataOffset(), getAbsoluteOffset());
         cu.addInstruction(load);
     }
 
     @Override
     public void store(CompilationUnit cu) throws SyntaxError {
-        Instruction store = new Store(DataSelector.GLOBAL,
+        RawInstruction store = new Store(DataSelector.GLOBAL,
                 type.getSize(), cu.getDataOffset(), getAbsoluteOffset());
         cu.addInstruction(store);
     }

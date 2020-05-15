@@ -14,28 +14,27 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.graph;
+package com.kniazkov.antcore.basic.bytecodebuilder;
 
-import com.kniazkov.antcore.basic.SyntaxError;
-import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
+import com.kniazkov.antcore.basic.bytecode.Instruction;
 
 /**
- * A left expression, i.e. expression that can be assigned
+ * An instruction of bytecode
  */
-public abstract class LeftExpression extends Expression {
-    @Override
-    public Object calculate() {
-        return false;
-    }
-
-    @Override
-    public LeftExpression toLeftExpression() {
-        return this;
-    }
-
+public abstract class RawInstruction {
     /**
-     * Generate instructions for storing value to the memory
-     * @param cu the compilation unit
+     * @return set of bytes that represents an instruction
      */
-    public abstract void store(CompilationUnit cu) throws SyntaxError;
+    public abstract Instruction generate();
+
+    void setIndex(int index) {
+        assert(this.index == null);
+        this.index = index;
+    }
+
+    public int getAddress() {
+        return index * 16;
+    }
+
+    private Integer index;
 }

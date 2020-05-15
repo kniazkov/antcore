@@ -35,4 +35,14 @@ public interface ByteList {
      * @return a copy of the list represented as an array
      */
     byte[] toArray();
+
+    /**
+     * Copy data to byte array
+     * @param fromIndex from what position of this list starting copying
+     * @param size the size of data
+     * @param destination the destination array
+     * @param toIndex the starting position in the destination array
+     * @return number of bytes copied
+     */
+    int copy(int fromIndex, int size, byte[] destination, int toIndex);
 }

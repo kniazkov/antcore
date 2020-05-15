@@ -24,17 +24,17 @@ import com.kniazkov.antcore.lib.ByteList;
 public class Disassembler {
     public static String convert(ByteList bytecode) {
         int size = bytecode.size();
-        Code code = new Code();
+        Instruction code = new Instruction();
         StringBuilder builder = new StringBuilder();
         for (int index = 0; index < size; index = index + 16) {
             code.read(bytecode, index);
             switch (code.opcode) {
-                case 1:
+                case OpCode.LOAD:
                     builder.append("LOAD")
                             .append('\t').append((int)code.p0).append(' ')
                             .append('\t').append(code.x0).append(' ').append(code.x1).append(' ').append('\n');
                     break;
-                case 2:
+                case OpCode.STORE:
                     builder.append("STORE")
                             .append('\t').append((int)code.p0).append(' ')
                             .append('\t').append(code.x0).append(' ').append(code.x1).append(' ').append('\n');

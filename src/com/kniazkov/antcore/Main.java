@@ -24,6 +24,7 @@ import com.kniazkov.antcore.basic.graph.Analyzer;
 import com.kniazkov.antcore.basic.graph.Program;
 import com.kniazkov.antcore.basic.SyntaxError;
 import com.kniazkov.antcore.basic.parser.Parser;
+import com.kniazkov.antcore.basic.virtualmachine.VirtualMachine;
 import com.kniazkov.antcore.lib.FileIO;
 
 public class Main {
@@ -37,7 +38,9 @@ public class Main {
                 CompiledProgram compiledProgram = program.compile();
                 for (String executor : compiledProgram.getExecutors()) {
                     for (CompiledModule module : compiledProgram.getModulesByExecutor(executor)) {
-                        System.out.println(Disassembler.convert(module.getBytecode()));
+                        //System.out.println(Disassembler.convert(module.getBytecode()));
+                        VirtualMachine virtualMachine = new VirtualMachine(module.getBytecode(), 1024);
+                        virtualMachine.run();
                     }
                 }
             } catch (SyntaxError syntaxError) {

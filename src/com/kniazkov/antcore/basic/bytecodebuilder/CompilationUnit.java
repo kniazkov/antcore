@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.bytecode;
+package com.kniazkov.antcore.basic.bytecodebuilder;
 
 import com.kniazkov.antcore.lib.ByteArrayWrapper;
 import com.kniazkov.antcore.lib.ByteList;
@@ -32,7 +32,7 @@ public class CompilationUnit {
         dataOffset = new Reference<>();
     }
 
-    public void addInstruction(Instruction item) {
+    public void addInstruction(RawInstruction item) {
         instructions.add(item);
         int count = instructions.size();
         item.setIndex(count);
@@ -44,7 +44,7 @@ public class CompilationUnit {
         int size = count * 16;
         byte[] buff = new byte[size];
         for (int i = 0; i < count; i++) {
-            instructions.get(i).getCode().write(buff, i * 16);
+            instructions.get(i).generate().write(buff, i * 16);
         }
         return new ByteArrayWrapper(buff);
     }
@@ -53,6 +53,6 @@ public class CompilationUnit {
         return dataOffset;
     }
 
-    private List<Instruction> instructions;
+    private List<RawInstruction> instructions;
     private Reference<Integer> dataOffset;
 }

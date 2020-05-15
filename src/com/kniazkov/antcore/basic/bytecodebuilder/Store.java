@@ -14,22 +14,25 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.bytecode;
+package com.kniazkov.antcore.basic.bytecodebuilder;
 
+import com.kniazkov.antcore.basic.bytecode.Instruction;
+import com.kniazkov.antcore.basic.bytecode.DataSelector;
+import com.kniazkov.antcore.basic.bytecode.OpCode;
 import com.kniazkov.antcore.lib.Reference;
 
 /**
  * Store a value to the memory
  */
-public class Store extends Instruction {
-    public Store(DataSelector selector, int size, Reference<Integer> offset) {
+public class Store extends RawInstruction {
+    public Store(byte selector, int size, Reference<Integer> offset) {
         this.selector = selector;
         this.size = size;
         this.offset = offset;
         this.address = new Reference<>();
     }
 
-    public Store(DataSelector selector, int size, Reference<Integer> offset, int address) {
+    public Store(byte selector, int size, Reference<Integer> offset, int address) {
         this.selector = selector;
         this.size = size;
         this.offset = offset;
@@ -37,20 +40,20 @@ public class Store extends Instruction {
     }
 
     @Override
-    public Code getCode() {
-        Code c = new Code();
-        c.opcode = OpCode.STORE.getValue();
-        c.p0 = selector.getValue();
-        c.x0 = size;
-        c.x1 = offset.value + address.value;
-        return c;
+    public Instruction generate() {
+        Instruction i = new Instruction();
+        i.opcode = OpCode.STORE;
+        i.p0 = selector;
+        i.x0 = size;
+        i.x1 = offset.value + address.value;
+        return i;
     }
 
     public Reference<Integer> getAddressReference() {
         return address;
     }
 
-    private DataSelector selector;
+    private byte selector;
     private int size;
     private Reference<Integer> offset;
     private Reference<Integer> address;

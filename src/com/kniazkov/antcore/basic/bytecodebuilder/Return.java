@@ -14,25 +14,23 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.bytecode;
+package com.kniazkov.antcore.basic.bytecodebuilder;
+
+import com.kniazkov.antcore.basic.bytecode.Instruction;
+import com.kniazkov.antcore.basic.bytecode.OpCode;
+import com.kniazkov.antcore.lib.Reference;
 
 /**
- * Load an integer value to the stack
+ * Load a value to the stack
  */
-public class PushInteger extends Instruction {
-    public PushInteger(int value) {
-        this.value = value;
+public class Return extends RawInstruction {
+    public Return() {
     }
 
     @Override
-    public Code getCode() {
-        Code c = new Code();
-        c.opcode = OpCode.LOAD.getValue();
-        c.p0 = DataSelector.INSTRUCTION.getValue();
-        c.x0 = 4;
-        c.x1 = value;
-        return c;
+    public Instruction generate() {
+        Instruction i = new Instruction();
+        i.opcode = OpCode.RET;
+        return i;
     }
-
-    protected int value;
 }

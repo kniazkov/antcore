@@ -39,5 +39,18 @@ public class ByteArrayWrapper implements ByteList {
         return array.clone();
     }
 
+    @Override
+    public int copy(int fromIndex, int size, byte[] destination, int toIndex) {
+        if (fromIndex >= array.length || toIndex >= destination.length)
+            return 0;
+        if (fromIndex + size > array.length)
+            size = array.length - fromIndex;
+        if (toIndex + size > destination.length)
+            size = destination.length - toIndex;
+        if (size >= 0)
+            System.arraycopy(array, fromIndex, destination, toIndex, size);
+        return size;
+    }
+
     private byte[] array;
 }

@@ -16,8 +16,8 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.bytecode.CompilationUnit;
-import com.kniazkov.antcore.basic.bytecode.PushInteger;
+import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
+import com.kniazkov.antcore.basic.bytecodebuilder.PushInteger;
 
 /**
  * The node represents an integer constant

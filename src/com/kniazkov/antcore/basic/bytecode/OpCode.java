@@ -19,18 +19,9 @@ package com.kniazkov.antcore.basic.bytecode;
 /**
  * The list of opcodes
  */
-public enum OpCode {
-    NOP(0),
-    LOAD(1),
-    STORE(2);
-
-    private final byte value;
-
-    OpCode(int value) {
-        this.value = (byte)value;
-    }
-
-    public byte getValue() {
-        return value;
-    }
+public final class OpCode {
+    public static final byte NOP = 0;
+    public static final byte LOAD = 1;
+    public static final byte STORE = 2;
+    public static final byte RET = 3;
 }

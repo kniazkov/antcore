@@ -14,28 +14,29 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.graph;
+package com.kniazkov.antcore.basic.bytecodebuilder;
 
-import com.kniazkov.antcore.basic.SyntaxError;
-import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
+import com.kniazkov.antcore.basic.bytecode.Instruction;
+import com.kniazkov.antcore.basic.bytecode.DataSelector;
+import com.kniazkov.antcore.basic.bytecode.OpCode;
 
 /**
- * A left expression, i.e. expression that can be assigned
+ * Load an integer value to the stack
  */
-public abstract class LeftExpression extends Expression {
-    @Override
-    public Object calculate() {
-        return false;
+public class PushInteger extends RawInstruction {
+    public PushInteger(int value) {
+        this.value = value;
     }
 
     @Override
-    public LeftExpression toLeftExpression() {
-        return this;
+    public Instruction generate() {
+        Instruction i = new Instruction();
+        i.opcode = OpCode.LOAD;
+        i.p0 = DataSelector.INSTRUCTION;
+        i.x0 = 4;
+        i.x1 = value;
+        return i;
     }
 
-    /**
-     * Generate instructions for storing value to the memory
-     * @param cu the compilation unit
-     */
-    public abstract void store(CompilationUnit cu) throws SyntaxError;
+    protected int value;
 }

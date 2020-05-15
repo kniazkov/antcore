@@ -19,17 +19,7 @@ package com.kniazkov.antcore.basic.bytecode;
 /**
  * The list of data selector
  */
-public enum DataSelector {
-    GLOBAL(0),
-    INSTRUCTION(7);
-
-    private final byte value;
-
-    DataSelector(int value) {
-        this.value = (byte)value;
-    }
-
-    public byte getValue() {
-        return value;
-    }
+public final class DataSelector {
+    public static final byte GLOBAL = 0;
+    public static final byte INSTRUCTION = 7;
 }

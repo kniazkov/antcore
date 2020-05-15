@@ -17,7 +17,7 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.SyntaxError;
-import com.kniazkov.antcore.basic.bytecode.CompilationUnit;
+import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 
 /**
  * An expression, i.e. node that has a type
