@@ -19,16 +19,16 @@ package com.kniazkov.antcore.basic.bytecode;
 import com.kniazkov.antcore.lib.Reference;
 
 /**
- * Load a value to the stack
+ * Store a value to the memory
  */
-public class Load extends Instruction {
-    public Load(DataSelector selector, int size) {
+public class Store extends Instruction {
+    public Store(DataSelector selector, int size) {
         this.selector = selector;
         this.address = new Reference<>();
         this.size = size;
     }
 
-    public Load(DataSelector selector, int address, int size) {
+    public Store(DataSelector selector, int address, int size) {
         this.selector = selector;
         this.address = new Reference<>(address);
         this.size = size;
@@ -37,7 +37,7 @@ public class Load extends Instruction {
     @Override
     public Code getCode() {
         Code c = new Code();
-        c.opcode = OpCode.LOAD.getValue();
+        c.opcode = OpCode.STORE.getValue();
         c.p0 = selector.getValue();
         c.x0 = size;
         c.x1 = address.value;

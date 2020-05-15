@@ -17,22 +17,22 @@
 package com.kniazkov.antcore.basic.bytecode;
 
 /**
- * An instruction of bytecode
+ * Load an integer value to the stack
  */
-public abstract class Instruction {
-    /**
-     * @return set of bytes that represents an instruction
-     */
-    public abstract Code getCode();
-
-    void setIndex(int index) {
-        assert(this.index == null);
-        this.index = index;
+public class PushInteger extends Instruction {
+    public PushInteger(int value) {
+        this.value = value;
     }
 
-    public int getAddress() {
-        return index * 16;
+    @Override
+    public Code getCode() {
+        Code c = new Code();
+        c.opcode = OpCode.LOAD.getValue();
+        c.p0 = DataSelector.INSTRUCTION.getValue();
+        c.x0 = 4;
+        c.x1 = value;
+        return c;
     }
 
-    private Integer index;
+    protected int value;
 }

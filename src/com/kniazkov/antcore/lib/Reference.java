@@ -16,10 +16,20 @@
  */
 package com.kniazkov.antcore.lib;
 
+import java.sql.Ref;
+
 /**
  * Object contains another object
  * @param <T> Type
  */
 public class Reference<T> {
+    public Reference() {
+        value = null;
+    }
+
+    public Reference(T initValue) {
+        value = initValue;
+    }
+
     public T value;
 }

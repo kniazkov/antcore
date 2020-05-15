@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.bytecode.CompiledModule;
 import com.kniazkov.antcore.lib.Reference;
 
 /**
@@ -87,6 +88,11 @@ public class Field extends LeftExpression implements DataTypeOwner {
     void setOffset(int offset) {
         assert(offset == -1);
         this.offset = offset;
+    }
+
+    @Override
+    public void compile(CompiledModule module) {
+        assert(false);
     }
 
     private DataSet owner;

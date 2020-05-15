@@ -16,23 +16,21 @@
  */
 package com.kniazkov.antcore.basic.bytecode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * An instruction of bytecode
+ * The whole compiled module
  */
-public abstract class Instruction {
-    /**
-     * @return set of bytes that represents an instruction
-     */
-    public abstract Code getCode();
-
-    void setIndex(int index) {
-        assert(this.index == null);
-        this.index = index;
+public class CompiledModule {
+    public CompiledModule() {
+        instructions = new ArrayList<>();
     }
 
-    public int getAddress() {
-        return index * 16;
+    public void addInstruction(Instruction item) {
+        instructions.add(item);
+        item.setIndex(instructions.size());
     }
 
-    private Integer index;
+    private List<Instruction> instructions;
 }

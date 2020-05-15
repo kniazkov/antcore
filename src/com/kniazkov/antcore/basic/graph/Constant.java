@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.bytecode.CompiledModule;
 import com.kniazkov.antcore.basic.exceptions.IncompatibleTypes;
 import com.kniazkov.antcore.basic.exceptions.UnknownType;
 
@@ -107,6 +108,11 @@ public class Constant extends Expression implements DataTypeOwner, ExpressionOwn
             if (!value.getType().getPureType().canBeCastTo(type.getPureType()))
                 throw new IncompatibleTypes(getFragment(), value.getType().getName(), type.getName());
         }
+    }
+
+    @Override
+    public void compile(CompiledModule module) {
+        value.compile(module);
     }
 
     private ConstantList owner;

@@ -20,13 +20,14 @@ package com.kniazkov.antcore.basic.bytecode;
  * The list of opcodes
  */
 public enum OpCode {
-    NOP((byte)0),
-    LOAD((byte)1);
+    NOP(0),
+    LOAD(1),
+    STORE(2);
 
     private final byte value;
 
-    OpCode(byte value) {
-        this.value = value;
+    OpCode(int value) {
+        this.value = (byte)value;
     }
 
     public byte getValue() {

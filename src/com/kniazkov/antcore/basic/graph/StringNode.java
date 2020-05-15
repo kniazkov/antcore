@@ -16,6 +16,8 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecode.CompiledModule;
+
 /**
  * The node represents a string constant
  */
@@ -75,6 +77,11 @@ public class StringNode extends Expression {
         }
         if (flag)
             buff.append('"');
+    }
+
+    @Override
+    public void compile(CompiledModule module) {
+        assert(false);
     }
 
     private ExpressionOwner owner;

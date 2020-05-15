@@ -17,6 +17,7 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.bytecode.CompiledModule;
 import com.kniazkov.antcore.basic.exceptions.OperatorNotApplicable;
 
 import javax.xml.crypto.Data;
@@ -74,5 +75,10 @@ public class Addition extends BinaryOperation {
             }
         }
         return null;
+    }
+
+    @Override
+    public void compile(CompiledModule module) {
+        assert(false);
     }
 }

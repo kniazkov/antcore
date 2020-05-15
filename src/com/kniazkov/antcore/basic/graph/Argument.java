@@ -17,6 +17,7 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.bytecode.CompiledModule;
 
 /**
  * The node represents an function (method) argument
@@ -80,6 +81,11 @@ public class Argument extends LeftExpression implements DataTypeOwner {
     void setOffset(int offset) {
         assert(offset == -1);
         this.offset = offset;
+    }
+
+    @Override
+    public void compile(CompiledModule module) {
+        assert(false);
     }
 
     private ArgumentList owner;

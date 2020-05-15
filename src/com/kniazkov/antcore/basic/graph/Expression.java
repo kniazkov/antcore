@@ -16,6 +16,8 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecode.CompiledModule;
+
 /**
  * An expression, i.e. node that has a type
  */
@@ -61,4 +63,10 @@ public abstract class Expression extends Node {
     public LeftExpression toLeftExpression() {
         return null;
     }
+
+    /**
+     * Compile an expression
+     * @param module the compilation unit
+     */
+    public abstract void compile(CompiledModule module);
 }

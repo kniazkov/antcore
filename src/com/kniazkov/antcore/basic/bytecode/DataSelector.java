@@ -20,12 +20,13 @@ package com.kniazkov.antcore.basic.bytecode;
  * The list of data selector
  */
 public enum DataSelector {
-    GLOBAL((byte)0);
+    GLOBAL(0),
+    INSTRUCTION(7);
 
     private final byte value;
 
-    DataSelector(byte value) {
-        this.value = value;
+    DataSelector(int value) {
+        this.value = (byte)value;
     }
 
     public byte getValue() {

@@ -17,6 +17,7 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.bytecode.CompiledModule;
 import com.kniazkov.antcore.basic.exceptions.CannotResolveSymbol;
 import com.kniazkov.antcore.basic.exceptions.UnknownType;
 
@@ -80,6 +81,11 @@ public class VariableReference extends Expression implements ExpressionOwner {
     @Override
     public LeftExpression toLeftExpression() {
         return expression.toLeftExpression();
+    }
+
+    @Override
+    public void compile(CompiledModule module) {
+        expression.compile(module);
     }
 
     private ExpressionOwner owner;

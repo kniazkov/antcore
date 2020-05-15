@@ -16,6 +16,9 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecode.CompiledModule;
+import com.kniazkov.antcore.basic.bytecode.PushInteger;
+
 /**
  * The node represents an integer constant
  */
@@ -52,6 +55,11 @@ public class IntegerNode extends Expression {
     @Override
     public void toUsageSourceCode(StringBuilder buff) {
         buff.append(value);
+    }
+
+    @Override
+    public void compile(CompiledModule module) {
+        module.addInstruction(new PushInteger(value));
     }
 
     private ExpressionOwner owner;
