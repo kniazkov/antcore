@@ -26,14 +26,14 @@ public class VirtualMachine {
     public VirtualMachine(ByteList code, int memorySize) {
         memory = new byte[memorySize];
         code.copy(0, code.size(), memory, 0);
-        IP = 0;
-        SP = memorySize;
     }
 
     /**
      * Starts execution
      */
     public void run() {
+        IP = 0;
+        SP = memory.length;
         power = true;
         while(power) {
             units[readOpcode()].exec();
@@ -76,6 +76,10 @@ public class VirtualMachine {
                 + ((int)(memory[IP + 14]) << 16) + ((int)(memory[IP + 15]) << 24);
     }
 
+    final void move(int fromPos, int toPos, int size) {
+        System.arraycopy(memory, fromPos, memory, toPos, size);
+    }
+
     interface Unit {
         void exec();
     }
@@ -89,10 +93,10 @@ public class VirtualMachine {
                 SP = SP - size;
                 switch (read_p0()) {
                     case DataSelector.GLOBAL:
-                        System.arraycopy(memory, read_x1(), memory, SP, size);
+                        move(read_x1(), SP, size);
                         break;
                     case DataSelector.INSTRUCTION:
-                        System.arraycopy(memory, IP + 8, memory, SP, size);
+                        move(IP + 8, SP, size);
                         break;
                 }
                 IP = IP + 16;
@@ -101,7 +105,7 @@ public class VirtualMachine {
                 int size = read_x0();
                 switch (read_p0()) {
                     case DataSelector.GLOBAL:
-                        System.arraycopy(memory, SP, memory, read_x1(), size);
+                        move(SP, read_x1(), size);
                         break;
                 }
                 SP = SP + size;
