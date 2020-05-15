@@ -17,7 +17,9 @@
 
 package com.kniazkov.antcore;
 
+import com.kniazkov.antcore.basic.bytecode.CompiledModule;
 import com.kniazkov.antcore.basic.bytecode.CompiledProgram;
+import com.kniazkov.antcore.basic.bytecode.Disassembler;
 import com.kniazkov.antcore.basic.graph.Analyzer;
 import com.kniazkov.antcore.basic.graph.Program;
 import com.kniazkov.antcore.basic.SyntaxError;
@@ -31,8 +33,13 @@ public class Main {
             try {
                 Program program = Parser.parse(null, source);
                 Analyzer.analyze(program);
-                CompiledProgram compiledProgram = program.compile();
                 System.out.println(program.toSourceCode());
+                CompiledProgram compiledProgram = program.compile();
+                for (String executor : compiledProgram.getExecutors()) {
+                    for (CompiledModule module : compiledProgram.getModulesByExecutor(executor)) {
+                        System.out.println(Disassembler.convert(module.getBytecode()));
+                    }
+                }
             } catch (SyntaxError syntaxError) {
                 syntaxError.printStackTrace();
             }
