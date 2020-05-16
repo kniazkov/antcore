@@ -27,6 +27,7 @@ import com.kniazkov.antcore.lib.Reference;
 public class Store extends RawInstruction {
     public Store(byte selector, int size, Reference<Integer> offset) {
         this.selector = selector;
+        assert(selector == DataSelector.GLOBAL);
         this.size = size;
         this.offset = offset;
         this.address = new Reference<>();

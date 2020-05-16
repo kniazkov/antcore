@@ -27,6 +27,7 @@ import com.kniazkov.antcore.lib.Reference;
 public class Load extends RawInstruction {
     public Load(byte selector, int size, Reference<Integer> offset) {
         this.selector = selector;
+        assert(selector == DataSelector.GLOBAL);
         this.size = size;
         this.offset = offset;
         this.address = new Reference<>();

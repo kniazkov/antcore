@@ -14,15 +14,28 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.bytecode;
+package com.kniazkov.antcore.basic.bytecodebuilder;
+
+import com.kniazkov.antcore.basic.bytecode.Instruction;
+import com.kniazkov.antcore.basic.bytecode.OpCode;
+import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 
 /**
- * The list of opcodes
+ * Add two values from the stack and push the result to the stack
  */
-public final class OpCode {
-    public static final byte NOP = 0;
-    public static final byte LOAD = 1;
-    public static final byte STORE = 2;
-    public static final byte RET = 3;
-    public static final byte ADD = 4;
+public class Add extends RawInstruction {
+    public Add(byte selector) {
+        this.selector = selector;
+        assert (selector == TypeSelector.INTEGER);
+    }
+
+    @Override
+    public Instruction generate() {
+        Instruction i = new Instruction();
+        i.opcode = OpCode.ADD;
+        i.p0 = selector;
+        return i;
+    }
+
+    private byte selector;
 }

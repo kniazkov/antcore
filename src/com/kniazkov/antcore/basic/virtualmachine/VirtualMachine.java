@@ -80,39 +80,81 @@ public class VirtualMachine {
         System.arraycopy(memory, fromPos, memory, toPos, size);
     }
 
+    final void pushInteger(int value) {
+        SP = SP - 4;
+        memory[SP] =      (byte)(value);
+        memory[SP + 1] =  (byte)(value >> 8);
+        memory[SP + 2] =  (byte)(value >> 16);
+        memory[SP + 3] =  (byte)(value >> 24);
+    }
+
+    final int popInteger() {
+        int value = (int)(memory[SP]) + ((int)(memory[SP + 1]) << 8)
+                + ((int)(memory[SP + 2]) << 16) + ((int)(memory[SP + 3]) << 24);
+        SP = SP + 4;
+        return value;
+    }
+
+    interface Load {
+        void exec(int size);
+    }
+
+    final Load[] load = {
+            (size) -> { // 0 -> GLOBAL
+                move(read_x1(), SP, size);
+            },
+            (size) -> { // 1 -> INSTRUCTION
+                move(IP + 8, SP, size);
+            },
+    };
+
+    interface Store {
+        void exec(int size);
+    }
+
+    final Store[] store = {
+            (size) -> { // 0 -> GLOBAL
+                move(SP, read_x1(), size);
+            },
+    };
+
+    interface Add {
+        void exec();
+    }
+
+    final Add[] add = {
+            () -> { // 0 -> INTEGER
+                pushInteger(popInteger() + popInteger());
+            },
+    };
+
     interface Unit {
         void exec();
     }
 
     final Unit[] units = {
-            () -> { // 0. NOP
+            () -> { // 0 -> NOP
                 IP = IP + 16;
             },
-            () -> { // 1. LOAD
+            () -> { // 1 -> LOAD
                 int size = read_x0();
                 SP = SP - size;
-                switch (read_p0()) {
-                    case DataSelector.GLOBAL:
-                        move(read_x1(), SP, size);
-                        break;
-                    case DataSelector.INSTRUCTION:
-                        move(IP + 8, SP, size);
-                        break;
-                }
+                load[read_p0()].exec(size);
                 IP = IP + 16;
             },
-            () -> { // 2. STORE
+            () -> { // 2 -> STORE
                 int size = read_x0();
-                switch (read_p0()) {
-                    case DataSelector.GLOBAL:
-                        move(SP, read_x1(), size);
-                        break;
-                }
+                store[read_p0()].exec(size);
                 SP = SP + size;
                 IP = IP + 16;
             },
-            () -> { // 2. RET
+            () -> { // 3 -> RET
                 power = false;
+                IP = IP + 16;
+            },
+            () -> { // 4 -> ADD
+                add[read_p0()].exec();
+                IP = IP + 16;
             },
     };
 }

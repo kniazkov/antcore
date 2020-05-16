@@ -8,7 +8,7 @@ MODULE SERVER
 		j AS INTEGER
 	END DATA
 	FUNCTION MAIN
-		i = 7
+		i = i + 1
 		j = i
 		'print("Hello, world")
 	END FUNCTION

@@ -38,8 +38,9 @@ public class Main {
                 CompiledProgram compiledProgram = program.compile();
                 for (String executor : compiledProgram.getExecutors()) {
                     for (CompiledModule module : compiledProgram.getModulesByExecutor(executor)) {
-                        //System.out.println(Disassembler.convert(module.getBytecode()));
+                        System.out.println(Disassembler.convert(module.getBytecode()));
                         VirtualMachine virtualMachine = new VirtualMachine(module.getBytecode(), 1024);
+                        virtualMachine.run();
                         virtualMachine.run();
                     }
                 }

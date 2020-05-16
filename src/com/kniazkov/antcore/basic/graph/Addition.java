@@ -17,6 +17,8 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.bytecode.TypeSelector;
+import com.kniazkov.antcore.basic.bytecodebuilder.Add;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.exceptions.OperatorNotApplicable;
 
@@ -76,7 +78,17 @@ public class Addition extends BinaryOperation {
     }
 
     @Override
-    public void load(CompilationUnit cu) {
+    public void load(CompilationUnit cu) throws SyntaxError {
+        DataType leftType = left.getType().getPureType();
+        DataType rightType = right.getType().getPureType();
+
+        right.load(cu);
+        left.load(cu);
+        if (leftType instanceof IntegerType || rightType instanceof IntegerType) {
+            cu.addInstruction(new Add(TypeSelector.INTEGER));
+            return;
+        }
+
         assert(false);
     }
 }

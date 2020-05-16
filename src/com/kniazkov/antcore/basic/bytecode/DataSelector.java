@@ -17,9 +17,9 @@
 package com.kniazkov.antcore.basic.bytecode;
 
 /**
- * The list of data selector
+ * The list of data selectors
  */
 public final class DataSelector {
     public static final byte GLOBAL = 0;
-    public static final byte INSTRUCTION = 7;
+    public static final byte INSTRUCTION = 1;
 }

@@ -39,6 +39,12 @@ public class Disassembler {
                             .append('\t').append((int)code.p0).append(' ')
                             .append('\t').append(code.x0).append(' ').append(code.x1).append(' ').append('\n');
                     break;
+                case OpCode.RET:
+                    builder.append("RET").append('\n');
+                    break;
+                case OpCode.ADD:
+                    builder.append("ADD ").append('\t').append(code.p0).append('\n');
+                    break;
                 default:
                     builder.append(code.opcode)
                             .append('\t').append((int)code.p0).append(' ').append((int)code.p1).append(' ').append((int)code.p2)
