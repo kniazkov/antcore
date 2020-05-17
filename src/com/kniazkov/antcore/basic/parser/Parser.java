@@ -23,6 +23,8 @@ import com.kniazkov.antcore.basic.graph.*;
 import com.kniazkov.antcore.basic.parser.exceptions.*;
 import com.kniazkov.antcore.basic.parser.tokens.*;
 import com.kniazkov.antcore.lib.CharIterator;
+import com.kniazkov.antcore.lib.FixedPoint;
+import com.kniazkov.antcore.lib.Math2;
 import com.kniazkov.antcore.lib.RollbackIterator;
 
 import java.util.*;
@@ -117,12 +119,12 @@ public class Parser {
             return null;
 
         if (isLetter(c)) {
-            StringBuilder b = new StringBuilder();
+            StringBuilder buff = new StringBuilder();
             do {
-                b.append(c);
+                buff.append(c);
                 c = src.next();
             } while(isLetter(c) || isDigit(c));
-            String name = b.toString();
+            String name = buff.toString();
             switch (name) {
                 case "MODULE":
                     return KeywordModule.getInstance();
@@ -160,28 +162,54 @@ public class Parser {
         }
 
         if (isDigit(c)) {
-            StringBuilder b = new StringBuilder();
-            do {
-                b.append(c);
-                c = src.next();
-            } while(isDigit(c));
-            String number = b.toString();
+            StringBuilder tokStr = new StringBuilder();
             try {
-                int value = Integer.parseInt(number);
-                return new TokenExpression(new IntegerNode(value));
+                StringBuilder buff = new StringBuilder();
+                String number;
+                do {
+                    buff.append(c);
+                    tokStr.append(c);
+                    c = src.next();
+                } while (isDigit(c));
+                number = buff.toString();
+                int intValue = Integer.parseInt(number);
+                if (c != '.')
+                    return new TokenExpression(new IntegerNode(intValue));
+                tokStr.append(c);
+                c = src.next();
+                if (isDigit(c)) {
+                    buff = new StringBuilder();
+                    int digits = 0;
+                    do {
+                        digits++;
+                        buff.append(c);
+                        tokStr.append(c);
+                        c = src.next();
+                    } while (isDigit(c));
+                    number = buff.toString();
+                    int fractValue = Integer.parseInt(number);
+                    FixedPoint realNumber = new FixedPoint();
+                    FixedPoint fractPart = new FixedPoint();
+                    FixedPoint divisor = new FixedPoint();
+                    realNumber.setInteger(intValue);
+                    fractPart.setInteger(fractValue);
+                    divisor.setInteger(Math2.powerOf10(digits));
+                    FixedPoint.div(fractPart, fractPart, divisor);
+                    FixedPoint.add(realNumber, realNumber, fractPart);
+                    return new TokenExpression(new RealNode(realNumber));
+                }
+            } catch (Exception e) {
             }
-            catch (NumberFormatException e) {
-                throw new WrongNumberFormat(fragment, number);
-            }
+            throw new WrongNumberFormat(fragment, tokStr.toString());
         }
 
         if (c == '"') {
-            StringBuilder b = new StringBuilder();
+            StringBuilder buff = new StringBuilder();
             boolean flag = false;
             do {
                 c = src.next();
                 while (c != '"') {
-                    b.append(c);
+                    buff.append(c);
                     c = src.next();
                     if (!src.valid())
                         throw new MissedClosingQuote(fragment);
@@ -190,20 +218,20 @@ public class Parser {
                 if (c != '"')
                     flag = false;
                 else {
-                    b.append('"');
+                    buff.append('"');
                     flag = true;
                 }
             } while(flag);
-            return new TokenExpression(new StringNode(b.toString()));
+            return new TokenExpression(new StringNode(buff.toString()));
         }
 
         if (isOperator(c)) {
-            StringBuilder b = new StringBuilder();
+            StringBuilder buff = new StringBuilder();
             do {
-                b.append(c);
+                buff.append(c);
                 c = src.next();
             } while(isOperator(c));
-            String operator = b.toString();
+            String operator = buff.toString();
             switch (operator) {
                 case "+":
                     return OperatorPlus.getInstance();

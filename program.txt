@@ -5,11 +5,11 @@
 MODULE SERVER
 	DATA
 		i AS INTEGER
-		j AS INTEGER
+		j AS REAL
 	END DATA
 	FUNCTION MAIN
-		i = i + 1
-		j = i
+		i = 1
+		j = 1.001
 		'print("Hello, world")
 	END FUNCTION
 END MODULE
