@@ -17,32 +17,32 @@
 package com.kniazkov.antcore.lib;
 
 /**
- * A list of bytes
+ * Mathematical routines that not covered by the standard Java libraries
  */
-public interface ByteList {
-    /**
-     * @return size of the list
-     */
-    int size();
+public class Math2 {
+    private  static final long powersOf10[] = {
+            1L,
+            10L,
+            100L,
+            1000L,
+            10000L,
+            100000L,
+            1000000L,
+            10000000L,
+            100000000L,
+            1000000000L,
+            10000000000L,
+            100000000000L,
+            1000000000000L,
+            10000000000000L,
+            100000000000000L,
+            1000000000000000L,
+            10000000000000000L,
+            100000000000000000L,
+            1000000000000000000L
+    };
 
-    /**
-     * @param index the index
-     * @return an item by index or 0 if index is incorrect
-     */
-    byte get(int index);
-
-    /**
-     * @return a copy of the list represented as an array
-     */
-    byte[] toArray();
-
-    /**
-     * Copy data to byte array
-     * @param fromIndex from what position of this list starting copying
-     * @param size the size of data
-     * @param destination the destination array
-     * @param toIndex the starting position in the destination array
-     * @return number of bytes copied
-     */
-    int copy(int fromIndex, int size, byte[] destination, int toIndex);
+    public static long powerOf10(int n) {
+        return powersOf10[n];
+    }
 }

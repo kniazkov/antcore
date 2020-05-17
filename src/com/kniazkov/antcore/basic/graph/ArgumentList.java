@@ -16,7 +16,7 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.common.SyntaxError;
 
 import java.util.Collections;
 import java.util.List;

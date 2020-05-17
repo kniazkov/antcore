@@ -16,7 +16,7 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.bytecodebuilder.Add;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;

@@ -22,7 +22,7 @@ import com.kniazkov.antcore.basic.bytecode.CompiledProgram;
 import com.kniazkov.antcore.basic.bytecode.Disassembler;
 import com.kniazkov.antcore.basic.graph.Analyzer;
 import com.kniazkov.antcore.basic.graph.Program;
-import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.parser.Parser;
 import com.kniazkov.antcore.basic.virtualmachine.VirtualMachine;
 import com.kniazkov.antcore.lib.FileIO;

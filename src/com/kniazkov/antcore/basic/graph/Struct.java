@@ -16,9 +16,9 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.DataPrefix;
-import com.kniazkov.antcore.basic.Fragment;
-import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.common.DataPrefix;
+import com.kniazkov.antcore.basic.common.Fragment;
+import com.kniazkov.antcore.basic.common.SyntaxError;
 
 import java.util.List;
 

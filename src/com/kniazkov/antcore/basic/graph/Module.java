@@ -17,8 +17,8 @@
 
 package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.Fragment;
-import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.common.Fragment;
+import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecode.CompiledModule;
 import com.kniazkov.antcore.basic.exceptions.FunctionMainNotFound;

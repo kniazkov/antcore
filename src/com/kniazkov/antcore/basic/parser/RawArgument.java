@@ -16,9 +16,7 @@
  */
 package com.kniazkov.antcore.basic.parser;
 
-import com.kniazkov.antcore.basic.Fragment;
 import com.kniazkov.antcore.basic.graph.Argument;
-import com.kniazkov.antcore.basic.graph.Field;
 
 /**
  * The parsed argument of a function

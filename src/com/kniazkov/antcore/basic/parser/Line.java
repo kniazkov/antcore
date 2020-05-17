@@ -16,7 +16,7 @@
  */
 package com.kniazkov.antcore.basic.parser;
 
-import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.common.Fragment;
 
 import java.util.Collections;
 import java.util.List;

@@ -16,10 +16,8 @@
  */
 package com.kniazkov.antcore.basic.parser;
 
-import com.kniazkov.antcore.basic.Fragment;
-import com.kniazkov.antcore.basic.graph.DataSet;
+import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.graph.Field;
-import com.kniazkov.antcore.basic.graph.Node;
 
 /**
  * The parsed field of data set

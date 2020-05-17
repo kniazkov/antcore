@@ -16,7 +16,7 @@
  */
 package com.kniazkov.antcore.basic.parser;
 
-import com.kniazkov.antcore.basic.Fragment;
+import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.graph.Statement;
 
 /**

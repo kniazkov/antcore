@@ -19,7 +19,7 @@ package com.kniazkov.antcore.test;
 
 import com.kniazkov.antcore.basic.graph.Analyzer;
 import com.kniazkov.antcore.basic.graph.Program;
-import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.parser.Parser;
 
 /**

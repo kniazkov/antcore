@@ -16,12 +16,13 @@
  */
 package com.kniazkov.antcore.basic.parser;
 
-import com.kniazkov.antcore.basic.DataPrefix;
-import com.kniazkov.antcore.basic.Fragment;
-import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.common.DataPrefix;
+import com.kniazkov.antcore.basic.common.Fragment;
+import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.graph.*;
 import com.kniazkov.antcore.basic.parser.exceptions.*;
 import com.kniazkov.antcore.basic.parser.tokens.*;
+import com.kniazkov.antcore.lib.CharIterator;
 import com.kniazkov.antcore.lib.RollbackIterator;
 
 import java.util.*;
@@ -233,30 +234,24 @@ public class Parser {
     /**
      * Sequence of chars
      */
-    private static class Source {
+    private static class Source implements CharIterator {
         public Source(String text) {
             this.text = text;
             this.idx = 0;
             this.maxIdx = text.length();
         }
 
-        /**
-         * @return true if has more chars
-         */
+        @Override
         public boolean valid() {
             return idx < maxIdx;
         }
 
-        /**
-         * @return current char (or 0)
-         */
+        @Override
         public char get() {
             return valid() ? text.charAt(idx) : 0;
         }
 
-        /**
-         * @return next char (or 0)
-         */
+        @Override
         public char next() {
             idx++;
             return get();

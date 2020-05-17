@@ -16,7 +16,7 @@
  */
 package com.kniazkov.antcore.basic.parser.exceptions;
 
-import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.parser.Line;
 
 /**

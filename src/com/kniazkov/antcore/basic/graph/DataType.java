@@ -17,8 +17,7 @@
 package com.kniazkov.antcore.basic.graph;
 
 
-import com.kniazkov.antcore.basic.Fragment;
-import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.common.SyntaxError;
 
 /**
  * The basic interface for data type

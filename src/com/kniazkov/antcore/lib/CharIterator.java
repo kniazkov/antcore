@@ -14,24 +14,24 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.parser.exceptions;
-
-import com.kniazkov.antcore.basic.common.SyntaxError;
-import com.kniazkov.antcore.basic.parser.Line;
+package com.kniazkov.antcore.lib;
 
 /**
- * The exception "Expected a right expression for operator"
+ * An iterator by chars
  */
-public class ExpectedRightExprOper extends SyntaxError {
-    public ExpectedRightExprOper(Line line, String operator) {
-        super(line.getFragment());
-        this.operator = operator;
-    }
+public interface CharIterator {
+    /**
+     * @return true if the iterator is valid, i.e. can return one more char
+     */
+    boolean valid();
 
-    @Override
-    protected String getErrorMessage() {
-        return "Expected a right expression for operator " + operator;
-    }
+    /**
+     * @return current char or 0 if the iterator is not valid
+     */
+    char get();
 
-    private String operator;
+    /**
+     * @return next char or 0 if the iterator is not valid
+     */
+    char next();
 }

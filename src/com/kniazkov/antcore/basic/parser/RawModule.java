@@ -16,14 +16,13 @@
  */
 package com.kniazkov.antcore.basic.parser;
 
-import com.kniazkov.antcore.basic.DataPrefix;
-import com.kniazkov.antcore.basic.Fragment;
-import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.common.DataPrefix;
+import com.kniazkov.antcore.basic.common.Fragment;
+import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.graph.*;
 import com.kniazkov.antcore.basic.parser.exceptions.DuplicateDataSet;
 import com.kniazkov.antcore.basic.parser.exceptions.FunctionAlreadyExists;
 import com.kniazkov.antcore.basic.parser.exceptions.UnexpectedDataSet;
-import com.kniazkov.antcore.lib.Pair;
 
 import java.util.*;
 

@@ -16,15 +16,10 @@
  */
 package com.kniazkov.antcore.basic.parser;
 
-import com.kniazkov.antcore.basic.DataPrefix;
-import com.kniazkov.antcore.basic.Fragment;
-import com.kniazkov.antcore.basic.SyntaxError;
+import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.exceptions.DuplicateConstant;
-import com.kniazkov.antcore.basic.exceptions.DuplicateField;
 import com.kniazkov.antcore.basic.graph.Constant;
 import com.kniazkov.antcore.basic.graph.ConstantList;
-import com.kniazkov.antcore.basic.graph.DataSet;
-import com.kniazkov.antcore.basic.graph.Field;
 
 import java.util.ArrayList;
 import java.util.List;

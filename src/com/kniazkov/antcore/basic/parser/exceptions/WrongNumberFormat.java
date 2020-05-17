@@ -16,9 +16,8 @@
  */
 package com.kniazkov.antcore.basic.parser.exceptions;
 
-import com.kniazkov.antcore.basic.Fragment;
-import com.kniazkov.antcore.basic.SyntaxError;
-import com.kniazkov.antcore.basic.parser.Line;
+import com.kniazkov.antcore.basic.common.Fragment;
+import com.kniazkov.antcore.basic.common.SyntaxError;
 
 /**
  * The exception "Wrong number format"

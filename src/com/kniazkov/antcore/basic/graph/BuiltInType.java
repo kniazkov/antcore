@@ -16,8 +16,6 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.Fragment;
-
 /**
  * A built-in data type
  */
