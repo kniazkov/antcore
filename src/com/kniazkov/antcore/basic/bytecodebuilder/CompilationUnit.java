@@ -22,6 +22,8 @@ import com.kniazkov.antcore.lib.Reference;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * The compilation unit (module with external functions)
@@ -29,30 +31,68 @@ import java.util.List;
 public class CompilationUnit {
     public CompilationUnit() {
         instructions = new ArrayList<>();
-        dataOffset = new Reference<>();
+        staticDataOffset = new Reference<>(0);
+        staticDataSize = 0;
+        dynamicDataOffset = new Reference<>(0);
+        stringsList = new ArrayList<>();
+        stringsMap = new TreeMap<>();
+    }
+
+    public Reference<Integer> getStaticDataOffset() {
+        return staticDataOffset;
+    }
+
+    public Reference<Integer> getDynamicDataOffset() {
+        return dynamicDataOffset;
+    }
+
+    public ByteList getBytecode() {
+        int count = instructions.size();
+        int size = count * 16 + staticDataSize;
+        byte[] buff = new byte[size];
+        for (int k = 0; k < count; k++) {
+            instructions.get(k).generate().write(buff, k * 16);
+        }
+        for (String string : stringsList) {
+            int index = stringsMap.get(string) + staticDataOffset.value;
+            for (int k = 0, length = string.length(); k < length; k++) {
+                char ch = string.charAt(k);
+                buff[index++] = (byte) (ch & 0xff);
+                buff[index++] = (byte) (ch >> 8);
+            }
+            buff[index++] = 0;
+            buff[index] = 0;
+        }
+        return new ByteArrayWrapper(buff);
+    }
+
+    private void updateOffsets() {
+        staticDataOffset.value = instructions.size() * 16;
+        dynamicDataOffset.value = staticDataOffset.value + staticDataSize;
     }
 
     public void addInstruction(RawInstruction item) {
         instructions.add(item);
         int count = instructions.size();
         item.setIndex(count);
-        dataOffset.value = count * 16;
+        updateOffsets();
     }
 
-    public ByteList getBytecode() {
-        int count = instructions.size();
-        int size = count * 16;
-        byte[] buff = new byte[size];
-        for (int i = 0; i < count; i++) {
-            instructions.get(i).generate().write(buff, i * 16);
-        }
-        return new ByteArrayWrapper(buff);
-    }
-
-    public Reference<Integer> getDataOffset() {
-        return dataOffset;
+    public int getStringOffset(String string) {
+        if (stringsMap.containsKey(string))
+            return stringsMap.get(string);
+        int offset = staticDataSize;
+        staticDataSize += (string.length() + 1) * 2;
+        stringsList.add(string);
+        stringsMap.put(string, offset);
+        updateOffsets();
+        return offset;
     }
 
     private List<RawInstruction> instructions;
-    private Reference<Integer> dataOffset;
+    private Reference<Integer> staticDataOffset;
+    private int staticDataSize;
+    private Reference<Integer> dynamicDataOffset;
+    private List<String> stringsList;
+    private Map<String, Integer> stringsMap;
 }

@@ -26,11 +26,15 @@ public class StringType extends DataType implements ExpressionOwner {
     public StringType(Expression length) {
         this.lengthNode = length;
         length.setOwner(this);
-        this.lenghtValue = -1;
+        this.lengthValue = -1;
     }
 
     public StringType(int length) {
-        this.lenghtValue = length;
+        this.lengthValue = length;
+    }
+
+    public StringType() {
+        this.lengthValue = -1;
     }
 
     @Override
@@ -49,33 +53,41 @@ public class StringType extends DataType implements ExpressionOwner {
     public String getName() {
         try {
             int length = getStringLength();
-            return "STRING OF " + length;
+            if (length >= 0)
+                return "STRING OF " + length;
+            return "STRING";
         } catch (SyntaxError syntaxError) {
             return "STRING OF ?";
         }
     }
 
     public int getStringLength() throws SyntaxError {
-        if (lenghtValue < 0) {
+        if (lengthValue < 0 && lengthNode != null) {
             Object value = lengthNode.calculate();
             if (value instanceof Short)
-                lenghtValue = ((Short) value).intValue();
+                lengthValue = ((Short) value).intValue();
             else if (value instanceof Integer)
-                lenghtValue = (Integer) value;
+                lengthValue = (Integer) value;
             else
                 throw new StringLengthMustBeConstant(getFragment());
         }
-        return lenghtValue;
+        return lengthValue;
     }
 
     @Override
     public int getSize() throws SyntaxError {
-        return (1 + getStringLength()) * 2;
+        int length = getStringLength();
+        return length >= 0 ? (1 + length) * 2 : 0;
     }
 
     @Override
-    public boolean builtIn() {
-        return false;
+    public boolean isBuiltIn() {
+        return true;
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return lengthValue < 0 && lengthNode == null;
     }
 
     @Override
@@ -101,5 +113,5 @@ public class StringType extends DataType implements ExpressionOwner {
 
     private DataTypeOwner owner;
     private Expression lengthNode;
-    private int lenghtValue;
+    private int lengthValue;
 }

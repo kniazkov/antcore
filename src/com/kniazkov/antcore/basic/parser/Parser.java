@@ -555,10 +555,13 @@ public class Parser {
             String name = ((Identifier) first).getName();
             if (name.equals("STRING")) {
                 if (!iterator.hasNext())
+                    return new RawDataTypeString();
+                Token next = iterator.next();
+                if (!(next instanceof KeywordOf)) {
+                    if (next instanceof Comma)
+                        return new RawDataTypeString();
                     throw new ExpectedOfKeyword(line);
-                Token ofKeyword = iterator.next();
-                if (!(ofKeyword instanceof KeywordOf))
-                    throw new ExpectedOfKeyword(line);
+                }
                 TokenExpression length = parseExpression(line, iterator, false);
                 return new RawDataTypeString(length);
             }

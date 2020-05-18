@@ -16,7 +16,11 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecode.DataSelector;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
+import com.kniazkov.antcore.basic.bytecodebuilder.Load;
+import com.kniazkov.antcore.basic.bytecodebuilder.RawInstruction;
+import com.kniazkov.antcore.basic.common.SyntaxError;
 
 /**
  * The node represents a string constant
@@ -80,8 +84,10 @@ public class StringNode extends Expression {
     }
 
     @Override
-    public void load(CompilationUnit cu) {
-        assert(false);
+    public void load(CompilationUnit cu) throws SyntaxError {
+        RawInstruction load = new Load(DataSelector.GLOBAL,
+                type.getSize(), cu.getStaticDataOffset(), cu.getStringOffset(value));
+        cu.addInstruction(load);
     }
 
     private ExpressionOwner owner;

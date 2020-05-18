@@ -18,19 +18,18 @@ package com.kniazkov.antcore.basic.bytecodebuilder;
 
 import com.kniazkov.antcore.basic.bytecode.Instruction;
 import com.kniazkov.antcore.basic.bytecode.OpCode;
-import com.kniazkov.antcore.lib.Reference;
 
 /**
- * Return from function
+ * End of program
  */
-public class Return extends RawInstruction {
-    public Return() {
+public class End extends RawInstruction {
+    public End() {
     }
 
     @Override
     public Instruction generate() {
         Instruction i = new Instruction();
-        i.opcode = OpCode.RET;
+        i.opcode = OpCode.END;
         return i;
     }
 }

@@ -36,7 +36,12 @@ public abstract class DataType extends Node {
     /**
      * @return true if the type is built-it
      */
-    public abstract boolean builtIn();
+    public abstract boolean isBuiltIn();
+
+    /**
+     * @return true if the type is abstract
+     */
+    public abstract boolean isAbstract();
 
     /**
      * Set owner of the node

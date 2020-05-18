@@ -16,7 +16,6 @@
  */
 package com.kniazkov.antcore.basic.virtualmachine;
 
-import com.kniazkov.antcore.basic.bytecode.DataSelector;
 import com.kniazkov.antcore.lib.ByteList;
 
 /**
@@ -132,6 +131,10 @@ public class VirtualMachine {
         void exec();
     }
 
+    final static Unit stubUnit = () -> {
+
+    };
+
     final Unit[] units = {
             () -> { // 0 -> NOP
                 IP = IP + 16;
@@ -156,5 +159,130 @@ public class VirtualMachine {
                 add[read_p0()].exec();
                 IP = IP + 16;
             },
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit, // 10
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit, // 20
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit, // 30
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit, // 40
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit, // 50
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit, // 60
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit, // 70
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit, // 80
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit, // 90
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit, // 100
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit, // 110
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit, // 120
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            stubUnit,
+            () -> { // 127 -> END
+                power = false;
+            }
     };
 }

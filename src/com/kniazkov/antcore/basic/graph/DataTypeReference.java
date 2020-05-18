@@ -50,8 +50,13 @@ public class DataTypeReference extends DataType {
     }
 
     @Override
-    public boolean builtIn() {
-        return type.builtIn();
+    public boolean isBuiltIn() {
+        return type.isBuiltIn();
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return type.isAbstract();
     }
 
     @Override

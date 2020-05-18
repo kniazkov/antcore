@@ -25,18 +25,26 @@ import com.kniazkov.antcore.basic.parser.tokens.TokenExpression;
  * A data type represented as pointer to another type
  */
 public class RawDataTypeString extends RawDataType {
+    public RawDataTypeString() {
+        this.length = null;
+    }
+
     public RawDataTypeString(TokenExpression length) {
         this.length = length;
     }
 
     @Override
     public String getName() {
-        return "STRING OF " + length.toString();
+        if (length != null)
+            return "STRING OF " + length.toString();
+        return "STRING";
     }
 
     @Override
     public DataType toNode() {
-        return new StringType(length.toNode());
+        if (length != null)
+            return new StringType(length.toNode());
+        return new StringType();
     }
 
     private TokenExpression length;

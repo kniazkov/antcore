@@ -21,8 +21,13 @@ package com.kniazkov.antcore.basic.graph;
  */
 public abstract class BuiltInType extends DataType {
     @Override
-    public boolean builtIn() {
+    public boolean isBuiltIn() {
         return true;
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return false;
     }
 
     @Override

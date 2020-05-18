@@ -25,4 +25,5 @@ public final class OpCode {
     public static final byte STORE = 2;
     public static final byte RET = 3;
     public static final byte ADD = 4;
+    public static final byte END = 127;
 }

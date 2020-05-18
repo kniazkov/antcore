@@ -89,7 +89,7 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
 
         for (Map.Entry<String, DataType> entry : types.entrySet()) {
             DataType type = entry.getValue();
-            if (!type.builtIn()) {
+            if (!type.isBuiltIn()) {
                 if (flag)
                     buff.append("\n");
                 type.toSourceCode(buff, i, i0);

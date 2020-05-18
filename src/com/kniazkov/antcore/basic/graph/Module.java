@@ -17,6 +17,7 @@
 
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecodebuilder.End;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
@@ -188,6 +189,7 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
             throw new IncorrectFunctionMain(fragment);
         CompilationUnit unit = new CompilationUnit();
         mainFunction.compile(unit);
+        unit.addInstruction(new End());
         return new CompiledModule(executor, name, unit.getBytecode());
     }
 

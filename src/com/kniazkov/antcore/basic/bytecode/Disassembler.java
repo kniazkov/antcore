@@ -40,11 +40,15 @@ public class Disassembler {
         void decode(Instruction inst, StringBuilder buff);
     }
 
+    final static Decoder stub = (i, buff) -> {
+
+    };
+
     final static Decoder[] decoders = {
-            (i, buff) -> { // 0. NOP
+            (i, buff) -> { // 0 -> NOP
                 buff.append("NOP");
             },
-            (i, buff) -> { // 1. LOAD
+            (i, buff) -> { // 1 -> LOAD
                 buff.append("LOAD\t");
                 switch (i.p0) {
                     case DataSelector.GLOBAL:
@@ -57,24 +61,149 @@ public class Disassembler {
                         break;
                 }
             },
-            (i, buff) -> { // 2. STORE
+            (i, buff) -> { // 2 -> STORE
                 buff.append("STORE\t");
                 switch (i.p0) {
                     case DataSelector.GLOBAL:
-                        buff.append("GLOBAL\t").append(' ').append(i.x0).append("b, ").append(i.x1);
+                        buff.append("GLOBAL\t").append(' ').append(i.x0).append(", ").append(i.x1);
                         break;
                 }
             },
-            (i, buff) -> { // 3. RET
+            (i, buff) -> { // 3 -> RET
                 buff.append("RET");
             },
-            (i, buff) -> { // 4. ADD
+            (i, buff) -> { // 4 -> ADD
                 buff.append("ADD \t");
                 switch (i.p0) {
                     case TypeSelector.INTEGER:
                         buff.append("INT");
                         break;
                 }
+            },
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 10
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 20
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 30
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 40
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 50
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 60
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 70
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 80
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 90
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 100
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 110
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 120
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            (i, buff) -> { // 127 -> END
+                buff.append("END");
             },
     };
 }

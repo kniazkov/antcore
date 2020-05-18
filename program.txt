@@ -4,12 +4,9 @@
 
 MODULE SERVER
 	DATA
-		i AS INTEGER
-		j AS REAL
+		s AS STRING OF 7
 	END DATA
 	FUNCTION MAIN
-		i = 1
-		j = 1.001
-		'print("Hello, world")
+		s = "Antcore"
 	END FUNCTION
 END MODULE
