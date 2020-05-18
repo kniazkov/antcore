@@ -32,7 +32,7 @@ public class PushInteger extends RawInstruction {
     public Instruction generate() {
         Instruction i = new Instruction();
         i.opcode = OpCode.LOAD;
-        i.p0 = DataSelector.INSTRUCTION;
+        i.p0 = DataSelector.IMMEDIATE;
         i.x0 = 4;
         i.x1 = value;
         return i;

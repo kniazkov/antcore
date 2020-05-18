@@ -33,7 +33,7 @@ public class PushReal extends RawInstruction {
     public Instruction generate() {
         Instruction i = new Instruction();
         i.opcode = OpCode.LOAD;
-        i.p0 = DataSelector.INSTRUCTION;
+        i.p0 = DataSelector.IMMEDIATE;
         i.x0 = 8;
         long data = value.getFixedAsLong();
         i.x1 = (int)(data);

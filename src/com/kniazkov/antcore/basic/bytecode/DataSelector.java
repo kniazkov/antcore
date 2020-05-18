@@ -21,5 +21,5 @@ package com.kniazkov.antcore.basic.bytecode;
  */
 public final class DataSelector {
     public static final byte GLOBAL = 0;
-    public static final byte INSTRUCTION = 1;
+    public static final byte IMMEDIATE = 1;
 }

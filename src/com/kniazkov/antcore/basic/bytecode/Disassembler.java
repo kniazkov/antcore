@@ -18,39 +18,63 @@ package com.kniazkov.antcore.basic.bytecode;
 
 import com.kniazkov.antcore.lib.ByteList;
 
+import java.lang.reflect.Type;
+
 /**
  * The disassembler for bytecode
  */
 public class Disassembler {
     public static String convert(ByteList bytecode) {
         int size = bytecode.size();
-        Instruction code = new Instruction();
-        StringBuilder builder = new StringBuilder();
+        Instruction inst = new Instruction();
+        StringBuilder buff = new StringBuilder();
         for (int index = 0; index < size; index = index + 16) {
-            code.read(bytecode, index);
-            switch (code.opcode) {
-                case OpCode.LOAD:
-                    builder.append("LOAD")
-                            .append('\t').append((int)code.p0).append(' ')
-                            .append('\t').append(code.x0).append(' ').append(code.x1).append(' ').append('\n');
-                    break;
-                case OpCode.STORE:
-                    builder.append("STORE")
-                            .append('\t').append((int)code.p0).append(' ')
-                            .append('\t').append(code.x0).append(' ').append(code.x1).append(' ').append('\n');
-                    break;
-                case OpCode.RET:
-                    builder.append("RET").append('\n');
-                    break;
-                case OpCode.ADD:
-                    builder.append("ADD ").append('\t').append(code.p0).append('\n');
-                    break;
-                default:
-                    builder.append(code.opcode)
-                            .append('\t').append((int)code.p0).append(' ').append((int)code.p1).append(' ').append((int)code.p2)
-                            .append('\t').append(code.x0).append(' ').append(code.x1).append(' ').append(code.x2).append('\n');
-            }
+            inst.read(bytecode, index);
+            decoders[inst.opcode].decode(inst, buff);
+            buff.append('\n');
         }
-        return builder.toString();
+        return buff.toString();
     }
+
+    interface Decoder {
+        void decode(Instruction inst, StringBuilder buff);
+    }
+
+    final static Decoder[] decoders = {
+            (i, buff) -> { // 0. NOP
+                buff.append("NOP");
+            },
+            (i, buff) -> { // 1. LOAD
+                buff.append("LOAD\t");
+                switch (i.p0) {
+                    case DataSelector.GLOBAL:
+                        buff.append("GLOBAL\t").append(' ').append(i.x0).append(", ").append(i.x1);
+                        break;
+                    case DataSelector.IMMEDIATE:
+                        buff.append("VAL \t").append(' ').append(i.x0).append(", ").append(i.x1);
+                        if (i.x0 > 4)
+                            buff.append(", ").append(i.x2);
+                        break;
+                }
+            },
+            (i, buff) -> { // 2. STORE
+                buff.append("STORE\t");
+                switch (i.p0) {
+                    case DataSelector.GLOBAL:
+                        buff.append("GLOBAL\t").append(' ').append(i.x0).append("b, ").append(i.x1);
+                        break;
+                }
+            },
+            (i, buff) -> { // 3. RET
+                buff.append("RET");
+            },
+            (i, buff) -> { // 4. ADD
+                buff.append("ADD \t");
+                switch (i.p0) {
+                    case TypeSelector.INTEGER:
+                        buff.append("INT");
+                        break;
+                }
+            },
+    };
 }
