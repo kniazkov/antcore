@@ -17,15 +17,14 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.common.SyntaxError;
-import com.kniazkov.antcore.basic.exceptions.UnknownType;
 
 /**
- * The reference to data type
+ * The constant modifier for data type
  */
-public class DataTypeReference extends DataType {
-    public DataTypeReference(String name, DataType type) {
-        this.name = name;
+public class ConstantModifier extends DataType implements DataTypeOwner {
+    public ConstantModifier(DataType type) {
         this.type = type;
+        type.setOwner(this);
     }
 
     @Override
@@ -33,15 +32,15 @@ public class DataTypeReference extends DataType {
         visitor.visit(this);
     }
 
-    void setOwner(DataTypeOwner owner) {
-        this.owner = owner;
+    @Override
+    public void dfs(NodeVisitor visitor) throws SyntaxError {
+        type.dfs(visitor);
+        accept(visitor);
     }
 
     @Override
     public String getName() {
-        if (type != null)
-            return type.getName();
-        return name;
+        return "CONST " + type.getName();
     }
 
     @Override
@@ -51,7 +50,7 @@ public class DataTypeReference extends DataType {
 
     @Override
     public boolean isBuiltIn() {
-        return type.isBuiltIn();
+        return true;
     }
 
     @Override
@@ -61,7 +60,12 @@ public class DataTypeReference extends DataType {
 
     @Override
     public boolean isConstant() {
-        return type.isConstant();
+        return true;
+    }
+
+    @Override
+    void setOwner(DataTypeOwner owner) {
+        this.owner = owner;
     }
 
     @Override
@@ -70,27 +74,14 @@ public class DataTypeReference extends DataType {
     }
 
     @Override
-    public DataType getPureType() {
-        return type;
-    }
-
-    /**
-     * Bind data type by name
-     */
-    void bindType() throws SyntaxError {
-        if (type != null)
-            return;
-        type = findTypeByName(name);
-        if (type == null)
-            throw new UnknownType(getFragment(), name);
-    }
-
-    @Override
     public boolean canBeCastTo(DataType otherType) throws SyntaxError {
+        if (otherType instanceof ConstantModifier) {
+            ConstantModifier otherTypePointer = (ConstantModifier) otherType;
+            return type.canBeCastTo(otherTypePointer.type);
+        }
         return type.canBeCastTo(otherType);
     }
 
     private DataTypeOwner owner;
-    private String name;
     private DataType type;
 }

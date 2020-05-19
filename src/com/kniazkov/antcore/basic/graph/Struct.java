@@ -55,6 +55,11 @@ public class Struct extends DataType implements DataSetOwner {
     }
 
     @Override
+    public boolean isConstant() {
+        return false;
+    }
+
+    @Override
     public boolean isBuiltIn() {
         return false;
     }

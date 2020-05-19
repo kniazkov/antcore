@@ -50,11 +50,16 @@ public class Pointer extends DataType implements DataTypeOwner {
 
     @Override
     public boolean isBuiltIn() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAbstract() {
+        return false;
+    }
+
+    @Override
+    public boolean isConstant() {
         return false;
     }
 

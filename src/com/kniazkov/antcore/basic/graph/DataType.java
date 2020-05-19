@@ -44,6 +44,11 @@ public abstract class DataType extends Node {
     public abstract boolean isAbstract();
 
     /**
+     * @return true if the type is constant (immutable)
+     */
+    public abstract boolean isConstant();
+
+    /**
      * Set owner of the node
      * @param owner owner
      */

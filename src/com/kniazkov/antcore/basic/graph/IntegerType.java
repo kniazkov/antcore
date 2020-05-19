@@ -33,6 +33,11 @@ public class IntegerType extends BuiltInType {
     }
 
     @Override
+    public boolean isConstant() {
+        return false;
+    }
+
+    @Override
     public boolean canBeCastTo(DataType otherType) throws SyntaxError {
         return this == otherType || otherType instanceof RealType;
     }

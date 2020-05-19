@@ -33,7 +33,7 @@ public class StringNode extends Expression {
     @Override
     public DataType getType() {
         if (type == null)
-            type = new StringType(value.length());
+            type = new ConstantModifier(new StringType(value.length()));
         return type;
     }
 

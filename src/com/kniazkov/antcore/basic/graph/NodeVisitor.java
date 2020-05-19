@@ -34,6 +34,8 @@ public abstract class NodeVisitor {
     }
     public void visit(ConstantList obj) throws SyntaxError {
     }
+    public void visit(ConstantModifier obj) throws SyntaxError {
+    }
     public void visit(DataSet obj) throws SyntaxError {
     }
     public void visit(DataTypeReference obj) throws SyntaxError {
