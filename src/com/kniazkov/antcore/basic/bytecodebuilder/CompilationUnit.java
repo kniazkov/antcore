@@ -50,18 +50,32 @@ public class CompilationUnit {
         int count = instructions.size();
         int size = count * 16 + staticDataSize;
         byte[] buff = new byte[size];
+
+        // code
         for (int k = 0; k < count; k++) {
             instructions.get(k).generate().write(buff, k * 16);
         }
+
+        // strings
         for (String string : stringsList) {
             int index = stringsMap.get(string) + staticDataOffset.value;
-            for (int k = 0, length = string.length(); k < length; k++) {
+            int length = string.length();
+            // current length
+            buff[index] =      (byte)(length);
+            buff[index + 1] =  (byte)(length >> 8);
+            buff[index + 2] =  (byte)(length >> 16);
+            buff[index + 3] =  (byte)(length >> 24);
+            // capacity, the same as length
+            buff[index + 4] =  buff[index];
+            buff[index + 5] =  buff[index + 1];
+            buff[index + 6] =  buff[index + 2];
+            buff[index + 7] =  buff[index + 3];
+            // data
+            for (int k = 0; k < length; k++) {
                 char ch = string.charAt(k);
-                buff[index++] = (byte) (ch & 0xff);
-                buff[index++] = (byte) (ch >> 8);
+                buff[index + 8 + k * 2] = (byte) (ch & 0xff);
+                buff[index + 8 + k * 2 + 1] = (byte) (ch >> 8);
             }
-            buff[index++] = 0;
-            buff[index] = 0;
         }
         return new ByteArrayWrapper(buff);
     }
@@ -82,7 +96,7 @@ public class CompilationUnit {
         if (stringsMap.containsKey(string))
             return stringsMap.get(string);
         int offset = staticDataSize;
-        staticDataSize += (string.length() + 1) * 2;
+        staticDataSize += string.length() * 2 + 8;
         stringsList.add(string);
         stringsMap.put(string, offset);
         updateOffsets();

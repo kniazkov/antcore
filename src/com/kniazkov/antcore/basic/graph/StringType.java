@@ -78,7 +78,8 @@ public class StringType extends DataType implements ExpressionOwner {
     @Override
     public int getSize() throws SyntaxError {
         int length = getStringLength();
-        return length >= 0 ? (1 + length) * 2 : 0;
+        // 2 bytes for each symbol + 4 bytes (INTEGER) for current length + 4 bytes (INTEGER) for capacity
+        return length >= 0 ? length * 2 + 8 : 0;
     }
 
     @Override

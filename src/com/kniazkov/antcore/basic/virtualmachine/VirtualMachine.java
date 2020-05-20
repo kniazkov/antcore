@@ -46,6 +46,33 @@ public class VirtualMachine {
     int IP;
     int SP;
 
+    final int readInteger(int address) {
+        return (int)(memory[address]) + ((int)(memory[address + 1]) << 8)
+                + ((int)(memory[address + 2]) << 16) + ((int)(memory[address + 3]) << 24);
+    }
+
+    final void writeInteger(int address, int value) {
+        memory[address] =  (byte)(value);
+        memory[address + 1] =  (byte)(value >> 8);
+        memory[address + 2] =  (byte)(value >> 16);
+        memory[address + 3] =  (byte)(value >> 24);
+    }
+
+    final StringData readString(int address) {
+        StringData string = new StringData();
+        string.length = readInteger(address);
+        string.capacity = readInteger(address + 4);
+        string.data = new byte[string.length * 2];
+        System.arraycopy(memory, address + 8, string.data, 0, string.length * 2);
+        return string;
+    }
+
+    final void writeString(int address, StringData string) {
+        writeInteger(address, string.length);
+        writeInteger(address + 4, string.capacity);
+        System.arraycopy(string.data, 0, memory, address + 8, string.length);
+    }
+
     final byte readOpcode() {
         return memory[IP];
     }
@@ -63,18 +90,15 @@ public class VirtualMachine {
     }
 
     final int read_x0() {
-        return (int)(memory[IP + 4]) + ((int)(memory[IP + 5]) << 8)
-                + ((int)(memory[IP + 6]) << 16) + ((int)(memory[IP + 7]) << 24);
+        return readInteger(IP + 4);
     }
 
     final int read_x1() {
-        return (int)(memory[IP + 8]) + ((int)(memory[IP + 9]) << 8)
-                + ((int)(memory[IP + 10]) << 16) + ((int)(memory[IP + 11]) << 24);
+        return readInteger(IP + 8);
     }
 
     final int read_x2() {
-        return (int)(memory[IP + 12]) + ((int)(memory[IP + 13]) << 8)
-                + ((int)(memory[IP + 14]) << 16) + ((int)(memory[IP + 15]) << 24);
+        return readInteger(IP + 12);
     }
 
     final void move(int fromPos, int toPos, int size) {
@@ -83,15 +107,11 @@ public class VirtualMachine {
 
     final void pushInteger(int value) {
         SP = SP - 4;
-        memory[SP] =      (byte)(value);
-        memory[SP + 1] =  (byte)(value >> 8);
-        memory[SP + 2] =  (byte)(value >> 16);
-        memory[SP + 3] =  (byte)(value >> 24);
+        writeInteger(SP, value);
     }
 
     final int popInteger() {
-        int value = (int)(memory[SP]) + ((int)(memory[SP + 1]) << 8)
-                + ((int)(memory[SP + 2]) << 16) + ((int)(memory[SP + 3]) << 24);
+        int value = readInteger(SP);
         SP = SP + 4;
         return value;
     }
@@ -142,19 +162,21 @@ public class VirtualMachine {
                 int newSize = read_x1();
                 if (newSize > currSize) {
                     int diff = newSize - currSize;
+                    assert(diff % 2 == 0);
+                    StringData string = readString(SP);
                     SP = SP - diff;
-                    for (int k = 0; k < currSize; k++) {
-                        memory[SP + k] = memory[SP + k + diff];
-                    }
+                    string.capacity += diff / 2;
+                    writeString(SP, string);
                 }
                 else if (currSize > newSize) {
                     int diff = currSize - newSize;
-                    for (int k = newSize - 3; k >= 0; k--) {
-                        memory[SP + k + diff] = memory[SP + k];
-                    }
-                    memory[SP + diff + newSize - 1] = 0;
-                    memory[SP + diff + newSize - 2] = 0;
+                    assert(diff % 2 == 0);
+                    StringData string = readString(SP);
                     SP = SP + diff;
+                    string.capacity -= diff / 2;
+                    if (string.length > string.capacity)
+                        string.length = string.capacity;
+                    writeString(SP, string);
                 }
             },
             stub,   // 9 -> ARRAY
