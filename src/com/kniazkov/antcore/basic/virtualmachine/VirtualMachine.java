@@ -34,6 +34,7 @@ public class VirtualMachine {
         IP = 0;
         SP = memory.length;
         power = true;
+        error = ErrorCode.OK;
         while(power) {
             units[readOpcode()].exec();
         }
@@ -41,6 +42,7 @@ public class VirtualMachine {
 
     byte[] memory;
     boolean power;
+    ErrorCode error;
     int IP;
     int SP;
 
@@ -94,6 +96,15 @@ public class VirtualMachine {
         return value;
     }
 
+    interface Unit {
+        void exec();
+    }
+
+    final Unit stub = () -> {
+        power = false;
+        error = ErrorCode.BAD_INSTRUCTION;
+    };
+    
     interface Load {
         void exec(int size);
     }
@@ -117,22 +128,69 @@ public class VirtualMachine {
             },
     };
 
-    interface Add {
-        void exec();
-    }
-
-    final Add[] add = {
-            () -> { // 0 -> INTEGER
-                pushInteger(popInteger() + popInteger());
+    final Unit[] castToString = {
+            stub,
+            stub,   // 1 -> POINTER
+            stub,   // 2 -> BOOLEAN
+            stub,   // 3 -> BYTE
+            stub,   // 4 -> SHORT
+            stub,   // 5 -> INTEGER
+            stub,   // 6 -> LONG
+            stub,   // 7 -> REAL
+            () -> { // 8 -> STRING
+                int currSize = read_x0();
+                int newSize = read_x1();
+                if (newSize > currSize) {
+                    int diff = newSize - currSize;
+                    SP = SP - diff;
+                    for (int k = 0; k < currSize; k++) {
+                        memory[SP + k] = memory[SP + k + diff];
+                    }
+                }
+                else if (currSize > newSize) {
+                    int diff = currSize - newSize;
+                    for (int k = newSize - 3; k >= 0; k--) {
+                        memory[SP + k + diff] = memory[SP + k];
+                    }
+                    memory[SP + diff + newSize - 1] = 0;
+                    memory[SP + diff + newSize - 2] = 0;
+                    SP = SP + diff;
+                }
             },
+            stub,   // 9 -> ARRAY
+            stub    // 10 -> STRUCT
     };
 
-    interface Unit {
-        void exec();
-    }
+    final Unit[] cast = {
+            stub,
+            stub,   // 1 -> POINTER
+            stub,   // 2 -> BOOLEAN
+            stub,   // 3 -> BYTE
+            stub,   // 4 -> SHORT
+            stub,   // 5 -> INTEGER
+            stub,   // 6 -> LONG
+            stub,   // 7 -> REAL
+            () -> { // 8 -> STRING
+                castToString[read_p0()].exec();
+            },
+            stub,   // 9 -> ARRAY
+            stub    // 10 -> STRUCT
+    };
 
-    final static Unit stubUnit = () -> {
-
+    final Unit[] add = {
+            stub,
+            stub,   // 1 -> POINTER
+            stub,   // 2 -> BOOLEAN
+            stub,   // 3 -> BYTE
+            stub,   // 4 -> SHORT
+            () -> { // 5 -> INTEGER
+                pushInteger(popInteger() + popInteger());
+            },
+            stub,   // 6 -> LONG
+            stub,   // 7 -> REAL
+            stub,   // 8 -> STRING
+            stub,   // 9 -> ARRAY
+            stub    // 10 -> STRUCT
     };
 
     final Unit[] units = {
@@ -151,136 +209,139 @@ public class VirtualMachine {
                 SP = SP + size;
                 IP = IP + 16;
             },
-            () -> { // 3 -> RET
+            () -> { // 3 -> CAST
+                cast[read_p1()].exec();
+                IP = IP + 16;
+            },
+            () -> { // 4 -> RET
                 power = false;
                 IP = IP + 16;
             },
-            () -> { // 4 -> ADD
+            () -> { // 5 -> ADD
                 add[read_p0()].exec();
                 IP = IP + 16;
             },
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit, // 10
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit, // 20
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit, // 30
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit, // 40
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit, // 50
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit, // 60
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit, // 70
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit, // 80
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit, // 90
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit, // 100
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit, // 110
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit, // 120
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
-            stubUnit,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 10
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 20
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 30
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 40
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 50
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 60
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 70
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 80
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 90
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 100
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 110
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub, // 120
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
+            stub,
             () -> { // 127 -> END
                 power = false;
             }

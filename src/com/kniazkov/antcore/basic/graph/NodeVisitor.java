@@ -30,6 +30,8 @@ public abstract class NodeVisitor {
     }
     public void visit(BinaryOperation obj) throws SyntaxError {
     }
+    public void visit(Casting obj) throws SyntaxError {
+    }
     public void visit(Constant obj) throws SyntaxError {
     }
     public void visit(ConstantList obj) throws SyntaxError {

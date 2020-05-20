@@ -40,16 +40,6 @@ public class RealNode extends Expression {
     }
 
     @Override
-    void setOwner(ExpressionOwner owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public Node getOwner() {
-        return (Node)owner;
-    }
-
-    @Override
     public void toDeclarationSourceCode(StringBuilder buff, String i) {
         buff.append(value);
     }
@@ -64,6 +54,5 @@ public class RealNode extends Expression {
         cu.addInstruction(new PushReal(value));
     }
 
-    private ExpressionOwner owner;
     private FixedPoint value;
 }

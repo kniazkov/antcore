@@ -50,16 +50,6 @@ public abstract class BinaryOperation extends Expression implements ExpressionOw
         this.type = type;
     }
 
-    @Override
-    void setOwner(ExpressionOwner owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public Node getOwner() {
-        return (Node)owner;
-    }
-
     protected abstract String getOperator();
     abstract void defineType() throws SyntaxError;
 
@@ -76,7 +66,6 @@ public abstract class BinaryOperation extends Expression implements ExpressionOw
     }
 
     private DataType type;
-    private ExpressionOwner owner;
     protected Expression left;
     protected Expression right;
 }

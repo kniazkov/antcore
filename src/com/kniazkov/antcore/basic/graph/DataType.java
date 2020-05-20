@@ -34,6 +34,11 @@ public abstract class DataType extends Node {
     public abstract int getSize() throws SyntaxError;
 
     /**
+     * @return type selector for bytecode instruction
+     */
+    public abstract byte getSelector();
+
+    /**
      * @return true if the type is built-it
      */
     public abstract boolean isBuiltIn();
@@ -72,8 +77,24 @@ public abstract class DataType extends Node {
     }
 
     /**
-     * @param type another type
-     * @return true if the type can be cast to another
+     * Check for binary match
+     * @param otherType another type
+     * @return return true if expression of another type can be copied to memory region
+     *   prepared for this type without any transformation
      */
-    public abstract boolean canBeCastTo(DataType type) throws SyntaxError;
+    public abstract boolean isBinaryAnalog(DataType otherType) throws SyntaxError;
+
+    /**
+     * Tries to perform a static casting of an expression to this type
+     * @param expression a static expression
+     * @return another static expression casted to this type, or null if cannot cast
+     */
+    public abstract Expression staticCast(Expression expression) throws SyntaxError;
+
+    /**
+     * Tries to perform a dynamic casting of an expression to this type
+     * @param expression an expression
+     * @return another expression casted to this type, or null if cannot cast
+     */
+    public abstract Expression dynamicCast(Expression expression) throws SyntaxError;
 }

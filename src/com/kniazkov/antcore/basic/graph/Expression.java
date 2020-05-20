@@ -37,7 +37,14 @@ public abstract class Expression extends Node {
      * Set owner of the node
      * @param owner owner
      */
-    abstract void setOwner(ExpressionOwner owner);
+    void setOwner(ExpressionOwner owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public Node getOwner() {
+        return (Node)owner;
+    }
 
     @Override
     public void toSourceCode(StringBuilder buff, String i, String i0) {
@@ -80,4 +87,6 @@ public abstract class Expression extends Node {
      * @param cu the compilation unit
      */
     public abstract void load(CompilationUnit cu) throws SyntaxError;
+
+    private ExpressionOwner owner;
 }

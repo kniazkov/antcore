@@ -16,6 +16,7 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
 /**
@@ -33,14 +34,34 @@ public class IntegerType extends BuiltInType {
     }
 
     @Override
+    public byte getSelector() {
+        return TypeSelector.INTEGER;
+    }
+
+    @Override
     public boolean isConstant() {
         return false;
     }
 
     @Override
-    public boolean canBeCastTo(DataType otherType) throws SyntaxError {
-        return this == otherType || otherType instanceof RealType;
+    public boolean isBinaryAnalog(DataType otherType) throws SyntaxError {
+        return otherType == this;
     }
+
+    @Override
+    public Expression staticCast(Expression expression) throws SyntaxError {
+        if (expression.getType().getPureType() == this)
+            return expression;
+        return null;
+    }
+
+    @Override
+    public Expression dynamicCast(Expression expression) throws SyntaxError {
+        if (expression.getType().getPureType() == this)
+            return expression;
+        return null;
+    }
+
 
     private IntegerType() {
     }

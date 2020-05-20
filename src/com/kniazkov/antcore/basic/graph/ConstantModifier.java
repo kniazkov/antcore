@@ -49,6 +49,11 @@ public class ConstantModifier extends DataType implements DataTypeOwner {
     }
 
     @Override
+    public byte getSelector() {
+        return type.getSelector();
+    }
+
+    @Override
     public boolean isBuiltIn() {
         return true;
     }
@@ -69,17 +74,28 @@ public class ConstantModifier extends DataType implements DataTypeOwner {
     }
 
     @Override
-    public Node getOwner() {
-        return (Node)owner;
+    public DataType getPureType() {
+        return type;
     }
 
     @Override
-    public boolean canBeCastTo(DataType otherType) throws SyntaxError {
-        if (otherType instanceof ConstantModifier) {
-            ConstantModifier otherTypePointer = (ConstantModifier) otherType;
-            return type.canBeCastTo(otherTypePointer.type);
-        }
-        return type.canBeCastTo(otherType);
+    public boolean isBinaryAnalog(DataType otherType) throws SyntaxError {
+        return type.isBinaryAnalog(otherType);
+    }
+
+    @Override
+    public Expression staticCast(Expression expression) throws SyntaxError {
+        return type.staticCast(expression);
+    }
+
+    @Override
+    public Expression dynamicCast(Expression expression) throws SyntaxError {
+        return type.dynamicCast(expression);
+    }
+
+    @Override
+    public Node getOwner() {
+        return (Node)owner;
     }
 
     private DataTypeOwner owner;

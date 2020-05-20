@@ -17,29 +17,40 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecode.DataSelector;
+import com.kniazkov.antcore.basic.bytecodebuilder.Cast;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
-import com.kniazkov.antcore.basic.bytecodebuilder.Load;
-import com.kniazkov.antcore.basic.bytecodebuilder.RawInstruction;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
 /**
- * The node represents a string constant
+ * Expression casted to other type
  */
-public class StringNode extends Expression {
-    public StringNode(String value) {
-        this.value = value;
+public class Casting extends Expression implements ExpressionOwner, DataTypeOwner {
+    public Casting(boolean implicit, Expression expression, DataType newType) {
+        this.implicit = implicit;
+        this.expression = expression;
+        this.newType = newType;
+    }
+
+    @Override
+    public void accept(NodeVisitor visitor) throws SyntaxError {
+        visitor.visit(this);
+    }
+
+    @Override
+    public void dfs(NodeVisitor visitor) throws SyntaxError {
+        expression.dfs(visitor);
+        newType.dfs(visitor);
+        accept(visitor);
     }
 
     @Override
     public DataType getType() {
-        if (type == null)
-            type = new ConstantModifier(new StringType(value.length()));
-        return type;
+        return newType;
     }
 
     @Override
     public Object calculate() {
-        return value;
+        return expression.calculate();
     }
 
     @Override
@@ -49,37 +60,25 @@ public class StringNode extends Expression {
 
     @Override
     public void toUsageSourceCode(StringBuilder buff) {
-        boolean flag = true;
-        buff.append('"');
-        for (int i = 0, length = value.length(); i < length; i++) {
-            char c = value.charAt(i);
-            if (c < 32) {
-                if (flag) {
-                    buff.append('"');
-                    flag = false;
-                }
-                buff.append(" + CHR(").append(Integer.valueOf(c)).append(')');
-            }
-            else {
-                if (!flag) {
-                    buff.append(" + \"");
-                }
-                if (c == '"')
-                    buff.append('"');
-                buff.append(c);
-            }
+        if (implicit)
+            expression.toUsageSourceCode(buff);
+        else {
+            buff.append("CAST(");
+            expression.toUsageSourceCode(buff);
+            buff.append(", ").append(newType.toString()).append(')');
         }
-        if (flag)
-            buff.append('"');
     }
 
     @Override
     public void load(CompilationUnit cu) throws SyntaxError {
-        RawInstruction load = new Load(DataSelector.GLOBAL,
-                type.getSize(), cu.getStaticDataOffset(), cu.getStringOffset(value));
-        cu.addInstruction(load);
+        expression.load(cu);
+        DataType currentType = expression.getType();
+        Cast cast = new Cast(currentType.getSelector(), currentType.getSize(),
+                newType.getSelector(), newType.getSize());
+        cu.addInstruction(cast);
     }
 
-    private String value;
-    private DataType type;
+    private boolean implicit;
+    private Expression expression;
+    private DataType newType;
 }

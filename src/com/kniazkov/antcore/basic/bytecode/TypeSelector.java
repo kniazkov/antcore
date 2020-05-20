@@ -20,5 +20,41 @@ package com.kniazkov.antcore.basic.bytecode;
  * The list of type selectors
  */
 public final class TypeSelector {
-    public static final byte INTEGER = 0;
+    public static final byte UNKNOWN = 0;
+    public static final byte POINTER = 1;
+    public static final byte BOOLEAN = 2;
+    public static final byte BYTE = 3;
+    public static final byte SHORT = 4;
+    public static final byte INTEGER = 5;
+    public static final byte LONG = 6;
+    public static final byte REAL = 7;
+    public static final byte STRING = 8;
+    public static final byte ARRAY = 9;
+    public static final byte STRUCT = 10;
+
+    public static String toString(byte selector) {
+        switch(selector) {
+            case POINTER:
+                return "PTR";
+            case BOOLEAN:
+                return "BOOL";
+            case BYTE:
+                return "BYTE";
+            case SHORT:
+                return "SHORT";
+            case INTEGER:
+                return "INT";
+            case LONG:
+                return "LONG";
+            case REAL:
+                return "REAL";
+            case STRING:
+                return "STRING";
+            case ARRAY:
+                return "ARRAY";
+            case STRUCT:
+                return "STRUCT";
+        }
+        return "?";
+    }
 }

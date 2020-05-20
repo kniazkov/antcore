@@ -16,6 +16,7 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.exceptions.StringLengthMustBeConstant;
 
@@ -81,6 +82,11 @@ public class StringType extends DataType implements ExpressionOwner {
     }
 
     @Override
+    public byte getSelector() {
+        return TypeSelector.STRING;
+    }
+
+    @Override
     public boolean isBuiltIn() {
         return true;
     }
@@ -101,14 +107,37 @@ public class StringType extends DataType implements ExpressionOwner {
     }
 
     @Override
-    public boolean canBeCastTo(DataType type) throws SyntaxError {
-        if (type instanceof StringType) {
-            StringType otherStringType = (StringType) type;
-            int thisLength = getStringLength();
-            int otherLength = otherStringType.getStringLength();
-            return otherLength >= thisLength;
+    public boolean isBinaryAnalog(DataType otherType) throws SyntaxError {
+        if (otherType instanceof StringType) {
+            StringType otherTypeString = (StringType)otherType;
+            return this.getStringLength() == otherTypeString.getStringLength();
         }
         return false;
+    }
+
+    @Override
+    public Expression staticCast(Expression expression) throws SyntaxError {
+        DataType otherType = expression.getType().getPureType();
+        if (otherType instanceof StringType) {
+            StringType otherTypeString = (StringType)otherType;
+            int thisLength = this.getStringLength();
+            int otherLength = otherTypeString.getStringLength();
+            if (thisLength >= otherLength)
+                return expression;
+            String data = (String) expression.calculate();
+            if (data == null)
+                return null;
+            return new StringNode(data.substring(0, thisLength));
+        }
+        return null;
+    }
+
+    @Override
+    public Expression dynamicCast(Expression expression) {
+        DataType otherType = expression.getType().getPureType();
+        if (otherType instanceof StringType)
+            return new Casting(true, expression, this);
+        return null;
     }
 
     @Override

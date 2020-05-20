@@ -31,7 +31,7 @@ public class ByteArrayWrapper implements ByteList {
 
     @Override
     public byte get(int index) throws IndexOutOfBoundsException {
-        return index >= 0 && index <= array.length ? array[index] : 0;
+        return index >= 0 && index < array.length ? array[index] : 0;
     }
 
     @Override

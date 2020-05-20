@@ -58,12 +58,16 @@ public class Assignment extends Statement implements ExpressionOwner {
      * Check data type or inference it
      */
     void checkType() throws SyntaxError {
-        if (!right.getType().getPureType().canBeCastTo(left.getType().getPureType()))
-            throw new IncompatibleTypes(getFragment(), right.getType().getName(), left.getType().getName());
+        DataType leftType = left.getType().getPureType();
+        DataType rightType = right.getType().getPureType();
+        if (!leftType.isBinaryAnalog(rightType)) {
+            Expression cast = leftType.dynamicCast(right);
+            if (cast == null)
+                throw new IncompatibleTypes(getFragment(), right.getType().getName(), left.getType().getName());
+            right = cast;
+            cast.setOwner(this);
+        }
     }
-
-    private Expression left;
-    private Expression right;
 
     @Override
     public void compile(CompilationUnit cu) throws SyntaxError {
@@ -73,4 +77,7 @@ public class Assignment extends Statement implements ExpressionOwner {
         right.load(cu);
         assignableExpression.store(cu);
     }
+
+    private Expression left;
+    private Expression right;
 }

@@ -44,15 +44,6 @@ public class VariableReference extends Expression implements ExpressionOwner {
         return expression.calculate();
     }
 
-    void setOwner(ExpressionOwner owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public Node getOwner() {
-        return (Node)owner;
-    }
-
     @Override
     public void toDeclarationSourceCode(StringBuilder buff, String i) {
         toUsageSourceCode(buff);
@@ -87,7 +78,6 @@ public class VariableReference extends Expression implements ExpressionOwner {
         expression.load(cu);
     }
 
-    private ExpressionOwner owner;
     private String name;
     private Expression expression;
 }

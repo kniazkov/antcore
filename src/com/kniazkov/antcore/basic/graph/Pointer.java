@@ -16,6 +16,7 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
 /**
@@ -49,6 +50,11 @@ public class Pointer extends DataType implements DataTypeOwner {
     }
 
     @Override
+    public byte getSelector() {
+        return TypeSelector.POINTER;
+    }
+
+    @Override
     public boolean isBuiltIn() {
         return true;
     }
@@ -69,17 +75,32 @@ public class Pointer extends DataType implements DataTypeOwner {
     }
 
     @Override
-    public Node getOwner() {
-        return (Node)owner;
+    public boolean isBinaryAnalog(DataType otherType) throws SyntaxError {
+        if (otherType instanceof Pointer) {
+            Pointer otherPointerType = (Pointer)otherType;
+            return this.type.isBinaryAnalog(otherPointerType.type);
+        }
+        return false;
     }
 
     @Override
-    public boolean canBeCastTo(DataType otherType) throws SyntaxError {
+    public Expression staticCast(Expression expression) {
+        return null;
+    }
+
+    @Override
+    public Expression dynamicCast(Expression expression) throws SyntaxError {
+        DataType otherType = expression.getType().getPureType();
         if (otherType instanceof Pointer) {
-            Pointer otherTypePointer = (Pointer) otherType;
-            return type.canBeCastTo(otherTypePointer.type);
+            if (type.isBinaryAnalog(((Pointer) otherType).type))
+                return expression;
         }
-        return false;
+        return null;
+    }
+
+    @Override
+    public Node getOwner() {
+        return (Node)owner;
     }
 
     private DataTypeOwner owner;

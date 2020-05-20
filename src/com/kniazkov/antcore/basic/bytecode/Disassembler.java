@@ -69,18 +69,16 @@ public class Disassembler {
                         break;
                 }
             },
-            (i, buff) -> { // 3 -> RET
+            (i, buff) -> { // 3 -> CAST
+                buff.append("CAST \t").append(TypeSelector.toString(i.p0)).append(" ").append(i.x0).append(" -> ")
+                        .append(TypeSelector.toString(i.p1)).append(" ").append(i.x1);
+            },
+            (i, buff) -> { // 4 -> RET
                 buff.append("RET");
             },
-            (i, buff) -> { // 4 -> ADD
-                buff.append("ADD \t");
-                switch (i.p0) {
-                    case TypeSelector.INTEGER:
-                        buff.append("INT");
-                        break;
-                }
+            (i, buff) -> { // 5 -> ADD
+                buff.append("ADD \t").append(TypeSelector.toString(i.p0));
             },
-            stub,
             stub,
             stub,
             stub,

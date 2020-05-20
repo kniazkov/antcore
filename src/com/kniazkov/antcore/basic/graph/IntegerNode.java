@@ -38,16 +38,6 @@ public class IntegerNode extends Expression {
     }
 
     @Override
-    void setOwner(ExpressionOwner owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public Node getOwner() {
-        return (Node)owner;
-    }
-
-    @Override
     public void toDeclarationSourceCode(StringBuilder buff, String i) {
         buff.append(value);
     }
@@ -62,6 +52,5 @@ public class IntegerNode extends Expression {
         cu.addInstruction(new PushInteger(value));
     }
 
-    private ExpressionOwner owner;
     private int value;
 }

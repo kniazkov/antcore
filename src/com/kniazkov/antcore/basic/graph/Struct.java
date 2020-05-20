@@ -16,6 +16,7 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.common.DataPrefix;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
@@ -52,6 +53,11 @@ public class Struct extends DataType implements DataSetOwner {
     @Override
     public int getSize() throws SyntaxError {
         return dataSet.getSize();
+    }
+
+    @Override
+    public byte getSelector() {
+        return TypeSelector.STRUCT;
     }
 
     @Override
@@ -95,9 +101,22 @@ public class Struct extends DataType implements DataSetOwner {
     }
 
     @Override
-    public boolean canBeCastTo(DataType otherType) throws SyntaxError {
-        return this == otherType;
+    public boolean isBinaryAnalog(DataType otherType) throws SyntaxError {
+        return otherType == this;
     }
+
+    @Override
+    public Expression staticCast(Expression expression) throws SyntaxError {
+        return null;
+    }
+
+    @Override
+    public Expression dynamicCast(Expression expression) {
+        if (expression.getType().getPureType() == this)
+            return expression;
+        return null;
+    }
+
 
     @Override
     public void calculateOffsets() throws SyntaxError {

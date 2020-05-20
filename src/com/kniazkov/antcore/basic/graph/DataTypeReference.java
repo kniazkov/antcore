@@ -50,6 +50,11 @@ public class DataTypeReference extends DataType {
     }
 
     @Override
+    public byte getSelector() {
+        return type.getSelector();
+    }
+
+    @Override
     public boolean isBuiltIn() {
         return type.isBuiltIn();
     }
@@ -74,6 +79,21 @@ public class DataTypeReference extends DataType {
         return type;
     }
 
+    @Override
+    public boolean isBinaryAnalog(DataType otherType) throws SyntaxError {
+        return type.isBinaryAnalog(otherType);
+    }
+
+    @Override
+    public Expression staticCast(Expression expression) throws SyntaxError {
+        return type.staticCast(expression);
+    }
+
+    @Override
+    public Expression dynamicCast(Expression expression) throws SyntaxError {
+        return type.dynamicCast(expression);
+    }
+
     /**
      * Bind data type by name
      */
@@ -85,10 +105,6 @@ public class DataTypeReference extends DataType {
             throw new UnknownType(getFragment(), name);
     }
 
-    @Override
-    public boolean canBeCastTo(DataType otherType) throws SyntaxError {
-        return type.canBeCastTo(otherType);
-    }
 
     private DataTypeOwner owner;
     private String name;

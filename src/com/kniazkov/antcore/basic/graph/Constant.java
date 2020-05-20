@@ -104,8 +104,15 @@ public class Constant extends Expression implements DataTypeOwner, ExpressionOwn
             type = value.getType();
         }
         else {
-            if (!value.getType().getPureType().canBeCastTo(type.getPureType()))
-                throw new IncompatibleTypes(getFragment(), value.getType().getName(), type.getName());
+            DataType expectedType = type.getPureType();
+            DataType actualType = value.getType().getPureType();
+            if (!expectedType.isBinaryAnalog(actualType)) {
+                Expression cast = expectedType.staticCast(value);
+                if (cast == null)
+                    throw new IncompatibleTypes(getFragment(), value.getType().getName(), type.getName());
+                value = cast;
+                cast.setOwner(this);
+            }
         }
     }
 
