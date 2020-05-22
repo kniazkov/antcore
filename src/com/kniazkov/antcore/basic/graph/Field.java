@@ -93,17 +93,22 @@ public class Field extends LeftExpression implements DataTypeOwner {
     }
 
     @Override
-    public void load(CompilationUnit cu) throws SyntaxError {
+    public void genLoad(CompilationUnit cu) throws SyntaxError {
         RawInstruction load = new Load(DataSelector.GLOBAL,
                 type.getSize(), cu.getDynamicDataOffset(), getAbsoluteOffset());
         cu.addInstruction(load);
     }
 
     @Override
-    public void store(CompilationUnit cu) throws SyntaxError {
+    public void genStore(CompilationUnit cu) throws SyntaxError {
         RawInstruction store = new Store(DataSelector.GLOBAL,
                 type.getSize(), cu.getDynamicDataOffset(), getAbsoluteOffset());
         cu.addInstruction(store);
+    }
+
+    @Override
+    public Expression getPointer() {
+        return new GlobalPointer(this, getAbsoluteOffset());
     }
 
     private DataSet owner;

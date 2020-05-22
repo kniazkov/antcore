@@ -84,12 +84,12 @@ public class Argument extends LeftExpression implements DataTypeOwner {
     }
 
     @Override
-    public void load(CompilationUnit cu) {
+    public void genLoad(CompilationUnit cu) {
         assert(false);
     }
 
     @Override
-    public void store(CompilationUnit cu) throws SyntaxError {
+    public void genStore(CompilationUnit cu) throws SyntaxError {
         assert(false);
     }
 

@@ -49,15 +49,20 @@ public class IntegerType extends BuiltInType {
     }
 
     @Override
-    public Expression staticCast(Expression expression) throws SyntaxError {
-        if (expression.getType().getPureType() == this)
+    public boolean isInheritedFrom(DataType otherType) {
+        return false;
+    }
+
+    @Override
+    public Expression staticCast(Expression expression, DataType otherType) throws SyntaxError {
+        if (otherType == this)
             return expression;
         return null;
     }
 
     @Override
-    public Expression dynamicCast(Expression expression) throws SyntaxError {
-        if (expression.getType().getPureType() == this)
+    public Expression dynamicCast(Expression expression, DataType otherType) throws SyntaxError {
+        if (otherType == this)
             return expression;
         return null;
     }

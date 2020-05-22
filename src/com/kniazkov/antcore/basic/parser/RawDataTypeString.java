@@ -16,6 +16,7 @@
  */
 package com.kniazkov.antcore.basic.parser;
 
+import com.kniazkov.antcore.basic.graph.AbstractStringType;
 import com.kniazkov.antcore.basic.graph.DataType;
 import com.kniazkov.antcore.basic.graph.Pointer;
 import com.kniazkov.antcore.basic.graph.StringType;
@@ -44,7 +45,7 @@ public class RawDataTypeString extends RawDataType {
     public DataType toNode() {
         if (length != null)
             return new StringType(length.toNode());
-        return new StringType();
+        return AbstractStringType.getInstance();
     }
 
     private TokenExpression length;

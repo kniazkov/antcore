@@ -16,7 +16,6 @@
  */
 package com.kniazkov.antcore.basic.bytecodebuilder;
 
-import com.kniazkov.antcore.lib.ByteArrayWrapper;
 import com.kniazkov.antcore.lib.ByteList;
 import com.kniazkov.antcore.lib.Reference;
 
@@ -77,7 +76,7 @@ public class CompilationUnit {
                 buff[index + 8 + k * 2 + 1] = (byte) (ch >> 8);
             }
         }
-        return new ByteArrayWrapper(buff);
+        return ByteList.wrap(buff);
     }
 
     private void updateOffsets() {

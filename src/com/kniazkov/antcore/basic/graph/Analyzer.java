@@ -29,8 +29,8 @@ public class Analyzer {
     public static void analyze(Program root) throws SyntaxError {
         bindTypes(root);
         bindNames(root);
-        defineTypes(root);
         calculateOffsets(root);
+        defineTypes(root);
     }
 
     /**

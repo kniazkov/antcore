@@ -32,6 +32,8 @@ public class Disassembler {
             inst.read(bytecode, index);
             decoders[inst.opcode].decode(inst, buff);
             buff.append('\n');
+            if (inst.opcode == OpCode.END)
+                break;
         }
         return buff.toString();
     }

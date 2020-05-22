@@ -74,8 +74,13 @@ public class VariableReference extends Expression implements ExpressionOwner {
     }
 
     @Override
-    public void load(CompilationUnit cu) throws SyntaxError {
-        expression.load(cu);
+    public void genLoad(CompilationUnit cu) throws SyntaxError {
+        expression.genLoad(cu);
+    }
+
+    @Override
+    public Expression getPointer() {
+        return expression.getPointer();
     }
 
     private String name;

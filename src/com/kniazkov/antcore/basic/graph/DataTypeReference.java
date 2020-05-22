@@ -85,13 +85,18 @@ public class DataTypeReference extends DataType {
     }
 
     @Override
-    public Expression staticCast(Expression expression) throws SyntaxError {
-        return type.staticCast(expression);
+    public boolean isInheritedFrom(DataType otherType) {
+        return type.isInheritedFrom(otherType);
     }
 
     @Override
-    public Expression dynamicCast(Expression expression) throws SyntaxError {
-        return type.dynamicCast(expression);
+    public Expression staticCast(Expression expression, DataType otherType) throws SyntaxError {
+        return type.staticCast(expression, otherType);
+    }
+
+    @Override
+    public Expression dynamicCast(Expression expression, DataType otherType) throws SyntaxError {
+        return type.dynamicCast(expression, otherType);
     }
 
     /**

@@ -17,40 +17,46 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
+import com.kniazkov.antcore.basic.bytecodebuilder.PushGlobalPointer;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushInteger;
 
 /**
- * The node represents an integer constant
+ * The node represents a global pointer, i.e. pointer to global variable or field of global object
  */
-public class IntegerNode extends Expression {
-    public IntegerNode(int value) {
-        this.value = value;
+public class GlobalPointer extends Expression {
+    public GlobalPointer(Expression expression, int address) {
+        this.expression = expression;
+        this.address = address;
     }
 
     @Override
     public DataType getType() {
-        return IntegerType.getInstance();
+        if (type == null)
+            type = new Pointer(expression.getType());
+        return type;
     }
 
     @Override
     public Object calculate() {
-        return value;
+        return address;
     }
 
     @Override
     public void toDeclarationSourceCode(StringBuilder buff, String i) {
-        buff.append(value);
+        expression.toDeclarationSourceCode(buff, i);
     }
 
     @Override
     public void toUsageSourceCode(StringBuilder buff) {
-        buff.append(value);
+        expression.toUsageSourceCode(buff);
     }
 
     @Override
     public void genLoad(CompilationUnit cu) {
-        cu.addInstruction(new PushInteger(value));
+        cu.addInstruction(new PushGlobalPointer(cu.getDynamicDataOffset(), address));
     }
 
-    private int value;
+    private Expression expression;
+    private int address;
+    private DataType type;
 }

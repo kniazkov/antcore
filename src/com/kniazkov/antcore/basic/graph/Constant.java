@@ -107,7 +107,7 @@ public class Constant extends Expression implements DataTypeOwner, ExpressionOwn
             DataType expectedType = type.getPureType();
             DataType actualType = value.getType().getPureType();
             if (!expectedType.isBinaryAnalog(actualType)) {
-                Expression cast = expectedType.staticCast(value);
+                Expression cast = expectedType.staticCast(value, actualType);
                 if (cast == null)
                     throw new IncompatibleTypes(getFragment(), value.getType().getName(), type.getName());
                 value = cast;
@@ -117,8 +117,8 @@ public class Constant extends Expression implements DataTypeOwner, ExpressionOwn
     }
 
     @Override
-    public void load(CompilationUnit cu) throws SyntaxError {
-        value.load(cu);
+    public void genLoad(CompilationUnit cu) throws SyntaxError {
+        value.genLoad(cu);
     }
 
     private ConstantList owner;

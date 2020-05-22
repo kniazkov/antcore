@@ -74,7 +74,7 @@ public class StringNode extends Expression {
     }
 
     @Override
-    public void load(CompilationUnit cu) throws SyntaxError {
+    public void genLoad(CompilationUnit cu) throws SyntaxError {
         RawInstruction load = new Load(DataSelector.GLOBAL,
                 type.getSize(), cu.getStaticDataOffset(), cu.getStringOffset(value));
         cu.addInstruction(load);

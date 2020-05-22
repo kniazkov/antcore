@@ -86,7 +86,15 @@ public abstract class Expression extends Node {
      * Generate instructions for loading (calculating) value to the stack
      * @param cu the compilation unit
      */
-    public abstract void load(CompilationUnit cu) throws SyntaxError;
+    public abstract void genLoad(CompilationUnit cu) throws SyntaxError;
+
+    /**
+     * Generate pointer to the expression (if possible)
+     * @return A pointer
+     */
+    public Expression getPointer() {
+        return null;
+    }
 
     private ExpressionOwner owner;
 }

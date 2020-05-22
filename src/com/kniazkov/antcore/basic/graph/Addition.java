@@ -78,12 +78,12 @@ public class Addition extends BinaryOperation {
     }
 
     @Override
-    public void load(CompilationUnit cu) throws SyntaxError {
+    public void genLoad(CompilationUnit cu) throws SyntaxError {
         DataType leftType = left.getType().getPureType();
         DataType rightType = right.getType().getPureType();
 
-        right.load(cu);
-        left.load(cu);
+        right.genLoad(cu);
+        left.genLoad(cu);
         if (leftType instanceof IntegerType || rightType instanceof IntegerType) {
             cu.addInstruction(new Add(TypeSelector.INTEGER));
             return;

@@ -77,24 +77,33 @@ public abstract class DataType extends Node {
     }
 
     /**
-     * Check for binary match
+     * Checking for binary match
      * @param otherType another type
-     * @return return true if expression of another type can be copied to memory region
+     * @return true if expression of another type can be copied to memory region
      *   prepared for this type without any transformation
      */
     public abstract boolean isBinaryAnalog(DataType otherType) throws SyntaxError;
 
     /**
+     * Checking for inheritance
+     * @param otherType another type
+     * @return true is the type is inherited from another
+     */
+    public abstract boolean isInheritedFrom(DataType otherType);
+
+    /**
      * Tries to perform a static casting of an expression to this type
      * @param expression a static expression
+     * @param otherType another type
      * @return another static expression casted to this type, or null if cannot cast
      */
-    public abstract Expression staticCast(Expression expression) throws SyntaxError;
+    public abstract Expression staticCast(Expression expression, DataType otherType) throws SyntaxError;
 
     /**
      * Tries to perform a dynamic casting of an expression to this type
      * @param expression an expression
+     * @param otherType another type
      * @return another expression casted to this type, or null if cannot cast
      */
-    public abstract Expression dynamicCast(Expression expression) throws SyntaxError;
+    public abstract Expression dynamicCast(Expression expression, DataType otherType) throws SyntaxError;
 }

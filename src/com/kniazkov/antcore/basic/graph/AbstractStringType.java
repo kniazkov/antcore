@@ -16,93 +16,66 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
 /**
- * The constant modifier for data type
+ * The STRING data type without size specified
  */
-public class ConstantModifier extends DataType implements DataTypeOwner {
-    public ConstantModifier(DataType type) {
-        this.type = type;
-        type.setOwner(this);
-    }
-
-    @Override
-    public void accept(NodeVisitor visitor) throws SyntaxError {
-        visitor.visit(this);
-    }
-
-    @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        type.dfs(visitor);
-        accept(visitor);
-    }
-
+public class AbstractStringType extends BuiltInType implements ExpressionOwner {
     @Override
     public String getName() {
-        return "CONST " + type.getName();
+        return "STRING";
     }
 
     @Override
     public int getSize() throws SyntaxError {
-        return type.getSize();
+        return 0;
     }
 
     @Override
     public byte getSelector() {
-        return type.getSelector();
-    }
-
-    @Override
-    public boolean isBuiltIn() {
-        return true;
+        return TypeSelector.STRING;
     }
 
     @Override
     public boolean isAbstract() {
-        return type.isAbstract();
-    }
-
-    @Override
-    public boolean isConstant() {
         return true;
     }
 
     @Override
-    void setOwner(DataTypeOwner owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public DataType getPureType() {
-        return type;
+    public boolean isConstant() {
+        return false;
     }
 
     @Override
     public boolean isBinaryAnalog(DataType otherType) throws SyntaxError {
-        return type.isBinaryAnalog(otherType);
+        return false;
     }
 
     @Override
     public boolean isInheritedFrom(DataType otherType) {
-        return type.isInheritedFrom(otherType);
+        return false;
     }
 
     @Override
     public Expression staticCast(Expression expression, DataType otherType) throws SyntaxError {
-        return type.staticCast(expression, otherType);
+        return null;
     }
 
     @Override
-    public Expression dynamicCast(Expression expression, DataType otherType) throws SyntaxError {
-        return type.dynamicCast(expression, otherType);
+    public Expression dynamicCast(Expression expression, DataType otherType) {
+        return null;
     }
 
-    @Override
-    public Node getOwner() {
-        return (Node)owner;
+    private AbstractStringType() {
     }
 
-    private DataTypeOwner owner;
-    private DataType type;
+    private static AbstractStringType instance;
+
+    public static DataType getInstance() {
+        if (instance == null)
+            instance = new AbstractStringType();
+        return instance;
+    }
 }

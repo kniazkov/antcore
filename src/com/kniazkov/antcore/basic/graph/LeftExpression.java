@@ -25,7 +25,7 @@ import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 public abstract class LeftExpression extends Expression {
     @Override
     public Object calculate() {
-        return false;
+        return null;
     }
 
     @Override
@@ -37,5 +37,5 @@ public abstract class LeftExpression extends Expression {
      * Generate instructions for storing value to the memory
      * @param cu the compilation unit
      */
-    public abstract void store(CompilationUnit cu) throws SyntaxError;
+    public abstract void genStore(CompilationUnit cu) throws SyntaxError;
 }

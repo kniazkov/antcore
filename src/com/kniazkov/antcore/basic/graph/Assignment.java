@@ -61,7 +61,7 @@ public class Assignment extends Statement implements ExpressionOwner {
         DataType leftType = left.getType().getPureType();
         DataType rightType = right.getType().getPureType();
         if (!leftType.isBinaryAnalog(rightType)) {
-            Expression cast = leftType.dynamicCast(right);
+            Expression cast = leftType.dynamicCast(right, rightType);
             if (cast == null)
                 throw new IncompatibleTypes(getFragment(), right.getType().getName(), left.getType().getName());
             right = cast;
@@ -74,8 +74,8 @@ public class Assignment extends Statement implements ExpressionOwner {
         LeftExpression assignableExpression = left.toLeftExpression();
         if (assignableExpression == null)
             throw new ExpressionCannotBeAssigned(getFragment(), left.toString(), right.toString());
-        right.load(cu);
-        assignableExpression.store(cu);
+        right.genLoad(cu);
+        assignableExpression.genStore(cu);
     }
 
     private Expression left;

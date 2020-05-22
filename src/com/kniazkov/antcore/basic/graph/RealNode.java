@@ -50,7 +50,7 @@ public class RealNode extends Expression {
     }
 
     @Override
-    public void load(CompilationUnit cu) {
+    public void genLoad(CompilationUnit cu) {
         cu.addInstruction(new PushReal(value));
     }
 

@@ -106,12 +106,17 @@ public class Struct extends DataType implements DataSetOwner {
     }
 
     @Override
-    public Expression staticCast(Expression expression) throws SyntaxError {
+    public boolean isInheritedFrom(DataType otherType) {
+        return false;
+    }
+
+    @Override
+    public Expression staticCast(Expression expression, DataType otherType) throws SyntaxError {
         return null;
     }
 
     @Override
-    public Expression dynamicCast(Expression expression) {
+    public Expression dynamicCast(Expression expression, DataType otherType) {
         if (expression.getType().getPureType() == this)
             return expression;
         return null;

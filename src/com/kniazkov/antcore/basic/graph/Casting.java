@@ -16,7 +16,6 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.bytecode.DataSelector;
 import com.kniazkov.antcore.basic.bytecodebuilder.Cast;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.common.SyntaxError;
@@ -70,8 +69,8 @@ public class Casting extends Expression implements ExpressionOwner, DataTypeOwne
     }
 
     @Override
-    public void load(CompilationUnit cu) throws SyntaxError {
-        expression.load(cu);
+    public void genLoad(CompilationUnit cu) throws SyntaxError {
+        expression.genLoad(cu);
         DataType currentType = expression.getType();
         Cast cast = new Cast(currentType.getSelector(), currentType.getSize(),
                 newType.getSelector(), newType.getSize());

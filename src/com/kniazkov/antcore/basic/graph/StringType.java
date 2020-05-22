@@ -34,10 +34,6 @@ public class StringType extends DataType implements ExpressionOwner {
         this.lengthValue = length;
     }
 
-    public StringType() {
-        this.lengthValue = -1;
-    }
-
     @Override
     public void accept(NodeVisitor visitor) throws SyntaxError {
         visitor.visit(this);
@@ -54,16 +50,14 @@ public class StringType extends DataType implements ExpressionOwner {
     public String getName() {
         try {
             int length = getStringLength();
-            if (length >= 0)
-                return "STRING OF " + length;
-            return "STRING";
+            return "STRING OF " + length;
         } catch (SyntaxError syntaxError) {
             return "STRING OF ?";
         }
     }
 
     public int getStringLength() throws SyntaxError {
-        if (lengthValue < 0 && lengthNode != null) {
+        if (lengthValue < 0) {
             Object value = lengthNode.calculate();
             if (value instanceof Short)
                 lengthValue = ((Short) value).intValue();
@@ -78,8 +72,7 @@ public class StringType extends DataType implements ExpressionOwner {
     @Override
     public int getSize() throws SyntaxError {
         int length = getStringLength();
-        // 2 bytes for each symbol + 4 bytes (INTEGER) for current length + 4 bytes (INTEGER) for capacity
-        return length >= 0 ? length * 2 + 8 : 0;
+        return length * 2 + 8;
     }
 
     @Override
@@ -94,7 +87,7 @@ public class StringType extends DataType implements ExpressionOwner {
 
     @Override
     public boolean isAbstract() {
-        return lengthValue < 0 && lengthNode == null;
+        return false;
     }
 
     @Override
@@ -117,8 +110,12 @@ public class StringType extends DataType implements ExpressionOwner {
     }
 
     @Override
-    public Expression staticCast(Expression expression) throws SyntaxError {
-        DataType otherType = expression.getType().getPureType();
+    public boolean isInheritedFrom(DataType otherType) {
+        return otherType == AbstractStringType.getInstance();
+    }
+
+    @Override
+    public Expression staticCast(Expression expression, DataType otherType) throws SyntaxError {
         if (otherType instanceof StringType) {
             StringType otherTypeString = (StringType)otherType;
             int thisLength = this.getStringLength();
@@ -134,8 +131,7 @@ public class StringType extends DataType implements ExpressionOwner {
     }
 
     @Override
-    public Expression dynamicCast(Expression expression) {
-        DataType otherType = expression.getType().getPureType();
+    public Expression dynamicCast(Expression expression, DataType otherType) {
         if (otherType instanceof StringType)
             return new Casting(true, expression, this);
         return null;
