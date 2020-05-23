@@ -16,6 +16,7 @@
  */
 package com.kniazkov.antcore.basic.bytecodebuilder;
 
+import com.kniazkov.antcore.lib.ByteBuffer;
 import com.kniazkov.antcore.lib.ByteList;
 import com.kniazkov.antcore.lib.Reference;
 
@@ -48,7 +49,7 @@ public class CompilationUnit {
     public ByteList getBytecode() {
         int count = instructions.size();
         int size = count * 16 + staticDataSize;
-        byte[] buff = new byte[size];
+        ByteBuffer buff = new ByteBuffer(size);
 
         // code
         for (int k = 0; k < count; k++) {
@@ -60,23 +61,16 @@ public class CompilationUnit {
             int index = stringsMap.get(string) + staticDataOffset.value;
             int length = string.length();
             // current length
-            buff[index] =      (byte)(length);
-            buff[index + 1] =  (byte)(length >> 8);
-            buff[index + 2] =  (byte)(length >> 16);
-            buff[index + 3] =  (byte)(length >> 24);
+            buff.setInt(index, length);
             // capacity, the same as length
-            buff[index + 4] =  buff[index];
-            buff[index + 5] =  buff[index + 1];
-            buff[index + 6] =  buff[index + 2];
-            buff[index + 7] =  buff[index + 3];
+            buff.setInt(index + 4, length);
             // data
             for (int k = 0; k < length; k++) {
                 char ch = string.charAt(k);
-                buff[index + 8 + k * 2] = (byte) (ch & 0xff);
-                buff[index + 8 + k * 2 + 1] = (byte) (ch >> 8);
+                buff.setChar(index + 8 + k * 2, ch);
             }
         }
-        return ByteList.wrap(buff);
+        return buff;
     }
 
     private void updateOffsets() {

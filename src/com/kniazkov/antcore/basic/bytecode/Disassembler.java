@@ -24,18 +24,18 @@ import java.lang.reflect.Type;
  * The disassembler for bytecode
  */
 public class Disassembler {
-    public static String convert(ByteList bytecode) {
-        int size = bytecode.size();
+    public static String convert(ByteList src) {
+        int size = src.size();
         Instruction inst = new Instruction();
-        StringBuilder buff = new StringBuilder();
+        StringBuilder dst = new StringBuilder();
         for (int index = 0; index < size; index = index + 16) {
-            inst.read(bytecode, index);
-            decoders[inst.opcode].decode(inst, buff);
-            buff.append('\n');
+            inst.read(src, index);
+            decoders[inst.opcode].decode(inst, dst);
+            dst.append('\n');
             if (inst.opcode == OpCode.END)
                 break;
         }
-        return buff.toString();
+        return dst.toString();
     }
 
     interface Decoder {

@@ -16,6 +16,7 @@
  */
 package com.kniazkov.antcore.basic.bytecode;
 
+import com.kniazkov.antcore.lib.ByteBuffer;
 import com.kniazkov.antcore.lib.ByteList;
 
 /**
@@ -37,44 +38,14 @@ public class Instruction {
      * @param buff the buffer
      * @param index the starting index
      */
-    public void write(byte[] buff, int index) {
-        buff[index] =      opcode;
-        buff[index + 1] =  p0;
-        buff[index + 2] =  p1;
-        buff[index + 3] =  p2;
-
-        buff[index + 4] =  (byte)(x0);
-        buff[index + 5] =  (byte)(x0 >> 8);
-        buff[index + 6] =  (byte)(x0 >> 16);
-        buff[index + 7] =  (byte)(x0 >> 24);
-
-        buff[index + 8] =  (byte)(x1);
-        buff[index + 9] =  (byte)(x1 >> 8);
-        buff[index + 10] = (byte)(x1 >> 16);
-        buff[index + 11] = (byte)(x1 >> 24);
-
-        buff[index + 12] = (byte)(x2);
-        buff[index + 13] = (byte)(x2 >> 8);
-        buff[index + 14] = (byte)(x2 >> 16);
-        buff[index + 15] = (byte)(x2 >> 24);
-    }
-
-    /**
-     * Read bytecode from the buffer
-     * @param buff the buffer
-     * @param index the starting index
-     */
-    public void read(byte[] buff, int index) {
-        opcode = buff[index];
-        p0 = buff[index + 1];
-        p1 = buff[index + 2];
-        p2 = buff[index + 3];
-        x0 = (int)(buff[index + 4]) + ((int)(buff[index + 5]) << 8)
-                + ((int)(buff[index + 6]) << 16) + ((int)(buff[index + 7]) << 24);
-        x1 = (int)(buff[index + 8]) + ((int)(buff[index + 9]) << 8)
-                + ((int)(buff[index + 10]) << 16) + ((int)(buff[index + 11]) << 24);
-        x2 = (int)(buff[index + 12]) + ((int)(buff[index + 13]) << 8)
-                + ((int)(buff[index + 14]) << 16) + ((int)(buff[index + 15]) << 24);
+    public void write(ByteBuffer buff, int index) {
+        buff.set(index, opcode);
+        buff.set(index + 1, p0);
+        buff.set(index + 2, p1);
+        buff.set(index + 3, p2);
+        buff.setInt(index + 4, x0);
+        buff.setInt(index + 8, x1);
+        buff.setInt(index + 12, x2);
     }
 
     /**
@@ -87,11 +58,8 @@ public class Instruction {
         p0 = buff.get(index + 1);
         p1 = buff.get(index + 2);
         p2 = buff.get(index + 3);
-        x0 = (int)(buff.get(index + 4)) + ((int)(buff.get(index + 5)) << 8)
-                + ((int)(buff.get(index + 6)) << 16) + ((int)(buff.get(index + 7)) << 24);
-        x1 = (int)(buff.get(index + 8)) + ((int)(buff.get(index + 9)) << 8)
-                + ((int)(buff.get(index + 10)) << 16) + ((int)(buff.get(index + 11)) << 24);
-        x2 = (int)(buff.get(index + 12)) + ((int)(buff.get(index + 13)) << 8)
-                + ((int)(buff.get(index + 14)) << 16) + ((int)(buff.get(index + 15)) << 24);
+        x0 = buff.getInt(index + 4);
+        x1 = buff.getInt(index + 8);
+        x2 = buff.getInt(index + 12);
     }
 }

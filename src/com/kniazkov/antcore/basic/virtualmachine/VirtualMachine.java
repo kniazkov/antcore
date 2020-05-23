@@ -16,6 +16,7 @@
  */
 package com.kniazkov.antcore.basic.virtualmachine;
 
+import com.kniazkov.antcore.lib.ByteBuffer;
 import com.kniazkov.antcore.lib.ByteList;
 
 /**
@@ -23,8 +24,8 @@ import com.kniazkov.antcore.lib.ByteList;
  */
 public class VirtualMachine {
     public VirtualMachine(ByteList code, int memorySize) {
-        memory = new byte[memorySize];
-        code.copy(0, code.size(), memory, 0);
+        memory = new ByteBuffer(memorySize);
+        memory.setByteList(0, code);
     }
 
     /**
@@ -32,7 +33,7 @@ public class VirtualMachine {
      */
     public void run() {
         IP = 0;
-        SP = memory.length;
+        SP = memory.size();
         power = true;
         error = ErrorCode.OK;
         while(power) {
@@ -40,78 +41,66 @@ public class VirtualMachine {
         }
     }
 
-    byte[] memory;
+    ByteBuffer memory;
     boolean power;
     ErrorCode error;
     int IP;
     int SP;
 
-    final int readInteger(int address) {
-        return (int)(memory[address]) + ((int)(memory[address + 1]) << 8)
-                + ((int)(memory[address + 2]) << 16) + ((int)(memory[address + 3]) << 24);
-    }
-
-    final void writeInteger(int address, int value) {
-        memory[address] =  (byte)(value);
-        memory[address + 1] =  (byte)(value >> 8);
-        memory[address + 2] =  (byte)(value >> 16);
-        memory[address + 3] =  (byte)(value >> 24);
-    }
-
     final StringData readString(int address) {
         StringData string = new StringData();
-        string.length = readInteger(address);
-        string.capacity = readInteger(address + 4);
+        string.length = memory.getInt(address);
+        string.capacity = memory.get(address + 4);
         string.data = new byte[string.length * 2];
-        System.arraycopy(memory, address + 8, string.data, 0, string.length * 2);
+        memory.copy(address + 8, string.data, 0, string.length * 2);
         return string;
     }
 
     final void writeString(int address, StringData string) {
-        writeInteger(address, string.length);
-        writeInteger(address + 4, string.capacity);
-        System.arraycopy(string.data, 0, memory, address + 8, string.length);
+        memory.setInt(address, string.length);
+        memory.setInt(address + 4, string.capacity);
+        memory.setArray(address + 8, string.data, 0, string.length);
     }
 
     final byte readOpcode() {
-        return memory[IP];
+        return memory.get(IP);
     }
 
     final byte read_p0() {
-        return memory[IP + 1];
+        return memory.get(IP + 1);
     }
 
     final byte read_p1() {
-        return memory[IP + 2];
+        return memory.get(IP + 2);
     }
 
     final byte read_p2() {
-        return memory[IP + 3];
+        return memory.get(IP + 3);
     }
 
     final int read_x0() {
-        return readInteger(IP + 4);
+        return memory.getInt(IP + 4);
     }
 
     final int read_x1() {
-        return readInteger(IP + 8);
+        return memory.getInt(IP + 8);
     }
 
     final int read_x2() {
-        return readInteger(IP + 12);
+        return memory.getInt(IP + 12);
     }
 
     final void move(int fromPos, int toPos, int size) {
-        System.arraycopy(memory, fromPos, memory, toPos, size);
+        memory.move(fromPos, toPos, size);
     }
 
     final void pushInteger(int value) {
         SP = SP - 4;
-        writeInteger(SP, value);
+        memory.setInt(SP, value);
     }
 
     final int popInteger() {
-        int value = readInteger(SP);
+        int value = memory.getInt(SP);
         SP = SP + 4;
         return value;
     }

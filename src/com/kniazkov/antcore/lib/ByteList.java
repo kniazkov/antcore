@@ -27,7 +27,7 @@ public abstract class ByteList {
 
     /**
      * @param index the index
-     * @return an item by index or 0 if index is incorrect
+     * @return an item by index
      */
     public abstract byte get(int index);
 
@@ -44,7 +44,7 @@ public abstract class ByteList {
      * @param toIndex the starting position in the destination array
      * @return number of bytes copied
      */
-    public abstract int copy(int fromIndex, int size, byte[] destination, int toIndex);
+    public abstract int copy(int fromIndex, byte[] destination, int toIndex, int size);
 
     /**
      * Represents a byte array as ByteList
@@ -53,6 +53,23 @@ public abstract class ByteList {
      */
     public static ByteList wrap(byte[] array) {
         return new ArrayWrapper(array);
+    }
+
+    /**
+     * @param index the index
+     * @return char (2 bytes) by index
+     */
+    public char getChar(int index) throws IndexOutOfBoundsException {
+        return (char)(((int)get(index) | ((int)get(index + 1) << 8)));
+    }
+
+    /**
+     * @param index the index
+     * @return integer (4 bytes) by index
+     */
+    public int getInt(int index) throws IndexOutOfBoundsException {
+        return ((int)get(index)) | ((int)get(index + 1) << 8) |
+                ((int)get(index + 2) << 16) | ((int)get(index + 3) << 24);
     }
 
     private static class ArrayWrapper extends ByteList {
@@ -67,7 +84,7 @@ public abstract class ByteList {
 
         @Override
         public byte get(int index) throws IndexOutOfBoundsException {
-            return index >= 0 && index < array.length ? array[index] : 0;
+            return array[index];
         }
 
         @Override
@@ -76,7 +93,7 @@ public abstract class ByteList {
         }
 
         @Override
-        public int copy(int fromIndex, int size, byte[] destination, int toIndex) {
+        public int copy(int fromIndex, byte[] destination, int toIndex, int size) {
             if (fromIndex >= array.length || toIndex >= destination.length)
                 return 0;
             if (fromIndex + size > array.length)
