@@ -45,6 +45,7 @@ public class Assignment extends Statement implements ExpressionOwner {
         right.dfs(visitor);
         accept(visitor);
     }
+
     @Override
     public void toSourceCode(StringBuilder buff, String i, String i0) {
         buff.append(i);

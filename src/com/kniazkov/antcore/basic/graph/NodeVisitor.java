@@ -48,6 +48,8 @@ public abstract class NodeVisitor {
     }
     public void visit(Function obj) throws SyntaxError {
     }
+    public void visit(FunctionCall obj) throws SyntaxError {
+    }
     public void visit(Module obj) throws SyntaxError {
     }
     public void visit(NativeFunction obj) throws SyntaxError {
@@ -55,6 +57,8 @@ public abstract class NodeVisitor {
     public void visit(Pointer obj) throws SyntaxError {
     }
     public void visit(Program obj)  throws SyntaxError {
+    }
+    public void visit(StatementExpression obj)  throws SyntaxError {
     }
     public void visit(StatementList obj)  throws SyntaxError {
     }
