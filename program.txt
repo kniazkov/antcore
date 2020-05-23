@@ -11,5 +11,6 @@ MODULE SERVER
 	FUNCTION MAIN
 		s = "Hello"
 		sp = s
+		'print(sp)
 	END FUNCTION
 END MODULE

@@ -75,13 +75,15 @@ public class Disassembler {
                 buff.append("CAST \t").append(TypeSelector.toString(i.p0)).append(" ").append(i.x0).append(" -> ")
                         .append(TypeSelector.toString(i.p1)).append(" ").append(i.x1);
             },
-            (i, buff) -> { // 4 -> RET
+            (i, buff) -> { // 4 -> POP
+                buff.append("POP \t").append(i.x0);
+            },
+            (i, buff) -> { // 5 -> RET
                 buff.append("RET");
             },
-            (i, buff) -> { // 5 -> ADD
+            (i, buff) -> { // 6 -> ADD
                 buff.append("ADD \t").append(TypeSelector.toString(i.p0));
             },
-            stub,
             stub,
             stub,
             stub,

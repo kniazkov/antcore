@@ -224,15 +224,18 @@ public class VirtualMachine {
                 cast[read_p1()].exec();
                 IP = IP + 16;
             },
-            () -> { // 4 -> RET
+            () -> { // 4 -> POP
+                SP = SP + read_x0();
+                IP = IP + 16;
+            },
+            () -> { // 5 -> RET
                 power = false;
                 IP = IP + 16;
             },
-            () -> { // 5 -> ADD
+            () -> { // 6 -> ADD
                 add[read_p0()].exec();
                 IP = IP + 16;
             },
-            stub,
             stub,
             stub,
             stub,

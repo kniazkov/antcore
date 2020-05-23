@@ -14,18 +14,26 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.bytecode;
+package com.kniazkov.antcore.basic.bytecodebuilder;
+
+import com.kniazkov.antcore.basic.bytecode.Instruction;
+import com.kniazkov.antcore.basic.bytecode.OpCode;
 
 /**
- * The list of opcodes
+ * Remove value from the stack
  */
-public final class OpCode {
-    public static final byte NOP = 0;
-    public static final byte LOAD = 1;
-    public static final byte STORE = 2;
-    public static final byte CAST = 3;
-    public static final byte POP = 4;
-    public static final byte RET = 5;
-    public static final byte ADD = 6;
-    public static final byte END = 127;
+public class Pop extends RawInstruction {
+    public Pop(int size) {
+        this.size = size;
+    }
+
+    @Override
+    public Instruction generate() {
+        Instruction i = new Instruction();
+        i.opcode = OpCode.POP;
+        i.x0 = size;
+        return i;
+    }
+
+    protected int size;
 }
