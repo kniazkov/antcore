@@ -26,10 +26,16 @@ import java.util.*;
  * The node that represents a whole program
  */
 public class Program extends Node implements DataTypeOwner, ConstantListOwner {
-    public Program(ConstantList constants, Map<String, Module> modules, Map<String, DataType> customTypes) {
+    public Program(ConstantList constants, List<CodeBlock> codeBlocks,
+                   Map<String, Module> modules, Map<String, DataType> customTypes) {
         this.constants = constants;
         if (constants != null)
             constants.setOwner(this);
+
+        this.codeBlocks = Collections.unmodifiableList(codeBlocks);
+        for (CodeBlock block : codeBlocks) {
+            block.setOwner(this);
+        }
 
         this.modules = Collections.unmodifiableMap(modules);
         for (Map.Entry<String, Module> entry : modules.entrySet()) {
@@ -87,6 +93,13 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
             flag = true;
         }
 
+        for (CodeBlock block : codeBlocks) {
+            if (flag)
+                buff.append("\n");
+            block.toSourceCode(buff, i, i0);
+            flag = true;
+        }
+
         for (Map.Entry<String, DataType> entry : types.entrySet()) {
             DataType type = entry.getValue();
             if (!type.isBuiltIn()) {
@@ -128,6 +141,7 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
     }
 
     private ConstantList constants;
+    private List<CodeBlock> codeBlocks;
     private Map<String, Module> modules;
     private Map<String, DataType> types;
 }

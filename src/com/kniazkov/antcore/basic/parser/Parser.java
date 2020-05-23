@@ -64,6 +64,12 @@ public class Parser {
 
         // convert to node
 
+        List<CodeBlock> codeBlocks = new ArrayList<>();
+        for (RawCodeBlock rawCodeBlock : parser.rawCodeBlocks) {
+            CodeBlock codeBlock = rawCodeBlock.toNode();
+            codeBlocks.add(codeBlock);
+        }
+
         Map<String, Module> modules = new TreeMap<>();
         for (Map.Entry<String, RawModule> entry : parser.rawModules.entrySet()) {
             Module module = entry.getValue().toNode();
@@ -77,7 +83,7 @@ public class Parser {
         }
 
         return new Program(parser.globalConstantList != null ? parser.globalConstantList.toNode() : null,
-            modules, dataTypes);
+            codeBlocks, modules, dataTypes);
     }
 
     /**
@@ -157,6 +163,8 @@ public class Parser {
                 case "CONST":
                 case "CONSTANT":
                     return KeywordConst.getInstance();
+                case "CODE":
+                    return KeywordCode.getInstance();
             }
             return new Identifier(name);
         }
@@ -362,11 +370,13 @@ public class Parser {
 
     private RawConstantList globalConstantList;
     private Map<String, RawModule> rawModules;
+    private List<RawCodeBlock> rawCodeBlocks;
     private Map<String, RawDataType> rawDataTypes;
     private List<RawFunction> rawFunctions;
 
     private Parser() {
         rawModules = new TreeMap<>();
+        rawCodeBlocks = new ArrayList<>();
         rawDataTypes = new TreeMap<>();
         rawFunctions = new ArrayList<>();
     }
@@ -404,6 +414,9 @@ public class Parser {
             }
             else if (firstToken instanceof KeywordType) {
                 parseStructure(line, iterator);
+            }
+            else if (firstToken instanceof KeywordCode) {
+                parseCodeBlock(line, iterator);
             }
             else if (firstToken instanceof KeywordModule) {
                 parseModule(line, iterator);
@@ -482,6 +495,51 @@ public class Parser {
             else
                 throw new UnexpectedSequence(line);
         }
+    }
+
+    /**
+     * Parse a code block
+     * @param declaration the line contains module declaration
+     * @param iterator the iterator by lines
+     */
+    private void parseCodeBlock(Line declaration, Iterator<Line> iterator) throws SyntaxError {
+        Iterator<Token> tokens = declaration.getTokens().iterator();
+        tokens.next();
+
+        List<String> executors = null;
+        if (tokens.hasNext()) {
+            executors = new ArrayList<>();
+            while(tokens.hasNext()) {
+                Token tokExecutor = tokens.next();
+                if (!(tokExecutor instanceof Identifier))
+                    throw new ExpectedExecutor(declaration);
+                executors.add(((Identifier) tokExecutor).getName());
+                if (tokens.hasNext()) {
+                    Token comma = tokens.next();
+                    if (!(comma instanceof Comma))
+                        throw new ExpectedComma(declaration);
+                    if (!tokens.hasNext())
+                        throw new ExpectedExecutor(declaration);
+                }
+            }
+        }
+
+        Line line = declaration;
+        List<Line> body = new ArrayList<>();
+        while(iterator.hasNext()) {
+            line = iterator.next();
+            List<Token> content = line.getTokens();
+            if (content.size() >= 2
+                    && content.get(0) instanceof KeywordEnd && content.get(1) instanceof KeywordCode) {
+                if (content.size() > 2)
+                    throw new UnrecognizedSequence(line);
+                RawCodeBlock codeBlock = new RawCodeBlock(declaration.getFragment(), executors, body);
+                rawCodeBlocks.add(codeBlock);
+                return;
+            }
+            body.add(line);
+        }
+        throw new UnexpectedEndOfFile(line);
     }
 
     /**

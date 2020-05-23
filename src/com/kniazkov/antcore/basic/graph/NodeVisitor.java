@@ -32,6 +32,8 @@ public abstract class NodeVisitor {
     }
     public void visit(Casting obj) throws SyntaxError {
     }
+    public void visit(CodeBlock obj) throws SyntaxError {
+    }
     public void visit(Constant obj) throws SyntaxError {
     }
     public void visit(ConstantList obj) throws SyntaxError {
