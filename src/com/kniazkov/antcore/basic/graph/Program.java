@@ -32,9 +32,27 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
         if (constants != null)
             constants.setOwner(this);
 
-        this.codeBlocks = Collections.unmodifiableList(codeBlocks);
+        this.allBlocks = Collections.unmodifiableList(codeBlocks);
+        this.blocksByExecutor = new TreeMap<>();
+        this.commonBlocks = new ArrayList<>();
         for (CodeBlock block : codeBlocks) {
             block.setOwner(this);
+            List<String> executors = block.getExecutors();
+            if (executors == null || executors.isEmpty()) {
+                commonBlocks.add(block);
+            } else {
+                for (String executor : executors) {
+                    List<CodeBlock> list = blocksByExecutor.get(executor);
+                    if (list != null) {
+                        list.add(block);
+                    }
+                    else {
+                        list = new ArrayList<>();
+                        list.add(block);
+                        blocksByExecutor.put(executor, list);
+                    }
+                }
+            }
         }
 
         this.modules = Collections.unmodifiableMap(modules);
@@ -93,7 +111,7 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
             flag = true;
         }
 
-        for (CodeBlock block : codeBlocks) {
+        for (CodeBlock block : allBlocks) {
             if (flag)
                 buff.append("\n");
             block.toSourceCode(buff, i, i0);
@@ -141,7 +159,9 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
     }
 
     private ConstantList constants;
-    private List<CodeBlock> codeBlocks;
+    private List<CodeBlock> allBlocks;
+    private Map<String, List<CodeBlock>> blocksByExecutor;
+    private List<CodeBlock> commonBlocks;
     private Map<String, Module> modules;
     private Map<String, DataType> types;
 }

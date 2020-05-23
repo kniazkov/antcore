@@ -19,6 +19,7 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,7 +28,8 @@ import java.util.List;
 public class CodeBlock extends Node {
     public CodeBlock(Fragment fragment, List<String> executors) {
         this.fragment = fragment;
-        this.executors = executors;
+        if (executors != null)
+            this.executors = Collections.unmodifiableList(executors);
     }
 
     @Override
@@ -72,6 +74,10 @@ public class CodeBlock extends Node {
         }
         //String i1 = i + i0;
         buff.append(i).append("END CODE\n");
+    }
+
+    public List<String> getExecutors() {
+        return executors;
     }
 
     private Program owner;
