@@ -17,23 +17,22 @@
 package com.kniazkov.antcore.basic.parser;
 
 import com.kniazkov.antcore.basic.common.Fragment;
-import com.kniazkov.antcore.basic.graph.*;
+import com.kniazkov.antcore.basic.graph.DataType;
+import com.kniazkov.antcore.basic.graph.NativeFunction;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Entity represents function
+ * Entity represents native function
  */
-public class RawFunction extends RawBaseFunction {
-    public RawFunction(Fragment fragment, String name, List<RawArgument> arguments,
-                       RawDataType returnType, List<Line> body) {
+public class RawNativeFunction extends RawBaseFunction {
+    public RawNativeFunction(Fragment fragment, String name, List<RawDataType> arguments, RawDataType returnType) {
         this.fragment = fragment;
         this.name = name;
         this.rawArguments = arguments != null ? Collections.unmodifiableList(arguments) : null;
         this.returnType = returnType;
-        this.rawBody = Collections.unmodifiableList(body);
     }
 
     public Fragment getFragment() {
@@ -45,38 +44,20 @@ public class RawFunction extends RawBaseFunction {
         return name;
     }
 
-    public List<Line> getRawBody() {
-        return rawBody;
-    }
-
-    public void setRawStatementList(List<RawStatement> rawStatements) {
-        this.rawStatements = rawStatements;
-    }
-
-    public Function toNode() {
-        List<Argument> arguments = null;
+    public NativeFunction toNode() {
+        List<DataType> arguments = null;
         if (rawArguments != null) {
             arguments = new ArrayList<>();
-            for (RawArgument rawArgument : rawArguments) {
-                Argument argument = rawArgument.toNode();
-                arguments.add(argument);
+            for (RawDataType rawType : rawArguments) {
+                DataType type = rawType.toNode();
+                arguments.add(type);
             }
         }
-        List<Statement> body = new ArrayList<>();
-        for (RawStatement rawStatement : rawStatements) {
-            Statement statement = rawStatement.toNode();
-            body.add(statement);
-        }
-        return new Function(fragment, name,
-                arguments != null ? new ArgumentList(arguments) : null,
-                returnType != null ? returnType.toNode() : null,
-                new StatementList(body));
+        return new NativeFunction(fragment, name, arguments, returnType != null ? returnType.toNode() : null);
     }
 
     private Fragment fragment;
     private String name;
-    private List<RawArgument> rawArguments;
+    private List<RawDataType> rawArguments;
     private RawDataType returnType;
-    private List<Line> rawBody;
-    private List<RawStatement> rawStatements;
 }

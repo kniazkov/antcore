@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -82,6 +83,21 @@ public class ArgumentList extends Node implements ExpressionOwner {
         }
     }
 
+    /**
+     * @return list contains types of each argument
+     */
+    public List<DataType> getTypes() {
+        if (types == null) {
+            ArrayList<DataType> list = new ArrayList<>(arguments.size());
+            for (Argument argument : arguments) {
+                list.add(argument.getType());
+            }
+            types = Collections.unmodifiableList(list);
+        }
+        return types;
+    }
+
     private Function owner;
     private List<Argument> arguments;
+    private List<DataType> types;
 }

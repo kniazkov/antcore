@@ -19,10 +19,7 @@ package com.kniazkov.antcore.basic.parser;
 import com.kniazkov.antcore.basic.common.DataPrefix;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
-import com.kniazkov.antcore.basic.graph.CodeBlock;
-import com.kniazkov.antcore.basic.graph.DataSet;
-import com.kniazkov.antcore.basic.graph.Function;
-import com.kniazkov.antcore.basic.graph.Module;
+import com.kniazkov.antcore.basic.graph.*;
 import com.kniazkov.antcore.basic.parser.exceptions.DuplicateDataSet;
 import com.kniazkov.antcore.basic.parser.exceptions.FunctionAlreadyExists;
 import com.kniazkov.antcore.basic.parser.exceptions.UnexpectedDataSet;
@@ -37,17 +34,34 @@ public class RawCodeBlock extends Entity {
         this.fragment = fragment;
         this.executors = executors;
         this.body = Collections.unmodifiableList(body);
+        this.rawNativeFunctions = new ArrayList<>();
+        this.allRawFunctions = new TreeMap<>();
     }
 
     public List<Line> getBody() {
         return body;
     }
 
+    public void addNativeFunction(RawNativeFunction function) throws SyntaxError {
+        String name = function.getName();
+        if (allRawFunctions.containsKey(name))
+            throw new FunctionAlreadyExists(function.getFragment(), name);
+        rawNativeFunctions.add(function);
+        allRawFunctions.put(name, function);
+    }
+
     public CodeBlock toNode() {
-        return new CodeBlock(fragment, executors);
+        List<NativeFunction> nativeFunctions = new ArrayList<>();
+        for (RawNativeFunction rawFunction : rawNativeFunctions) {
+            NativeFunction function = rawFunction.toNode();
+            nativeFunctions.add(function);
+        }
+        return new CodeBlock(fragment, executors, nativeFunctions);
     }
 
     private Fragment fragment;
     private List<String> executors;
     private List<Line> body;
+    private List<RawNativeFunction> rawNativeFunctions;
+    private Map<String, RawBaseFunction> allRawFunctions;
 }

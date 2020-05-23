@@ -165,6 +165,8 @@ public class Parser {
                     return KeywordConst.getInstance();
                 case "CODE":
                     return KeywordCode.getInstance();
+                case "DECLARE":
+                    return KeywordDeclare.getInstance();
             }
             return new Identifier(name);
         }
@@ -388,6 +390,9 @@ public class Parser {
      */
     private void parse(List<Line> lines) throws SyntaxError {
         parseProgram(lines.iterator());
+        for (RawCodeBlock block : rawCodeBlocks) {
+            parseCodeBlockBody(block);
+        }
         for (Map.Entry<String, RawModule> entry : rawModules.entrySet()) {
             parseModuleBody(entry.getValue());
         }
@@ -540,6 +545,34 @@ public class Parser {
             body.add(line);
         }
         throw new UnexpectedEndOfFile(line);
+    }
+
+    /**
+     * Parse the body of a code block
+     * @param block Module
+     */
+    private void parseCodeBlockBody(RawCodeBlock block) throws SyntaxError {
+        Iterator<Line> iterator = block.getBody().iterator();
+        while (iterator.hasNext()) {
+            Line line = iterator.next();
+            List<Token> tokens = line.getTokens();
+            int size  = tokens.size();
+            assert(size > 0);
+            if (size > 2 && tokens.get(0) instanceof KeywordDeclare &&
+                    tokens.get(1) instanceof KeywordFunction) {
+                RawNativeFunction nativeFunction = parseNativeFunction(line);
+                block.addNativeFunction(nativeFunction);
+            }
+            /*
+            else if (tokens.get(0) instanceof KeywordFunction) {
+                RawFunction function = parseFunction(line, iterator);
+                block.addFunction(function);
+                rawFunctions.add(function);
+            }
+            */
+            else
+                throw new UnexpectedSequence(line);
+        }
     }
 
     /**
@@ -724,6 +757,67 @@ public class Parser {
         }
 
         return new RawConstant(declaration.getFragment(), name, value, type);
+    }
+
+    /**
+     * Parse a native function
+     * @param declaration the line contains native function declaration
+     */
+    private RawNativeFunction parseNativeFunction(Line declaration) throws SyntaxError {
+        RollbackIterator<Token> tokens = new RollbackIterator<>(declaration.getTokens().iterator());
+        Token token = tokens.next();
+        assert(token instanceof KeywordDeclare);
+        token = tokens.next();
+        assert(token instanceof KeywordFunction);
+
+        if (!tokens.hasNext())
+            throw new ExpectedFunctionName(declaration);
+        token = tokens.next();
+        if (!(token instanceof Identifier))
+            throw new ExpectedFunctionName(declaration);
+        String name = ((Identifier)token).getName();
+
+        Token nextToken = null;
+        List<RawDataType> arguments = null;
+        if (tokens.hasNext()) {
+            nextToken = tokens.next();
+            if (nextToken instanceof RoundBracketsPair) {
+                RollbackIterator<Token> argIterator =
+                        new RollbackIterator<>(((RoundBracketsPair) nextToken).getTokens().iterator());
+                boolean oneMoreArg = false;
+                arguments = new ArrayList<>();
+                while(true) {
+                    if (!argIterator.hasNext())
+                    {
+                        if (!oneMoreArg)
+                            break;
+                        throw new ExpectedArgument(declaration);
+                    }
+                    RawDataType type = parseDataType(declaration, argIterator);
+                    arguments.add(type);
+                    if (argIterator.hasNext()) {
+                        Token comma = argIterator.next();
+                        if (!(comma instanceof Comma))
+                            throw new ExpectedComma(declaration);
+                        oneMoreArg = true;
+                    }
+                    else
+                        break;
+                }
+                nextToken = tokens.hasNext() ? tokens.next() : null;
+            }
+        }
+
+        RawDataType returnType = null;
+        if (nextToken != null) {
+            if (!(nextToken instanceof KeywordAs))
+                throw new ExpectedReturnType(declaration);
+            returnType = parseDataType(declaration, tokens);
+            if (tokens.hasNext())
+                throw new UnrecognizedSequence(declaration);
+        }
+
+        return new RawNativeFunction(declaration.getFragment(), name, arguments, returnType);
     }
 
     /**

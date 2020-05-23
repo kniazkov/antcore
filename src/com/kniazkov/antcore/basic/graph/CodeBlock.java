@@ -21,15 +21,25 @@ import com.kniazkov.antcore.basic.common.SyntaxError;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * The node that represents a block of code
  */
-public class CodeBlock extends Node {
-    public CodeBlock(Fragment fragment, List<String> executors) {
+public class CodeBlock extends Node implements FunctionOwner {
+    public CodeBlock(Fragment fragment, List<String> executors, List<NativeFunction> nativeFunctions) {
         this.fragment = fragment;
         if (executors != null)
             this.executors = Collections.unmodifiableList(executors);
+        this.nativeFunctionList = Collections.unmodifiableList(nativeFunctions);
+        this.nativeFunctionMap = new TreeMap<>();
+        this.allFunctionMap = new TreeMap<>();
+        for (NativeFunction function : nativeFunctions) {
+            function.setOwner(this);
+            nativeFunctionMap.put(function.getName(), function);
+            allFunctionMap.put(function.getName(), function);
+        }
     }
 
     @Override
@@ -39,6 +49,9 @@ public class CodeBlock extends Node {
 
     @Override
     public void dfs(NodeVisitor visitor) throws SyntaxError {
+        for (NativeFunction function : nativeFunctionList) {
+            function.dfs(visitor);
+        }
         accept(visitor);
     }
 
@@ -72,7 +85,10 @@ public class CodeBlock extends Node {
         else {
             buff.append(i).append("CODE\n");
         }
-        //String i1 = i + i0;
+        String i1 = i + i0;
+        for (NativeFunction function : nativeFunctionList) {
+            function.toSourceCode(buff, i1, i0);
+        }
         buff.append(i).append("END CODE\n");
     }
 
@@ -83,4 +99,7 @@ public class CodeBlock extends Node {
     private Program owner;
     private Fragment fragment;
     private List<String> executors;
+    private List<NativeFunction> nativeFunctionList;
+    private Map<String, NativeFunction> nativeFunctionMap;
+    private Map<String, NativeFunction> allFunctionMap;
 }

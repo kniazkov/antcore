@@ -18,26 +18,26 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
-import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
-import com.kniazkov.antcore.basic.bytecodebuilder.Return;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
- * The function
+ * The native function, i.e. function executed by virtual machine
  */
-public class Function extends BaseFunction implements DataTypeOwner, StatementListOwner {
-    public Function(Fragment fragment, String name, ArgumentList arguments, DataType returnType, StatementList body) {
+public class NativeFunction extends BaseFunction implements DataTypeOwner {
+    public NativeFunction(Fragment fragment, String name, List<DataType> arguments, DataType returnType) {
         super(fragment);
         this.name = name;
-        this.arguments = arguments;
-        if (arguments != null)
-            arguments.setOwner(this);
+        if (arguments != null) {
+            this.arguments = Collections.unmodifiableList(arguments);
+            for (DataType type : arguments) {
+                type.setOwner(this);
+            }
+        }
         this.returnType = returnType;
         if (returnType != null)
             returnType.setOwner(this);
-        this.body = body;
-        body.setOwner(this);
     }
 
     @Override
@@ -47,11 +47,13 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
 
     @Override
     public void dfs(NodeVisitor visitor) throws SyntaxError {
-        if (arguments != null)
-            arguments.dfs(visitor);
+        if (arguments != null) {
+            for (DataType type : arguments) {
+                type.dfs(visitor);
+            }
+        }
         if (returnType != null)
             returnType.dfs(visitor);
-        body.dfs(visitor);
         accept(visitor);
     }
 
@@ -61,22 +63,8 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
     }
 
     @Override
-    public void toSourceCode(StringBuilder buff, String i, String i0) {
-        buff.append(i).append("FUNCTION ").append(name);
-        if (arguments != null)
-            arguments.toSourceCode(buff, i, i0);
-        if (returnType != null) {
-            buff.append(" AS ");
-            returnType.toSourceCode(buff, i, i0);
-        }
-        buff.append('\n');
-        String i1 = i + i0;
-        body.toSourceCode(buff, i1, i0);
-        buff.append(i).append("END FUNCTION\n");
-    }
-
-    public int getArgumentsCount() {
-        return arguments != null ? arguments.getCount() : 0;
+    public List<DataType> getArgumentTypes() {
+        return arguments;
     }
 
     @Override
@@ -85,17 +73,25 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
     }
 
     @Override
-    public List<DataType> getArgumentTypes() {
-        return arguments != null ? arguments.getTypes() : null;
-    }
-
-    public void compile(CompilationUnit cu) throws SyntaxError {
-        body.compile(cu);
-        cu.addInstruction(new Return());
+    public void toSourceCode(StringBuilder buff, String i, String i0) {
+        buff.append(i).append("DECLARE FUNCTION ").append(name);
+        if (arguments != null) {
+            buff.append('(');
+            boolean flag = false;
+            for (DataType type : arguments) {
+                if (flag)
+                    buff.append(", ");
+                buff.append(type.getName());
+                flag = true;
+            }
+            buff.append(')');
+        }
+        if (returnType != null)
+            buff.append(" AS ").append(returnType.getName());
+        buff.append('\n');
     }
 
     private String name;
-    private ArgumentList arguments;
+    private List<DataType> arguments;
     private DataType returnType;
-    private StatementList body;
 }

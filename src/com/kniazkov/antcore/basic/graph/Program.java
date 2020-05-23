@@ -60,7 +60,6 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
             entry.getValue().setOwner(this);
         }
 
-
         Map<String, DataType> types = new TreeMap<>();
         for (Map.Entry<String, DataType> entry : customTypes.entrySet()) {
             types.put(entry.getKey(), entry.getValue());
@@ -82,6 +81,9 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
     public void dfs(NodeVisitor visitor) throws SyntaxError {
         if (constants != null)
             constants.dfs(visitor);
+        for (CodeBlock block : allBlocks) {
+            block.dfs(visitor);
+        }
         for (Map.Entry<String, DataType> entry : types.entrySet()) {
             entry.getValue().dfs(visitor);
         }
