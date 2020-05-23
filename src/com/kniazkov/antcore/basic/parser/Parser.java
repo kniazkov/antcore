@@ -1045,8 +1045,9 @@ public class Parser {
         RollbackIterator<Token> tokens = new RollbackIterator<>(line.getTokens().iterator());
 
         TokenExpression left = parseExpression(line, tokens, true);
-        if (!tokens.hasNext())
-            throw new ExpectedAssignmentOperator(line);
+        if (!tokens.hasNext()) {
+            return new RawStatementExpression(line.getFragment(), left);
+        }
         Token token = tokens.next();
         if (!(token instanceof OperatorAssignEquals))
             throw new ExpectedAssignmentOperator(line);
@@ -1057,5 +1058,4 @@ public class Parser {
 
         return new RawAssignment(line.getFragment(), left, right);
     }
-
 }

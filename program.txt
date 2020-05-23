@@ -7,10 +7,13 @@ MODULE SERVER
 	DATA
 		s AS STRING OF 10
 		sp AS POINTER TO STRING
+		i AS INTEGER
 	END DATA
 	FUNCTION MAIN
 		s = "Hello"
 		sp = s
 		'print(sp)
+		i = 2
+		i + 3
 	END FUNCTION
 END MODULE
