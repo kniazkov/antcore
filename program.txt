@@ -5,15 +5,16 @@ END CODE
 
 MODULE SERVER
 	DATA
-		s AS STRING OF 10
-		sp AS POINTER TO STRING
+		's AS STRING OF 10
+		'sp AS POINTER TO STRING
 		i AS INTEGER
 	END DATA
 	FUNCTION MAIN
-		s = "Hello"
-		sp = s
+		's = "Hello"
+		'sp = s
 		'print(sp)
-		i = 2
-		i + 3
+		i = 2 + (3 + 4)
+		'i + 3
+		'print("hello")
 	END FUNCTION
 END MODULE

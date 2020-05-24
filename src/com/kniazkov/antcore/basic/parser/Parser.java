@@ -909,7 +909,8 @@ public class Parser {
      * @param iterator the iterator by tokens
      * @param ignoreAssignment do not parse assignment operator
      */
-    private TokenExpression parseExpression(Line line, RollbackIterator<Token> iterator, boolean ignoreAssignment) throws SyntaxError {
+    private TokenExpression parseExpression(Line line, RollbackIterator<Token> iterator,
+                                            boolean ignoreAssignment) throws SyntaxError {
         if (!iterator.hasNext())
             throw new ExpectedAnExpression(line);
 
@@ -923,7 +924,8 @@ public class Parser {
                 }
                 sequence.add(token);
             }
-            else if (token instanceof Identifier || token instanceof TokenExpression || token instanceof Operator) {
+            else if (token instanceof Identifier || token instanceof TokenExpression || token instanceof Operator
+                    || token instanceof BracketsPair) {
                 sequence.add(token);
             }
             else {
@@ -959,6 +961,15 @@ public class Parser {
             if (token instanceof Identifier) {
                 String name = ((Identifier) token).getName();
                 leftSequence.addLast(new TokenExpression(new VariableReference(name, null)));
+            }
+            else if (token instanceof RoundBracketsPair) {
+                if (leftSequence.isEmpty() || leftSequence.peekLast() instanceof Operator) {
+                    // expression in brackets
+                    TokenExpression expression = parseParenthesizedExpression(line, (RoundBracketsPair) token);
+                    leftSequence.addLast(new TokenExpression(new ParenthesizedExpression(expression.toNode())));
+                }
+                else
+                    throw new UnrecognizedSequence(line);
             }
             else
                 leftSequence.addLast(token);
@@ -1004,6 +1015,20 @@ public class Parser {
             }
         }
         return leftSequence;
+    }
+
+    /**
+     * Parse expression in brackets
+     * @param line the line of source code
+     * @param bracketsPair the pair of brackets that contains an expression
+     * @return an expression
+     */
+    private TokenExpression parseParenthesizedExpression(Line line, RoundBracketsPair bracketsPair) throws SyntaxError {
+        RollbackIterator<Token> iterator = new RollbackIterator<>(bracketsPair.getTokens().iterator());
+        TokenExpression result = parseExpression(line, iterator, false);
+        if (iterator.hasNext())
+            throw new UnrecognizedSequence(line);
+        return result;
     }
 
     /**
