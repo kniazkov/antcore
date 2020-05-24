@@ -67,6 +67,10 @@ public class Analyzer {
             public void visit(BinaryOperation obj) throws SyntaxError {
                 obj.defineType();
             }
+            @Override
+            public void visit(FunctionCall obj) throws SyntaxError {
+                obj.checkArguments();
+            }
         }
 
         root.dfs(new Calculator());

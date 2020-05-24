@@ -18,9 +18,11 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.common.SyntaxError;
-import com.kniazkov.antcore.basic.exceptions.CannotResolveSymbol;
-import com.kniazkov.antcore.basic.exceptions.UnknownFunction;
+import com.kniazkov.antcore.basic.exceptions.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -29,7 +31,7 @@ import java.util.List;
 public class FunctionCall extends Expression implements ExpressionOwner {
     public FunctionCall(String functionName, List<Expression> arguments) {
         this.functionName = functionName;
-        this.arguments = arguments;
+        this.arguments = Collections.unmodifiableList(arguments);
         for (Expression argument : arguments) {
             argument.setOwner(this);
         }
@@ -83,6 +85,39 @@ public class FunctionCall extends Expression implements ExpressionOwner {
         function = findFunctionByName(functionName);
         if (function == null)
             throw new UnknownFunction(getFragment(), functionName);
+    }
+
+    void checkArguments() throws SyntaxError {
+        List<DataType> expectedArgumentTypes = function.getArgumentTypes();
+        int expectedNumberOfArguments = expectedArgumentTypes != null ? expectedArgumentTypes.size() : 0;
+        int actualNumberOfArguments = arguments.size();
+        if (expectedNumberOfArguments != actualNumberOfArguments)
+            throw new InvalidNumberOfArguments(getFragment(), functionName, expectedNumberOfArguments,
+                    actualNumberOfArguments);
+        if (expectedNumberOfArguments != 0) {
+            List<Expression> transformedArguments = new ArrayList<>(actualNumberOfArguments);
+            Iterator<DataType> typeIterator = expectedArgumentTypes.iterator();
+            Iterator<Expression> argumentsIterator = arguments.iterator();
+            for (int k = 0; k < expectedNumberOfArguments; k++) {
+                DataType expectedType = typeIterator.next();
+                DataType pureExpectedType = expectedType.getPureType();
+                Expression argument = argumentsIterator.next();
+                DataType actualType = argument.getType();
+                DataType pureActualType = actualType.getPureType();
+                if (!pureExpectedType.isBinaryAnalog(pureActualType)) {
+                    Expression cast = pureExpectedType.dynamicCast(argument, pureActualType);
+                    if (cast == null)
+                        throw new IncompatibleArgumentType(getFragment(), functionName, k + 1,
+                                expectedType.getName(), actualType.getName());
+                    cast.setOwner(this);
+                    transformedArguments.add(cast);
+                }
+                else {
+                    transformedArguments.add(argument);
+                }
+            }
+            arguments = Collections.unmodifiableList(transformedArguments);
+        }
     }
 
     @Override

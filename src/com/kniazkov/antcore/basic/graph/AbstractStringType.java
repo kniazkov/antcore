@@ -50,7 +50,7 @@ public class AbstractStringType extends BuiltInType implements ExpressionOwner {
 
     @Override
     public boolean isBinaryAnalog(DataType otherType) throws SyntaxError {
-        return false;
+        return otherType == this;
     }
 
     @Override
