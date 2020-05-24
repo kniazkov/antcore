@@ -14,19 +14,18 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.bytecode;
+package com.kniazkov.antcore.basic.virtualmachine;
+
+import com.kniazkov.antcore.lib.ByteBuffer;
 
 /**
- * The list of opcodes
+ * A native function, i.e. function executed by executor
  */
-public final class OpCode {
-    public static final byte NOP = 0;
-    public static final byte LOAD = 1;
-    public static final byte STORE = 2;
-    public static final byte CAST = 3;
-    public static final byte POP = 4;
-    public static final byte CALL = 5;
-    public static final byte RET = 6;
-    public static final byte ADD = 7;
-    public static final byte END = 127;
+public interface NativeFunction {
+    /**
+     * Execute the function
+     * @param memory program memory
+     * @param SP stack pointer
+     */
+    void exec(ByteBuffer memory, int SP);
 }

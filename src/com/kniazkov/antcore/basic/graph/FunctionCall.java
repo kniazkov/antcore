@@ -17,13 +17,11 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
+import com.kniazkov.antcore.basic.bytecodebuilder.Pop;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.exceptions.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * The function (method) call
@@ -122,7 +120,19 @@ public class FunctionCall extends Expression implements ExpressionOwner {
 
     @Override
     public void genLoad(CompilationUnit cu) throws SyntaxError {
-        // TODO
+        int popSize = 0;
+        if (arguments.size() > 0) {
+            ListIterator<Expression> iterator = arguments.listIterator(arguments.size());
+            while(iterator.hasPrevious()) {
+                Expression argument = iterator.previous();
+                argument.genLoad(cu);
+                popSize += argument.getType().getSize();
+            }
+        }
+        function.genCall(cu);
+        if (popSize > 0) {
+            cu.addInstruction(new Pop(popSize));
+        }
     }
 
     private String functionName;

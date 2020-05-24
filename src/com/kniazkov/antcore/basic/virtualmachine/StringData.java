@@ -16,6 +16,8 @@
  */
 package com.kniazkov.antcore.basic.virtualmachine;
 
+import com.kniazkov.antcore.lib.ByteBuffer;
+
 /**
  * String that can be converted from/to byte array
  */
@@ -23,6 +25,21 @@ public class StringData {
     public int length;
     public int capacity;
     public byte[] data;
+
+    public static StringData read(ByteBuffer memory, int address) {
+        StringData string = new StringData();
+        string.length = memory.getInt(address);
+        string.capacity = memory.get(address + 4);
+        string.data = new byte[string.length * 2];
+        memory.copy(address + 8, string.data, 0, string.length * 2);
+        return string;
+    }
+
+    public void write(ByteBuffer memory, int address) {
+        memory.setInt(address, length);
+        memory.setInt(address + 4, capacity);
+        memory.setArray(address + 8, data, 0, length * 2);
+    }
 
     @Override
     public String toString() {

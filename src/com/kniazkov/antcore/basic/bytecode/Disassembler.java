@@ -54,10 +54,10 @@ public class Disassembler {
                 buff.append("LOAD\t");
                 switch (i.p0) {
                     case DataSelector.GLOBAL:
-                        buff.append("GLOBAL\t").append(' ').append(i.x0).append(", ").append(i.x1);
+                        buff.append("GLOBAL\t").append(i.x0).append(", ").append(i.x1);
                         break;
                     case DataSelector.IMMEDIATE:
-                        buff.append("VAL \t").append(' ').append(i.x0).append(", ").append(i.x1);
+                        buff.append("VAL \t").append(i.x0).append(", ").append(i.x1);
                         if (i.x0 > 4)
                             buff.append(", ").append(i.x2);
                         break;
@@ -67,7 +67,7 @@ public class Disassembler {
                 buff.append("STORE\t");
                 switch (i.p0) {
                     case DataSelector.GLOBAL:
-                        buff.append("GLOBAL\t").append(' ').append(i.x0).append(", ").append(i.x1);
+                        buff.append("GLOBAL\t").append(i.x0).append(", ").append(i.x1);
                         break;
                 }
             },
@@ -78,13 +78,15 @@ public class Disassembler {
             (i, buff) -> { // 4 -> POP
                 buff.append("POP \t").append(i.x0);
             },
-            (i, buff) -> { // 5 -> RET
+            (i, buff) -> { // 5 -> CALL
+                buff.append("CALL\t").append(FunctionSelector.toString(i.p0)).append('\t').append(i.x0);
+            },
+            (i, buff) -> { // 6 -> RET
                 buff.append("RET");
             },
-            (i, buff) -> { // 6 -> ADD
+            (i, buff) -> { // 7 -> ADD
                 buff.append("ADD \t").append(TypeSelector.toString(i.p0));
             },
-            stub,
             stub,
             stub,
             stub, // 10

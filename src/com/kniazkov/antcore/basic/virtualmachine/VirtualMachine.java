@@ -19,13 +19,16 @@ package com.kniazkov.antcore.basic.virtualmachine;
 import com.kniazkov.antcore.lib.ByteBuffer;
 import com.kniazkov.antcore.lib.ByteList;
 
+import java.util.Map;
+
 /**
  * The virtual machine that runs compiled code
  */
 public class VirtualMachine {
-    public VirtualMachine(ByteList code, int memorySize) {
+    public VirtualMachine(ByteList code, int memorySize, Map<String, NativeFunction> functions) {
         memory = new ByteBuffer(memorySize);
         memory.setByteList(0, code);
+        this.functions = functions;
     }
 
     /**
@@ -42,25 +45,11 @@ public class VirtualMachine {
     }
 
     ByteBuffer memory;
+    Map<String, NativeFunction> functions;
     boolean power;
     ErrorCode error;
     int IP;
     int SP;
-
-    final StringData readString(int address) {
-        StringData string = new StringData();
-        string.length = memory.getInt(address);
-        string.capacity = memory.get(address + 4);
-        string.data = new byte[string.length * 2];
-        memory.copy(address + 8, string.data, 0, string.length * 2);
-        return string;
-    }
-
-    final void writeString(int address, StringData string) {
-        memory.setInt(address, string.length);
-        memory.setInt(address + 4, string.capacity);
-        memory.setArray(address + 8, string.data, 0, string.length);
-    }
 
     final byte readOpcode() {
         return memory.get(IP);
@@ -152,20 +141,20 @@ public class VirtualMachine {
                 if (newSize > currSize) {
                     int diff = newSize - currSize;
                     assert(diff % 2 == 0);
-                    StringData string = readString(SP);
+                    StringData string = StringData.read(memory, SP);
                     SP = SP - diff;
                     string.capacity += diff / 2;
-                    writeString(SP, string);
+                    string.write(memory, SP);
                 }
                 else if (currSize > newSize) {
                     int diff = currSize - newSize;
                     assert(diff % 2 == 0);
-                    StringData string = readString(SP);
+                    StringData string = StringData.read(memory, SP);
                     SP = SP + diff;
                     string.capacity -= diff / 2;
                     if (string.length > string.capacity)
                         string.length = string.capacity;
-                    writeString(SP, string);
+                    string.write(memory, SP);
                 }
             },
             stub,   // 9 -> ARRAY
@@ -186,6 +175,20 @@ public class VirtualMachine {
             },
             stub,   // 9 -> ARRAY
             stub    // 10 -> STRUCT
+    };
+
+    final Unit[] call = {
+            () -> { // 0 -> NATIVE
+                StringData functionName = StringData.read(memory, read_x0());
+                NativeFunction function = functions.get(functionName.toString());
+                if (function == null) {
+                    power = false;
+                    error = ErrorCode.FUNCTION_NOT_DEFINED;
+                    return;
+                }
+                function.exec(memory, SP);
+                IP = popInteger();
+            }
     };
 
     final Unit[] add = {
@@ -228,15 +231,18 @@ public class VirtualMachine {
                 SP = SP + read_x0();
                 IP = IP + 16;
             },
-            () -> { // 5 -> RET
+            () -> { // 5 -> CALL
+                pushInteger(IP + 16);
+                call[read_p0()].exec();
+            },
+            () -> { // 6 -> RET
                 power = false;
                 IP = IP + 16;
             },
-            () -> { // 6 -> ADD
+            () -> { // 7 -> ADD
                 add[read_p0()].exec();
                 IP = IP + 16;
             },
-            stub,
             stub,
             stub,
             stub, // 10

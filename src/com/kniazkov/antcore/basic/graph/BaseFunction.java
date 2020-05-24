@@ -16,6 +16,7 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.common.Fragment;
 
 import java.util.List;
@@ -56,6 +57,12 @@ public abstract class BaseFunction extends Node {
      * @return a type of returned value
      */
     public abstract DataType getReturnType();
+
+    /**
+     * Generate instruction(s) for calling this function
+     * @param cu the compilation unit
+     */
+    public abstract void genCall(CompilationUnit cu);
 
     private FunctionOwner owner;
     private Fragment fragment;

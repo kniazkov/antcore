@@ -5,11 +5,11 @@ END CODE
 
 MODULE SERVER
 	DATA
-		s AS STRING OF 10
+		s AS STRING OF 255
 		sp AS POINTER TO STRING
 	END DATA
 	FUNCTION MAIN
-		s = "Hello"
+		s = "Hello world"
 		sp = s
 		print(sp)
 	END FUNCTION

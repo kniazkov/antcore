@@ -85,6 +85,11 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
     }
 
     @Override
+    public void genCall(CompilationUnit cu) {
+        assert(false);
+    }
+
+    @Override
     public List<DataType> getArgumentTypes() {
         return arguments != null ? arguments.getTypes() : null;
     }

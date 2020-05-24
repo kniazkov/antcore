@@ -16,6 +16,9 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecode.FunctionSelector;
+import com.kniazkov.antcore.basic.bytecodebuilder.Call;
+import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
@@ -70,6 +73,11 @@ public class NativeFunction extends BaseFunction implements DataTypeOwner {
     @Override
     public DataType getReturnType() {
         return returnType;
+    }
+
+    @Override
+    public void genCall(CompilationUnit cu) {
+        cu.addInstruction(new Call(FunctionSelector.NATIVE, cu.getStaticDataOffset(), cu.getStringOffset(name)));
     }
 
     @Override

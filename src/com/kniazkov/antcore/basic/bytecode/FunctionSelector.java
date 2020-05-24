@@ -17,16 +17,19 @@
 package com.kniazkov.antcore.basic.bytecode;
 
 /**
- * The list of opcodes
+ * The list of function selectors
  */
-public final class OpCode {
-    public static final byte NOP = 0;
-    public static final byte LOAD = 1;
-    public static final byte STORE = 2;
-    public static final byte CAST = 3;
-    public static final byte POP = 4;
-    public static final byte CALL = 5;
-    public static final byte RET = 6;
-    public static final byte ADD = 7;
-    public static final byte END = 127;
+public final class FunctionSelector {
+    public static final byte NATIVE = 0;
+    public static final byte USER_DEFINED = 1;
+
+    public static String toString(byte selector) {
+        switch(selector) {
+            case NATIVE:
+                return "NATIVE";
+            case USER_DEFINED:
+                return "DEF ";
+        }
+        return "?";
+    }
 }
