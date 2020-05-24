@@ -55,9 +55,12 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
             }
         }
 
-        this.modules = Collections.unmodifiableMap(modules);
+        this.moduleMap = Collections.unmodifiableMap(modules);
+        this.moduleList = new ArrayList<>();
         for (Map.Entry<String, Module> entry : modules.entrySet()) {
-            entry.getValue().setOwner(this);
+            Module module = entry.getValue();
+            module.setOwner(this);
+            moduleList.add(module);
         }
 
         Map<String, DataType> types = new TreeMap<>();
@@ -87,8 +90,8 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
         for (Map.Entry<String, DataType> entry : types.entrySet()) {
             entry.getValue().dfs(visitor);
         }
-        for (Map.Entry<String, Module> entry : modules.entrySet()) {
-            entry.getValue().dfs(visitor);
+        for (Module module : moduleList) {
+            module.dfs(visitor);
         }
         accept(visitor);
     }
@@ -130,10 +133,10 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
             }
         }
 
-        for (Map.Entry<String, Module> entry : modules.entrySet()) {
+        for (Module module : moduleList) {
             if (flag)
                 buff.append("\n");
-            entry.getValue().toSourceCode(buff, i, i0);
+            module.toSourceCode(buff, i, i0);
             flag = true;
         }
     }
@@ -152,10 +155,33 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
         return null;
     }
 
+    @Override
+    protected BaseFunction findFunctionByName(String name) {
+        return null;
+    }
+
+    public List<CodeBlock> getCodeBlocksByExecutor(String name) {
+        List<CodeBlock> result = new ArrayList<>();
+        List<CodeBlock> selected = blocksByExecutor.get(name);
+        if (selected != null)
+            result.addAll(selected);
+        result.addAll(commonBlocks);
+        return result;
+    }
+
+    /**
+     * Move all functions and constants from code blocks to modules
+     */
+    void mergeModulesAndCodeBlocks() throws SyntaxError {
+        for (Module module : moduleList) {
+            module.mergeCode();
+        }
+    }
+
     public CompiledProgram compile() throws SyntaxError {
         List<CompiledModule> list = new ArrayList<>();
-        for (Map.Entry<String, Module> entry : modules.entrySet()) {
-            list.add(entry.getValue().compile());
+        for (Module module : moduleList) {
+            list.add(module.compile());
         }
         return new CompiledProgram(list);
     }
@@ -164,6 +190,7 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
     private List<CodeBlock> allBlocks;
     private Map<String, List<CodeBlock>> blocksByExecutor;
     private List<CodeBlock> commonBlocks;
-    private Map<String, Module> modules;
+    private List<Module> moduleList;
+    private Map<String, Module> moduleMap;
     private Map<String, DataType> types;
 }

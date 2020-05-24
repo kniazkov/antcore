@@ -22,6 +22,8 @@ import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecode.CompiledModule;
+import com.kniazkov.antcore.basic.exceptions.DuplicateField;
+import com.kniazkov.antcore.basic.exceptions.DuplicateFunction;
 import com.kniazkov.antcore.basic.exceptions.FunctionMainNotFound;
 import com.kniazkov.antcore.basic.exceptions.IncorrectFunctionMain;
 
@@ -94,8 +96,8 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
         return name;
     }
 
-    public String getExecutor() {
-        return executor;
+    public String getNotNullExecutor() {
+        return executor != null ? executor : "SERVER";
     }
 
     @Override
@@ -162,6 +164,11 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
     }
 
     @Override
+    protected BaseFunction findFunctionByName(String name) {
+        return allFunctionMap.get(name);
+    }
+
+    @Override
     public void calculateOffsets() throws SyntaxError {
         int offset = 0;
         if (localData != null) {
@@ -178,6 +185,25 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
     }
 
     /**
+     * Merging all appropriate code blocks to this module
+     */
+    void mergeCode() throws SyntaxError {
+        List<CodeBlock> blocks = owner.getCodeBlocksByExecutor(getNotNullExecutor());
+        allFunctionMap = new TreeMap<>(functionMap);
+        for (CodeBlock block : blocks) {
+            List<BaseFunction> functions = block.getFunctionList();
+            for (BaseFunction function : functions) {
+                String name = function.getName();
+                if (allFunctionMap.containsKey(name)) {
+                    BaseFunction duplicate = allFunctionMap.get(name);
+                    throw new DuplicateFunction(duplicate.getFragment(), name);
+                }
+                allFunctionMap.put(name, function);
+            }
+        }
+    }
+
+    /**
      * Compiling the module
      * @return a bytecode
      */
@@ -190,7 +216,7 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
         CompilationUnit unit = new CompilationUnit();
         mainFunction.compile(unit);
         unit.addInstruction(new End());
-        return new CompiledModule(executor, name, unit.getBytecode());
+        return new CompiledModule(getNotNullExecutor(), name, unit.getBytecode());
     }
 
     private Program owner;
@@ -202,4 +228,5 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
     private DataSet outputData;
     private List<Function> functionList;
     private Map<String, Function> functionMap;
+    private Map<String, BaseFunction> allFunctionMap;
 }

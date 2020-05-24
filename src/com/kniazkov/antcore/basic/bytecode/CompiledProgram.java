@@ -27,8 +27,6 @@ public class CompiledProgram {
         executors = new ArrayList<>();
         for (CompiledModule module : rawList) {
             String executor  = module.getExecutor();
-            if (executor == null)
-                executor = "SERVER";
             List<CompiledModule> sublist = modules.get(executor);
             if (sublist != null) {
                 sublist.add(module);

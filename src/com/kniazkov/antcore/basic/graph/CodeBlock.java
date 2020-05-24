@@ -19,10 +19,7 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * The node that represents a block of code
@@ -33,13 +30,12 @@ public class CodeBlock extends Node implements FunctionOwner {
         if (executors != null)
             this.executors = Collections.unmodifiableList(executors);
         this.nativeFunctionList = Collections.unmodifiableList(nativeFunctions);
-        this.nativeFunctionMap = new TreeMap<>();
-        this.allFunctionMap = new TreeMap<>();
+        List<BaseFunction> functionList = new ArrayList<>();
         for (NativeFunction function : nativeFunctions) {
             function.setOwner(this);
-            nativeFunctionMap.put(function.getName(), function);
-            allFunctionMap.put(function.getName(), function);
+            functionList.add(function);
         }
+        allFunctionList = Collections.unmodifiableList(functionList);
     }
 
     @Override
@@ -96,10 +92,13 @@ public class CodeBlock extends Node implements FunctionOwner {
         return executors;
     }
 
+    public List<BaseFunction> getFunctionList() {
+        return allFunctionList;
+    }
+
     private Program owner;
     private Fragment fragment;
     private List<String> executors;
     private List<NativeFunction> nativeFunctionList;
-    private Map<String, NativeFunction> nativeFunctionMap;
-    private Map<String, NativeFunction> allFunctionMap;
+    private List<BaseFunction> allFunctionList;
 }

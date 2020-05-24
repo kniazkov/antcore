@@ -70,6 +70,15 @@ public abstract class Node {
     }
 
     /**
+     * Finds a function by its name
+     * @param name the name
+     * @return a function or null if not found
+     */
+    protected BaseFunction findFunctionByName(String name) {
+        return getOwner().findFunctionByName(name);
+    }
+
+    /**
      * Generate program source code from the node
      * @param buff destination buffer
      * @param i current indentation

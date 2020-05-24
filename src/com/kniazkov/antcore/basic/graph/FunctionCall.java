@@ -18,6 +18,8 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.basic.exceptions.CannotResolveSymbol;
+import com.kniazkov.antcore.basic.exceptions.UnknownFunction;
 
 import java.util.List;
 
@@ -72,6 +74,15 @@ public class FunctionCall extends Expression implements ExpressionOwner {
             flag = true;
         }
         buff.append(')');
+    }
+
+    /**
+     * Bind function by name
+     */
+    void bindName() throws SyntaxError {
+        function = findFunctionByName(functionName);
+        if (function == null)
+            throw new UnknownFunction(getFragment(), functionName);
     }
 
     @Override

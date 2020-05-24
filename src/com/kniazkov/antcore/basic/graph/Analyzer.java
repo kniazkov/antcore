@@ -27,10 +27,11 @@ public class Analyzer {
      * @param root the root node
      */
     public static void analyze(Program root) throws SyntaxError {
+        root.mergeModulesAndCodeBlocks();
         bindTypes(root);
         bindNames(root);
         calculateOffsets(root);
-        defineTypes(root);
+        inferTypes(root);
     }
 
     /**
@@ -49,10 +50,10 @@ public class Analyzer {
     }
 
     /**
-     * Define data types for operations
+     * Infer data types for operations
      * @param root the root node
      */
-    protected static void defineTypes(Program root) throws SyntaxError {
+    protected static void inferTypes(Program root) throws SyntaxError {
         class Calculator extends NodeVisitor {
             @Override
             public void visit(Assignment obj) throws SyntaxError {
@@ -77,6 +78,10 @@ public class Analyzer {
      */
     protected static void bindNames(Program root) throws SyntaxError {
         class Binder extends NodeVisitor {
+            @Override
+            public void visit(FunctionCall obj) throws SyntaxError {
+                obj.bindName();
+            }
             @Override
             public void visit(VariableReference obj) throws SyntaxError {
                 obj.bindName();
