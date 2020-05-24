@@ -34,6 +34,10 @@ public class VariableReference extends Expression implements ExpressionOwner {
         visitor.visit(this);
     }
 
+    public String getName() {
+        return name;
+    }
+
     @Override
     public DataType getType() {
         return expression.getType();

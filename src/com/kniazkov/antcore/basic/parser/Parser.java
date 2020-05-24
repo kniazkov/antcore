@@ -968,6 +968,18 @@ public class Parser {
                     TokenExpression expression = parseParenthesizedExpression(line, (RoundBracketsPair) token);
                     leftSequence.addLast(new TokenExpression(new ParenthesizedExpression(expression.toNode())));
                 }
+                else if (leftSequence.peekLast() instanceof TokenExpression) {
+                    Expression expression = ((TokenExpression) leftSequence.peekLast()).getExpression();
+                    if (expression instanceof VariableReference) {
+                        // function call
+                        String functionName = ((VariableReference)expression).getName();
+                        List<Expression> arguments = parseFunctionCallArguments(line, (RoundBracketsPair) token);
+                        leftSequence.removeLast();
+                        leftSequence.addLast(new TokenExpression(new FunctionCall(functionName, arguments)));
+                    }
+                    else
+                        throw new UnrecognizedSequence(line);
+                }
                 else
                     throw new UnrecognizedSequence(line);
             }
@@ -1028,6 +1040,38 @@ public class Parser {
         TokenExpression result = parseExpression(line, iterator, false);
         if (iterator.hasNext())
             throw new UnrecognizedSequence(line);
+        return result;
+    }
+
+    /**
+     * Parse expression in brackets
+     * @param line the line of source code
+     * @param bracketsPair the pair of brackets that contains arguments
+     * @return a list contains function call arguments
+     */
+    private List<Expression> parseFunctionCallArguments(Line line, RoundBracketsPair bracketsPair)
+            throws SyntaxError {
+        RollbackIterator<Token> iterator = new RollbackIterator<>(bracketsPair.getTokens().iterator());
+        List<Expression> result = new ArrayList<>();
+        boolean oneMoreArg = false;
+        while(true) {
+            if (!iterator.hasNext())
+            {
+                if (!oneMoreArg)
+                    break;
+                throw new ExpectedArgument(line);
+            }
+            TokenExpression expression = parseExpression(line, iterator, false);
+            result.add(expression.toNode());
+            if (iterator.hasNext()) {
+                Token comma = iterator.next();
+                if (!(comma instanceof Comma))
+                    throw new ExpectedComma(line);
+                oneMoreArg = true;
+            }
+            else
+                break;
+        }
         return result;
     }
 

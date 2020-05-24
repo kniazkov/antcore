@@ -34,6 +34,10 @@ public class TokenExpression extends Token {
         return tmp.toString();
     }
 
+    public Expression getExpression() {
+        return expression;
+    }
+
     public Expression toNode() {
         return expression;
     }
