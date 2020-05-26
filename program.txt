@@ -1,16 +1,17 @@
 CODE SERVER
-	DECLARE FUNCTION print ( POINTER TO STRING )
+	DECLARE FUNCTION print ( POINTER TO CONST STRING )
 	DECLARE FUNCTION atan2 ( REAL , REAL ) AS REAL
 END CODE
 
 MODULE SERVER
 	DATA
-		s AS STRING OF 255
-		sp AS POINTER TO STRING
+		's AS STRING OF 255
+		'sp AS POINTER TO STRING
 	END DATA
 	FUNCTION MAIN
-		s = "Hello world"
-		sp = s
-		print(sp)
+		's = "Hello world"
+		'sp = s
+		'print(sp)
+		'print("Ok.")
 	END FUNCTION
 END MODULE

@@ -631,12 +631,17 @@ public class Parser {
         throw new UnexpectedEndOfFile(line);
     }
 
+    private RawDataType parseDataType(Line line, RollbackIterator<Token> iterator) throws SyntaxError {
+        return parseDataType(line, iterator, false);
+    }
+
     /**
      * Parse a data type
      * @param line the line of source code
      * @param iterator the iterator by tokens
+     * @param constant there was a constant modifier
      */
-    private RawDataType parseDataType(Line line, RollbackIterator<Token> iterator) throws SyntaxError {
+    private RawDataType parseDataType(Line line, RollbackIterator<Token> iterator, boolean constant) throws SyntaxError {
         if (!iterator.hasNext())
             throw new ExpectedDataType(line);
 
@@ -665,8 +670,15 @@ public class Parser {
             Token toKeyword = iterator.next();
             if (!(toKeyword instanceof KeywordTo))
                 throw new ExpectedToKeyword(line);
-            RawDataType subType = parseDataType(line, iterator);
+            RawDataType subType = parseDataType(line, iterator, false);
             return new RawDataTypePointer(subType);
+        }
+
+        if (first instanceof KeywordConst) {
+            if (constant)
+                throw new TwoConstantModifiers(line);
+            RawDataType subType = parseDataType(line, iterator, true);
+            return new RawDataTypeConstant(subType);
         }
 
         throw new ExpectedDataType(line);
@@ -1044,7 +1056,7 @@ public class Parser {
     }
 
     /**
-     * Parse expression in brackets
+     * Parse function call arguments
      * @param line the line of source code
      * @param bracketsPair the pair of brackets that contains arguments
      * @return a list contains function call arguments
