@@ -16,6 +16,7 @@
  */
 package com.kniazkov.antcore.lib;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -36,5 +37,17 @@ public final class FileIO {
             System.err.println("Can't find file specified '" + path + '\'');
         }
         return null;
+    }
+
+    public static boolean writeStringToFile(String path, String data) {
+        try {
+            FileWriter writer = new FileWriter(path);
+            writer.write(data);
+            writer.close();
+            return true;
+        } catch (IOException e) {
+            System.err.println("Can't write '" + path + '\'');
+        }
+        return false;
     }
 }

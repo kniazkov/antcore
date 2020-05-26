@@ -25,6 +25,7 @@ import com.kniazkov.antcore.basic.graph.Program;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.parser.Parser;
 import com.kniazkov.antcore.basic.virtualmachine.NativeFunction;
+import com.kniazkov.antcore.basic.virtualmachine.StandardLibrary;
 import com.kniazkov.antcore.basic.virtualmachine.StringData;
 import com.kniazkov.antcore.basic.virtualmachine.VirtualMachine;
 import com.kniazkov.antcore.lib.FileIO;
@@ -45,15 +46,8 @@ public class Main {
                     for (CompiledModule module : compiledProgram.getModulesByExecutor(executor)) {
                         System.out.println(Disassembler.convert(module.getBytecode()));
 
-                        Map<String, NativeFunction> functions = new TreeMap<>();
-                        functions.put("print", (memory, SP) -> {
-                            int address = memory.getInt(SP + 4);
-                            StringData string = StringData.read(memory, address);
-                            System.out.println(string);
-                        });
-
                         VirtualMachine virtualMachine = new VirtualMachine(module.getBytecode(), 1024,
-                                functions);
+                                StandardLibrary.getFunctions());
                         virtualMachine.run();
                     }
                 }

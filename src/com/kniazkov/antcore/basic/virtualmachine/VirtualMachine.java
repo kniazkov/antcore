@@ -44,6 +44,10 @@ public class VirtualMachine {
         }
     }
 
+    public ErrorCode getErrorCode() {
+        return error;
+    }
+
     ByteBuffer memory;
     Map<String, NativeFunction> functions;
     boolean power;
