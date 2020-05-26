@@ -19,6 +19,8 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.common.DataPrefix;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.basic.exceptions.FieldCanNotBeAbstract;
+import com.kniazkov.antcore.basic.exceptions.FieldCanNotBeConstant;
 import com.kniazkov.antcore.basic.exceptions.RecursiveNesting;
 
 import java.util.Collections;
@@ -133,6 +135,19 @@ public class DataSet extends Node implements ExpressionOwner {
 
     public Field getFieldByName(String name) {
         return fieldMap.get(name);
+    }
+
+    /**
+     * Check types of all fields
+     */
+    void checkTypes() throws SyntaxError {
+        for (Field field : fieldList) {
+            DataType type = field.getType();
+            if (type.isConstant())
+                throw new FieldCanNotBeConstant(field.getFragment());
+            if (type.isAbstract())
+                throw new FieldCanNotBeAbstract(field.getFragment());
+        }
     }
 
     private DataSetOwner owner;

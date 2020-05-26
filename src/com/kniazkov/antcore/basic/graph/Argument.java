@@ -79,7 +79,7 @@ public class Argument extends LeftExpression implements DataTypeOwner {
     }
 
     void setOffset(int offset) {
-        assert(offset == -1);
+        assert(this.offset == -1);
         this.offset = offset;
     }
 

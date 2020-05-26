@@ -20,6 +20,8 @@ import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.Return;
+import com.kniazkov.antcore.basic.exceptions.ReturnTypeCanNotBeAbstract;
+import com.kniazkov.antcore.basic.exceptions.ReturnTypeCanNotBeConstant;
 
 import java.util.List;
 
@@ -97,6 +99,18 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
     public void compile(CompilationUnit cu) throws SyntaxError {
         body.compile(cu);
         cu.addInstruction(new Return());
+    }
+
+    /**
+     * Check correctness of return type
+     */
+    void checkReturnType() throws SyntaxError {
+        if (returnType != null) {
+            if (returnType.isConstant())
+                throw new ReturnTypeCanNotBeConstant(getFragment());
+            if (returnType.isAbstract())
+                throw new ReturnTypeCanNotBeAbstract(getFragment());
+        }
     }
 
     private String name;

@@ -21,6 +21,10 @@ import com.kniazkov.antcore.basic.bytecodebuilder.Call;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.basic.exceptions.ArgumentCanNotBeAbstract;
+import com.kniazkov.antcore.basic.exceptions.ArgumentCanNotBeConstant;
+import com.kniazkov.antcore.basic.exceptions.ReturnTypeCanNotBeAbstract;
+import com.kniazkov.antcore.basic.exceptions.ReturnTypeCanNotBeConstant;
 
 import java.util.Collections;
 import java.util.List;
@@ -97,6 +101,26 @@ public class NativeFunction extends BaseFunction implements DataTypeOwner {
         if (returnType != null)
             buff.append(" AS ").append(returnType.getName());
         buff.append('\n');
+    }
+
+    /**
+     * Check types of arguments and correctness of return type
+     */
+    void checkTypes() throws SyntaxError {
+        if (arguments != null) {
+            for (DataType type : arguments) {
+                if (type.isConstant())
+                    throw new ArgumentCanNotBeConstant(getFragment());
+                if (type.isAbstract())
+                    throw new ArgumentCanNotBeAbstract(getFragment());
+            }
+        }
+        if (returnType != null) {
+            if (returnType.isConstant())
+                throw new ReturnTypeCanNotBeConstant(getFragment());
+            if (returnType.isAbstract())
+                throw new ReturnTypeCanNotBeAbstract(getFragment());
+        }
     }
 
     private String name;

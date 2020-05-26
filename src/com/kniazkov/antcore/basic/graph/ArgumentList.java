@@ -17,6 +17,9 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.basic.exceptions.ArgumentCanNotBeAbstract;
+import com.kniazkov.antcore.basic.exceptions.ArgumentCanNotBeConstant;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,6 +83,19 @@ public class ArgumentList extends Node implements ExpressionOwner {
         for (Argument argument : arguments) {
             argument.setOffset(offset);
             offset += argument.getType().getSize();
+        }
+    }
+
+    /**
+     * Check types of all arguments
+     */
+    void checkTypes() throws SyntaxError {
+        for (Argument argument : arguments) {
+            DataType type = argument.getType();
+            if (type.isConstant())
+                throw new ArgumentCanNotBeConstant(getFragment());
+            if (type.isAbstract())
+                throw new ArgumentCanNotBeAbstract(getFragment());
         }
     }
 

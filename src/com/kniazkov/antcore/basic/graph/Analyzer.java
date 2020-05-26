@@ -31,7 +31,7 @@ public class Analyzer {
         bindTypes(root);
         bindNames(root);
         calculateOffsets(root);
-        inferTypes(root);
+        checkTypes(root);
     }
 
     /**
@@ -50,11 +50,15 @@ public class Analyzer {
     }
 
     /**
-     * Infer data types for operations
+     * Check, cast and infer data types
      * @param root the root node
      */
-    protected static void inferTypes(Program root) throws SyntaxError {
-        class Calculator extends NodeVisitor {
+    protected static void checkTypes(Program root) throws SyntaxError {
+        class Checker extends NodeVisitor {
+            @Override
+            public void visit(ArgumentList obj) throws SyntaxError {
+                obj.checkTypes();
+            }
             @Override
             public void visit(Assignment obj) throws SyntaxError {
                 obj.checkType();
@@ -68,12 +72,24 @@ public class Analyzer {
                 obj.defineType();
             }
             @Override
+            public void visit(DataSet obj) throws SyntaxError {
+                obj.checkTypes();
+            }
+            @Override
+            public void visit(Function obj) throws SyntaxError {
+                obj.checkReturnType();
+            }
+            @Override
             public void visit(FunctionCall obj) throws SyntaxError {
                 obj.checkArguments();
             }
+            @Override
+            public void visit(NativeFunction obj) throws SyntaxError {
+                obj.checkTypes();
+            }
         }
 
-        root.dfs(new Calculator());
+        root.dfs(new Checker());
     }
 
     /**
