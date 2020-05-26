@@ -96,15 +96,19 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
         accept(visitor);
     }
 
+    @Override
+    public Node getOwner() {
+        return null;
+    }
+
+    public List<Module> getModuleList() {
+        return moduleList;
+    }
+
     public String toSourceCode() {
         StringBuilder buff = new StringBuilder();
         toSourceCode(buff, "", "\t");
         return buff.toString();
-    }
-
-    @Override
-    public Node getOwner() {
-        return null;
     }
 
     @Override

@@ -20,6 +20,7 @@ import com.kniazkov.antcore.basic.bytecode.DataSelector;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.Load;
 import com.kniazkov.antcore.basic.bytecodebuilder.RawInstruction;
+import com.kniazkov.antcore.basic.bytecodebuilder.StaticDataBuilder;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
 /**
@@ -28,6 +29,12 @@ import com.kniazkov.antcore.basic.common.SyntaxError;
 public class StringNode extends Expression {
     public StringNode(String value) {
         this.value = value;
+        address = -1;
+    }
+
+    @Override
+    public void accept(NodeVisitor visitor) throws SyntaxError {
+        visitor.visit(this);
     }
 
     @Override
@@ -73,6 +80,21 @@ public class StringNode extends Expression {
             buff.append('"');
     }
 
+    /**
+     * Calculate absolute string address
+     * @param staticData the static data
+     */
+    void calculateAddress(StaticDataBuilder staticData) {
+        assert (address < 0);
+        address = staticData.getStringOffset(value);
+    }
+
+    @Override
+    public Expression getPointer() {
+        assert (address >= 0);
+        return new GlobalPointer(this, address, false);
+    }
+
     @Override
     public void genLoad(CompilationUnit cu) throws SyntaxError {
         RawInstruction load = new Load(DataSelector.GLOBAL,
@@ -82,4 +104,5 @@ public class StringNode extends Expression {
 
     private String value;
     private DataType type;
+    private int address;
 }

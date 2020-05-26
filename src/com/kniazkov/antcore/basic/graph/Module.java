@@ -18,6 +18,7 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecodebuilder.End;
+import com.kniazkov.antcore.basic.bytecodebuilder.StaticDataBuilder;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
@@ -42,6 +43,7 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
         this.fragment = fragment;
         this.name = name;
         this.executor = executor;
+        this.staticData = new StaticDataBuilder();
         this.localData = localData;
         if (localData != null)
             localData.setOwner(this);
@@ -98,6 +100,10 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
 
     public String getNotNullExecutor() {
         return executor != null ? executor : "SERVER";
+    }
+
+    StaticDataBuilder getStaticData() {
+        return staticData;
     }
 
     @Override
@@ -213,7 +219,7 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
             throw new FunctionMainNotFound(fragment, name);
         if (mainFunction.getArgumentsCount() != 0 || mainFunction.getReturnType() != null)
             throw new IncorrectFunctionMain(fragment);
-        CompilationUnit unit = new CompilationUnit();
+        CompilationUnit unit = new CompilationUnit(staticData);
         mainFunction.compile(unit);
         unit.addInstruction(new End());
         return new CompiledModule(getNotNullExecutor(), name, unit.getBytecode());
@@ -223,6 +229,7 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
     private Fragment fragment;
     private String name;
     private String executor;
+    private StaticDataBuilder staticData;
     private DataSet localData;
     private DataSet inputData;
     private DataSet outputData;

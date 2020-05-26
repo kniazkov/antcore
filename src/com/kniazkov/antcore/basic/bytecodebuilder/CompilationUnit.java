@@ -29,13 +29,11 @@ import java.util.TreeMap;
  * The compilation unit (module with external functions)
  */
 public class CompilationUnit {
-    public CompilationUnit() {
+    public CompilationUnit(StaticDataBuilder staticData) {
         instructions = new ArrayList<>();
+        this.staticData = staticData;
         staticDataOffset = new Reference<>(0);
-        staticDataSize = 0;
         dynamicDataOffset = new Reference<>(0);
-        stringsList = new ArrayList<>();
-        stringsMap = new TreeMap<>();
     }
 
     public Reference<Integer> getStaticDataOffset() {
@@ -48,7 +46,7 @@ public class CompilationUnit {
 
     public ByteList getBytecode() {
         int count = instructions.size();
-        int size = count * 16 + staticDataSize;
+        int size = count * 16 + staticData.getSize();
         ByteBuffer buff = new ByteBuffer(size);
 
         // code
@@ -56,26 +54,14 @@ public class CompilationUnit {
             instructions.get(k).generate().write(buff, k * 16);
         }
 
-        // strings
-        for (String string : stringsList) {
-            int index = stringsMap.get(string) + staticDataOffset.value;
-            int length = string.length();
-            // current length
-            buff.setInt(index, length);
-            // capacity, the same as length
-            buff.setInt(index + 4, length);
-            // data
-            for (int k = 0; k < length; k++) {
-                char ch = string.charAt(k);
-                buff.setChar(index + 8 + k * 2, ch);
-            }
-        }
+        // data
+        staticData.build(buff, staticDataOffset.value);
         return buff;
     }
 
     private void updateOffsets() {
         staticDataOffset.value = instructions.size() * 16;
-        dynamicDataOffset.value = staticDataOffset.value + staticDataSize;
+        dynamicDataOffset.value = staticDataOffset.value + staticData.getSize();
     }
 
     public void addInstruction(RawInstruction item) {
@@ -86,20 +72,13 @@ public class CompilationUnit {
     }
 
     public int getStringOffset(String string) {
-        if (stringsMap.containsKey(string))
-            return stringsMap.get(string);
-        int offset = staticDataSize;
-        staticDataSize += string.length() * 2 + 8;
-        stringsList.add(string);
-        stringsMap.put(string, offset);
+        int offset = staticData.getStringOffset(string);
         updateOffsets();
         return offset;
     }
 
     private List<RawInstruction> instructions;
+    private StaticDataBuilder staticData;
     private Reference<Integer> staticDataOffset;
-    private int staticDataSize;
     private Reference<Integer> dynamicDataOffset;
-    private List<String> stringsList;
-    private Map<String, Integer> stringsMap;
 }

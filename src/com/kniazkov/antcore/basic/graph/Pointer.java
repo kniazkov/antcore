@@ -99,7 +99,7 @@ public class Pointer extends DataType implements DataTypeOwner {
             if (type.isBinaryAnalog(((Pointer) otherType).type))
                 return expression;
         }
-        if (type.isBinaryAnalog(otherType) || otherType.isInheritedFrom(type))
+        if (type.isBinaryAnalog(otherType) || otherType.isInheritedFrom(type.getPureType()))
             return expression.getPointer();
         return null;
     }

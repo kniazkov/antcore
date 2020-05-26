@@ -5,16 +5,13 @@ END CODE
 
 MODULE SERVER
 	DATA
-		s AS STRING OF 255
-		sp AS POINTER TO STRING
+		's AS STRING OF 255
+		'sp AS POINTER TO STRING
 	END DATA
 	FUNCTION MAIN
 		's = "Hello world"
 		'sp = s
 		'print(sp)
-		'print("Ok.")
-	END FUNCTION
-	
-	FUNCTION myFunction( s AS POINTER TO STRING ) AS INTEGER
+		print("Ok.")
 	END FUNCTION
 END MODULE

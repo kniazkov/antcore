@@ -19,14 +19,16 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushGlobalPointer;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushInteger;
+import com.kniazkov.antcore.lib.Reference;
 
 /**
  * The node represents a global pointer, i.e. pointer to global variable or field of global object
  */
 public class GlobalPointer extends Expression {
-    public GlobalPointer(Expression expression, int address) {
+    public GlobalPointer(Expression expression, int address, boolean isDynamicData) {
         this.expression = expression;
         this.address = address;
+        this.isDynamicData = isDynamicData;
     }
 
     @Override
@@ -53,10 +55,12 @@ public class GlobalPointer extends Expression {
 
     @Override
     public void genLoad(CompilationUnit cu) {
-        cu.addInstruction(new PushGlobalPointer(cu.getDynamicDataOffset(), address));
+        Reference<Integer> offset = isDynamicData ? cu.getDynamicDataOffset() : cu.getStaticDataOffset();
+        cu.addInstruction(new PushGlobalPointer(offset, address));
     }
 
     private Expression expression;
     private int address;
     private DataType type;
+    private boolean isDynamicData;
 }

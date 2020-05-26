@@ -16,6 +16,7 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecodebuilder.StaticDataBuilder;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
 /**
@@ -31,6 +32,7 @@ public class Analyzer {
         bindTypes(root);
         bindNames(root);
         calculateOffsets(root);
+        buildStaticData(root);
         checkTypes(root);
     }
 
@@ -133,5 +135,28 @@ public class Analyzer {
         }
 
         root.dfs(new Calculator());
+    }
+
+    /**
+     * Calculate offsets of all static blocks such as strings
+     * @param root the root node
+     */
+    protected static void buildStaticData(Program root) throws SyntaxError {
+        class Builder extends  NodeVisitor {
+            StaticDataBuilder staticData;
+
+            Builder(StaticDataBuilder staticData) {
+                this.staticData = staticData;
+            }
+
+            @Override
+            public void visit(StringNode obj) throws SyntaxError {
+                obj.calculateAddress(staticData);
+            }
+        }
+
+        for (Module module : root.getModuleList()) {
+            module.dfs(new Builder(module.getStaticData()));
+        }
     }
 }
