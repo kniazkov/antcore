@@ -20,6 +20,7 @@ import com.kniazkov.antcore.lib.ByteBuffer;
 import com.kniazkov.antcore.lib.ByteList;
 
 import java.util.Map;
+import java.util.SplittableRandom;
 
 /**
  * The virtual machine that runs compiled code
@@ -206,20 +207,16 @@ public class VirtualMachine {
             },
             stub,   // 6 -> LONG
             stub,   // 7 -> REAL
-            () -> {   // 8 -> STRING
+            () -> { // 8 -> STRING
                 StringData str1 = StringData.read(memory, SP);
                 SP = SP + read_x0();
                 StringData str2 = StringData.read(memory, SP);
                 SP = SP + read_x1();
                 StringData result = new StringData();
-                result.capacity = read_x2() - 8;
-                result.data = new byte[(str1.length + str2.length) * 2];
-                System.arraycopy(str1.data, 0, result.data, 0, str1.length * 2);
-                System.arraycopy(str2.data, 0, result.data, str1.length * 2, str2.length * 2);
-                result.length = str1.length + str2.length;
-                if (result.length > result.capacity)
-                    result.length = result.capacity;
-                SP = SP - read_x2();
+                int resultLength = read_x2();
+                result.capacity = (resultLength - 8) / 2;
+                StringData.concat(result, str1, str2);
+                SP = SP - resultLength;
                 result.write(memory, SP);
             },
             stub,   // 9 -> ARRAY

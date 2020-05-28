@@ -41,6 +41,24 @@ public class StringData {
         memory.setArray(address + 8, data, 0, length * 2);
     }
 
+    public static void concat(StringData result, StringData str1, StringData str2) {
+        result.length = str1.length + str2.length;
+        if (result.length > result.capacity)
+            result.length = result.capacity;
+        result.data = new byte[result.length * 2];
+        if (result.length >= str1.length) {
+            System.arraycopy(str1.data, 0, result.data, 0, str1.length * 2);
+            if (result.length == str1.length + str2.length)
+                System.arraycopy(str2.data, 0, result.data, str1.length * 2, str2.length * 2);
+            else
+                System.arraycopy(str2.data, 0, result.data, str1.length * 2,
+                        (result.length - str1.length) * 2);
+        }
+        else {
+            System.arraycopy(str1.data, 0, result.data, 0, result.length * 2);
+        }
+    }
+
     @Override
     public String toString() {
         if (length == 0)
