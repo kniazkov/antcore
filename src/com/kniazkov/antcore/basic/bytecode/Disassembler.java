@@ -85,7 +85,8 @@ public class Disassembler {
                 buff.append("RET");
             },
             (i, buff) -> { // 7 -> ADD
-                buff.append("ADD \t").append(TypeSelector.toString(i.p0));
+                buff.append("ADD \t").append(TypeSelector.toString(i.p0)).append('\t')
+                        .append(i.x0).append(", ").append(i.x1).append(" -> ").append(i.x2);
             },
             stub,
             stub,

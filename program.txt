@@ -2,14 +2,12 @@ CODE SERVER
 	DECLARE FUNCTION print ( POINTER TO CONST STRING )
 END CODE
 
-CONST message = "It works."
-
 MODULE SERVER
 	DATA
 		s AS STRING OF 20
 	END DATA
 	FUNCTION MAIN
-		s = message
+		s = "It " + "works"
 		print(s)
 	END FUNCTION
 END MODULE

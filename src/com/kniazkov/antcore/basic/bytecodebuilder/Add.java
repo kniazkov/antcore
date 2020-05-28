@@ -24,9 +24,12 @@ import com.kniazkov.antcore.basic.bytecode.TypeSelector;
  * Add two values from the stack and push the result to the stack
  */
 public class Add extends RawInstruction {
-    public Add(byte selector) {
+    public Add(byte selector, int leftSize, int rightSize, int totalSize) {
         this.selector = selector;
-        assert (selector == TypeSelector.INTEGER);
+        assert (selector == TypeSelector.INTEGER || selector == TypeSelector.STRING);
+        this.leftSize = leftSize;
+        this.rightSize = rightSize;
+        this.totalSize = totalSize;
     }
 
     @Override
@@ -34,8 +37,14 @@ public class Add extends RawInstruction {
         Instruction i = new Instruction();
         i.opcode = OpCode.ADD;
         i.p0 = selector;
+        i.x0 = leftSize;
+        i.x1 = rightSize;
+        i.x2 = totalSize;
         return i;
     }
 
     private byte selector;
+    private int leftSize;
+    private int rightSize;
+    private int totalSize;
 }

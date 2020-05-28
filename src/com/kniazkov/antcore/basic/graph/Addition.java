@@ -84,8 +84,14 @@ public class Addition extends BinaryOperation {
 
         right.genLoad(cu);
         left.genLoad(cu);
-        if (leftType instanceof IntegerType || rightType instanceof IntegerType) {
-            cu.addInstruction(new Add(TypeSelector.INTEGER));
+        if (leftType instanceof IntegerType && rightType instanceof IntegerType) {
+            cu.addInstruction(new Add(TypeSelector.INTEGER,4, 4, 4));
+            return;
+        }
+
+        if (leftType instanceof StringType && rightType instanceof StringType) {
+            cu.addInstruction(new Add(TypeSelector.STRING,
+                    leftType.getSize(), rightType.getSize(), getType().getSize()));
             return;
         }
 
