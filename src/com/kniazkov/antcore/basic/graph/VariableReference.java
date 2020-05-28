@@ -34,6 +34,14 @@ public class VariableReference extends Expression implements ExpressionOwner {
         visitor.visit(this);
     }
 
+    @Override
+    public void dfs(NodeVisitor visitor) throws SyntaxError {
+        if (expression != null)
+            expression.dfs(visitor);
+        visitor.visit(this);
+    }
+
+
     public String getName() {
         return name;
     }

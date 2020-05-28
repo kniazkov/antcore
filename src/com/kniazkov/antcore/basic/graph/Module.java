@@ -43,7 +43,7 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
         this.fragment = fragment;
         this.name = name;
         this.executor = executor;
-        this.staticData = new StaticDataBuilder();
+        this.staticData = new StaticDataBuilder(this);
         this.localData = localData;
         if (localData != null)
             localData.setOwner(this);
@@ -219,7 +219,7 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
             throw new FunctionMainNotFound(fragment, name);
         if (mainFunction.getArgumentsCount() != 0 || mainFunction.getReturnType() != null)
             throw new IncorrectFunctionMain(fragment);
-        CompilationUnit unit = new CompilationUnit(staticData);
+        CompilationUnit unit = new CompilationUnit(this, staticData);
         mainFunction.compile(unit);
         unit.addInstruction(new End());
         return new CompiledModule(getNotNullExecutor(), name, unit.getBytecode());

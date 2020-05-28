@@ -20,8 +20,10 @@ import com.kniazkov.antcore.basic.bytecode.DataSelector;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.Load;
 import com.kniazkov.antcore.basic.bytecodebuilder.RawInstruction;
-import com.kniazkov.antcore.basic.bytecodebuilder.StaticDataBuilder;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The node represents a string constant
@@ -29,7 +31,7 @@ import com.kniazkov.antcore.basic.common.SyntaxError;
 public class StringNode extends Expression {
     public StringNode(String value) {
         this.value = value;
-        address = -1;
+        address = new HashMap<>();
     }
 
     @Override
@@ -82,27 +84,28 @@ public class StringNode extends Expression {
 
     /**
      * Calculate absolute string address
-     * @param staticData the static data
+     * @param module the module
      */
-    void calculateAddress(StaticDataBuilder staticData) {
-        assert (address < 0);
-        address = staticData.getStringOffset(value);
+    void calculateAddress(Module module) {
+        assert (!address.containsKey(module));
+        address.put(module, module.getStaticData().getStringOffset(value));
     }
 
     @Override
     public Expression getPointer() {
-        assert (address >= 0);
-        return new GlobalPointer(this, address, false);
+        return new GlobalStaticPointer(this, address);
     }
 
     @Override
     public void genLoad(CompilationUnit cu) throws SyntaxError {
+        Module module = cu.getModule();
+        assert (address.containsKey(module));
         RawInstruction load = new Load(DataSelector.GLOBAL,
-                type.getSize(), cu.getStaticDataOffset(), cu.getStringOffset(value));
+                type.getSize(), cu.getStaticDataOffset(), address.get(module));
         cu.addInstruction(load);
     }
 
     private String value;
     private DataType type;
-    private int address;
+    private Map<Module, Integer> address;
 }

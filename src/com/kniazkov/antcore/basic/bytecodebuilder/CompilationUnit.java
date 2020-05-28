@@ -16,6 +16,7 @@
  */
 package com.kniazkov.antcore.basic.bytecodebuilder;
 
+import com.kniazkov.antcore.basic.graph.Module;
 import com.kniazkov.antcore.lib.ByteBuffer;
 import com.kniazkov.antcore.lib.ByteList;
 import com.kniazkov.antcore.lib.Reference;
@@ -25,15 +26,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/*
+ The memory model:
+ +------+-------------+--------------+-------+
+ + CODE | STATIC DATA | DYNAMIC DATA | STACK |
+ +------+-------------+--------------+-------+
+ */
+
 /**
  * The compilation unit (module with external functions)
  */
 public class CompilationUnit {
-    public CompilationUnit(StaticDataBuilder staticData) {
+    public CompilationUnit(Module module, StaticDataBuilder staticData) {
+        this.module = module;
         instructions = new ArrayList<>();
         this.staticData = staticData;
         staticDataOffset = new Reference<>(0);
         dynamicDataOffset = new Reference<>(0);
+    }
+
+    public Module getModule() {
+        return module;
     }
 
     public Reference<Integer> getStaticDataOffset() {
@@ -44,6 +57,10 @@ public class CompilationUnit {
         return dynamicDataOffset;
     }
 
+    /**
+     * Generate binary code
+     * @return a bytecode as list of bytes
+     */
     public ByteList getBytecode() {
         int count = instructions.size();
         int size = count * 16 + staticData.getSize();
@@ -77,6 +94,7 @@ public class CompilationUnit {
         return offset;
     }
 
+    private Module module;
     private List<RawInstruction> instructions;
     private StaticDataBuilder staticData;
     private Reference<Integer> staticDataOffset;

@@ -16,9 +16,8 @@
  */
 package com.kniazkov.antcore.basic.bytecodebuilder;
 
+import com.kniazkov.antcore.basic.graph.Module;
 import com.kniazkov.antcore.lib.ByteBuffer;
-import com.kniazkov.antcore.lib.ByteList;
-import com.kniazkov.antcore.lib.Reference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +28,8 @@ import java.util.TreeMap;
  * The class for building static data in binary form
  */
 public class StaticDataBuilder {
-    public StaticDataBuilder() {
+    public StaticDataBuilder(Module module) {
+        this.module = module;
         staticDataSize = 0;
         stringsList = new ArrayList<>();
         stringsMap = new TreeMap<>();
@@ -71,10 +71,15 @@ public class StaticDataBuilder {
         }
     }
 
+    public Module getModule() {
+        return module;
+    }
+
     public int getSize() {
         return staticDataSize;
     }
 
+    private Module module;
     private int staticDataSize;
     private List<String> stringsList;
     private Map<String, Integer> stringsMap;

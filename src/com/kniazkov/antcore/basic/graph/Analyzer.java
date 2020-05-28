@@ -143,20 +143,20 @@ public class Analyzer {
      */
     protected static void buildStaticData(Program root) throws SyntaxError {
         class Builder extends  NodeVisitor {
-            StaticDataBuilder staticData;
+            Module module;
 
-            Builder(StaticDataBuilder staticData) {
-                this.staticData = staticData;
+            Builder(Module module) {
+                this.module = module;
             }
 
             @Override
             public void visit(StringNode obj) throws SyntaxError {
-                obj.calculateAddress(staticData);
+                obj.calculateAddress(module);
             }
         }
 
         for (Module module : root.getModuleList()) {
-            module.dfs(new Builder(module.getStaticData()));
+            module.dfs(new Builder(module));
         }
     }
 }

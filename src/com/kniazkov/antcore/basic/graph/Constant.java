@@ -117,6 +117,11 @@ public class Constant extends Expression implements DataTypeOwner, ExpressionOwn
     }
 
     @Override
+    public Expression getPointer() {
+        return value.getPointer();
+    }
+
+    @Override
     public void genLoad(CompilationUnit cu) throws SyntaxError {
         value.genLoad(cu);
     }

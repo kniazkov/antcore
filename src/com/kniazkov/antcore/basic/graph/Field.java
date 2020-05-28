@@ -108,7 +108,7 @@ public class Field extends LeftExpression implements DataTypeOwner {
 
     @Override
     public Expression getPointer() {
-        return new GlobalPointer(this, getAbsoluteOffset(), true);
+        return new GlobalDynamicPointer(this, getAbsoluteOffset());
     }
 
     private DataSet owner;

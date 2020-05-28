@@ -5,11 +5,7 @@ END CODE
 CONST message = "It works."
 
 MODULE SERVER
-	DATA
-		s AS STRING OF 20
-	END DATA
 	FUNCTION MAIN
-		s = message
-		print(s)
+		print(message)
 	END FUNCTION
 END MODULE

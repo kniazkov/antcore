@@ -20,15 +20,17 @@ import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushGlobalPointer;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushInteger;
 import com.kniazkov.antcore.lib.Reference;
+import com.sun.org.apache.xpath.internal.operations.Mod;
+
+import java.util.Map;
 
 /**
- * The node represents a global pointer, i.e. pointer to global variable or field of global object
+ * The node represents pointer to a static global object (a constant, etc)
  */
-public class GlobalPointer extends Expression {
-    public GlobalPointer(Expression expression, int address, boolean isDynamicData) {
+public class GlobalStaticPointer extends Expression {
+    public GlobalStaticPointer(Expression expression, Map<Module, Integer> address) {
         this.expression = expression;
         this.address = address;
-        this.isDynamicData = isDynamicData;
     }
 
     @Override
@@ -55,12 +57,13 @@ public class GlobalPointer extends Expression {
 
     @Override
     public void genLoad(CompilationUnit cu) {
-        Reference<Integer> offset = isDynamicData ? cu.getDynamicDataOffset() : cu.getStaticDataOffset();
-        cu.addInstruction(new PushGlobalPointer(offset, address));
+        Module module = cu.getModule();
+        assert(address.containsKey(module));
+        Reference<Integer> offset = cu.getStaticDataOffset();
+        cu.addInstruction(new PushGlobalPointer(offset, address.get(module)));
     }
 
     private Expression expression;
-    private int address;
+    private Map<Module, Integer> address;
     private DataType type;
-    private boolean isDynamicData;
 }
