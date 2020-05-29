@@ -19,6 +19,7 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.basic.exceptions.ExpressionCannotBeAssigned;
 
 /**
  * The node represents a variable declaration
@@ -57,7 +58,11 @@ public class VariableDeclaration extends Statement {
 
     @Override
     public void compile(CompilationUnit cu) throws SyntaxError {
-
+        Expression initValue = variable.getInitValue();
+        if (initValue != null) {
+            initValue.genLoad(cu);
+            variable.genStore(cu);
+        }
     }
 
     @Override

@@ -89,6 +89,10 @@ public class Analyzer {
             public void visit(NativeFunction obj) throws SyntaxError {
                 obj.checkTypes();
             }
+            @Override
+            public void visit(Variable obj) throws SyntaxError {
+                obj.checkType();
+            }
         }
 
         root.dfs(new Checker());

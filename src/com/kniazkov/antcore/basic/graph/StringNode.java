@@ -87,8 +87,8 @@ public class StringNode extends Expression {
      * @param module the module
      */
     void calculateAddress(Module module) {
-        assert (!address.containsKey(module));
-        address.put(module, module.getStaticData().getStringOffset(value));
+        if(!address.containsKey(module));
+            address.put(module, module.getStaticData().getStringOffset(value));
     }
 
     @Override

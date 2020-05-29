@@ -58,6 +58,10 @@ public class Variable extends LeftExpression implements DataTypeOwner, Expressio
         return name;
     }
 
+    public Expression getInitValue() {
+        return initValue;
+    }
+
     void setOwner(VariableDeclaration owner) {
         this.owner = owner;
     }
@@ -99,9 +103,9 @@ public class Variable extends LeftExpression implements DataTypeOwner, Expressio
      */
     void checkType() throws SyntaxError {
         if (type == null) {
-            type = initValue.getType();
+            type = initValue.getType().getPureType();
         }
-        else {
+        else if (initValue != null) {
             DataType expectedType = type.getPureType();
             DataType actualType = initValue.getType().getPureType();
             if (!expectedType.isBinaryAnalog(actualType)) {
