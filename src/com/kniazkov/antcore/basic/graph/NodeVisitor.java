@@ -94,6 +94,12 @@ public abstract class NodeVisitor {
     public void visit(Struct obj)  throws SyntaxError {
     }
 
+    public void visit(Variable obj)  throws SyntaxError {
+    }
+
+    public void visit(VariableDeclaration obj)  throws SyntaxError {
+    }
+
     public void visit(VariableReference obj)  throws SyntaxError {
     }
 }

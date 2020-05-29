@@ -3,11 +3,9 @@ CODE SERVER
 END CODE
 
 MODULE SERVER
-	DATA
-		s AS STRING OF 20
-	END DATA
 	FUNCTION MAIN
-		s = "It " + "works"
-		print(s)
+		VAR s AS STRING OF 20
+		's = "It works"
+		'print(s)
 	END FUNCTION
 END MODULE

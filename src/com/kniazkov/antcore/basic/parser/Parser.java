@@ -19,6 +19,7 @@ package com.kniazkov.antcore.basic.parser;
 import com.kniazkov.antcore.basic.common.DataPrefix;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.basic.exceptions.DuplicateVariable;
 import com.kniazkov.antcore.basic.graph.*;
 import com.kniazkov.antcore.basic.parser.exceptions.*;
 import com.kniazkov.antcore.basic.parser.tokens.*;
@@ -167,6 +168,9 @@ public class Parser {
                     return KeywordCode.getInstance();
                 case "DECLARE":
                     return KeywordDeclare.getInstance();
+                case "VAR":
+                case "VARIABLE":
+                    return KeywordVar.getInstance();
             }
             return new Identifier(name);
         }
@@ -1103,6 +1107,7 @@ public class Parser {
      * @param result the destination list
      */
     private void parseStatementList(Iterator<Line> iterator, List<RawStatement> result) throws SyntaxError {
+        Map<String, RawVariableDeclaration> variables = new TreeMap<>();
         while(iterator.hasNext()) {
             Line line = iterator.next();
             List<Token> tokens = line.getTokens();
@@ -1111,6 +1116,14 @@ public class Parser {
             if (firstToken instanceof Identifier) {
                 RawStatement statement = parseStatementExpression(line);
                 result.add(statement);
+            }
+            else if (firstToken instanceof KeywordVar) {
+                RawVariableDeclaration variableDeclaration =  parseVariableDeclaration(line);
+                String name = variableDeclaration.getName();
+                if (variables.containsKey(name))
+                    throw new DuplicateVariable(line.getFragment(), name);
+                variables.put(name, variableDeclaration);
+                result.add(variableDeclaration);
             }
             else
                 throw new UnrecognizedSequence(line);
@@ -1138,5 +1151,51 @@ public class Parser {
             throw new UnexpectedSequence(line);
 
         return new RawAssignment(line.getFragment(), left, right);
+    }
+
+    /**
+     * Parse line contains a variable declaration
+     * @param declaration the line of source code
+     */
+    private RawVariableDeclaration parseVariableDeclaration(Line declaration) throws SyntaxError {
+        RollbackIterator<Token> tokens = new RollbackIterator<>(declaration.getTokens().iterator());
+        Token token = tokens.next();
+        assert(token instanceof KeywordVar);
+
+        if (!tokens.hasNext())
+            throw new ExpectedVariableName(declaration);
+        token = tokens.next();
+        if (!(token instanceof Identifier))
+            throw new ExpectedVariableName(declaration);
+        String name = ((Identifier)token).getName();
+
+        if (!tokens.hasNext())
+            throw new ExpectedAsKeyword(declaration);
+        token = tokens.next();
+
+        TokenExpression initValue = null;
+        RawDataType type = null;
+        if (!(token instanceof OperatorAssignEquals)) {
+            // variable without init value
+            if (!(token instanceof KeywordAs))
+                throw new ExpectedAsKeyword(declaration);
+            type = parseDataType(declaration, tokens);
+            if (tokens.hasNext())
+                throw new UnexpectedSequence(declaration);
+        }
+        else {
+            // variable with init value
+            initValue = parseExpression(declaration, tokens, false);
+            if (tokens.hasNext()) {
+                token = tokens.next();
+                if (!(token instanceof KeywordAs))
+                    throw new ExpectedAsKeyword(declaration);
+                type = parseDataType(declaration, tokens);
+                if (tokens.hasNext())
+                    throw new UnexpectedSequence(declaration);
+            }
+        }
+
+        return new RawVariableDeclaration(declaration.getFragment(), name, initValue, type);
     }
 }
