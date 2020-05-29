@@ -5,7 +5,7 @@ END CODE
 MODULE SERVER
 	FUNCTION MAIN
 		VAR s AS STRING OF 20
-		's = "It works"
+		s = "It works"
 		'print(s)
 	END FUNCTION
 END MODULE

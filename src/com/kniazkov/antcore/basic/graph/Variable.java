@@ -24,7 +24,7 @@ import com.kniazkov.antcore.basic.exceptions.IncompatibleTypes;
 /**
  * The node represents a variable
  */
-public class Variable extends Expression implements DataTypeOwner, ExpressionOwner {
+public class Variable extends LeftExpression implements DataTypeOwner, ExpressionOwner {
     public Variable(String name, Expression initValue, DataType type) {
         this.name = name;
         assert(initValue != null || type != null);
@@ -110,6 +110,11 @@ public class Variable extends Expression implements DataTypeOwner, ExpressionOwn
         }
     }
 
+    void setOffset(int offset) {
+        assert (this.offset == null);
+        this.offset = offset;
+    }
+
     @Override
     public Expression getPointer() {
         return null;
@@ -120,8 +125,14 @@ public class Variable extends Expression implements DataTypeOwner, ExpressionOwn
 
     }
 
+    @Override
+    public void genStore(CompilationUnit cu) throws SyntaxError {
+
+    }
+
     private VariableDeclaration owner;
     private String name;
     private Expression initValue;
     private DataType type;
+    private Integer offset;
 }

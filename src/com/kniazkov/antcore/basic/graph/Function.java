@@ -23,6 +23,8 @@ import com.kniazkov.antcore.basic.bytecodebuilder.Return;
 import com.kniazkov.antcore.basic.exceptions.ReturnTypeCanNotBeAbstract;
 import com.kniazkov.antcore.basic.exceptions.ReturnTypeCanNotBeConstant;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -113,8 +115,37 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
         }
     }
 
+    /**
+     * Go through all the statement lists and collect the variables,
+     * then calculate offsets
+     */
+    void collectVariablesAndCalculateOffsets() throws SyntaxError {
+        class Collector extends NodeVisitor {
+            List<Variable> result;
+
+            Collector() {
+                result = new ArrayList<>();
+            }
+
+            @Override
+            public void visit(StatementList obj)  throws SyntaxError {
+                obj.collectVariables(result);
+            }
+        }
+
+        Collector collector = new Collector();
+        body.dfs(collector);
+        variableList = collector.result;
+        int offset = 0;
+        for  (Variable variable : variableList) {
+            offset -= variable.getType().getSize();
+            variable.setOffset(offset);
+        }
+    }
+
     private String name;
     private ArgumentList arguments;
     private DataType returnType;
     private StatementList body;
+    private List<Variable> variableList;
 }

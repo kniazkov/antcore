@@ -129,6 +129,10 @@ public class Analyzer {
                 obj.calculateOffsets();
             }
             @Override
+            public void visit(Function obj) throws SyntaxError {
+                obj.collectVariablesAndCalculateOffsets();
+            }
+            @Override
             public void visit(Module obj) throws SyntaxError {
                 obj.calculateOffsets();
             }

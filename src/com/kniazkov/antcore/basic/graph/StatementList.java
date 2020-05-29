@@ -19,8 +19,7 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * The list of statements
@@ -28,8 +27,15 @@ import java.util.List;
 public class StatementList extends Node {
     public StatementList(List<Statement> statements) {
         this.statements = Collections.unmodifiableList(statements);
+        variableList = new ArrayList<>();
+        variableMap = new TreeMap<>();
         for (Statement statement : statements) {
             statement.setOwner(this);
+            if (statement instanceof VariableDeclaration) {
+                Variable variable = ((VariableDeclaration) statement).getVariable();
+                variableList.add(variable);
+                variableMap.put(variable.getName(), variable);
+            }
         }
     }
 
@@ -68,6 +74,24 @@ public class StatementList extends Node {
         }
     }
 
+    /**
+     * Collects variables into one list
+     * @param dst the destination list
+     */
+    void collectVariables(List<Variable> dst) {
+        dst.addAll(variableList);
+    }
+
+    @Override
+    protected Expression findVariableByName(String name) {
+        Variable variableOfThisScope = variableMap.get(name);
+        if (variableOfThisScope != null)
+            return variableOfThisScope;
+        return ((Node)owner).findVariableByName(name);
+    }
+
     private StatementListOwner owner;
     private List<Statement> statements;
+    private List<Variable> variableList;
+    private Map<String, Variable> variableMap;
 }
