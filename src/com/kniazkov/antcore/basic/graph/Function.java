@@ -16,6 +16,8 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecodebuilder.Enter;
+import com.kniazkov.antcore.basic.bytecodebuilder.Leave;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
@@ -42,6 +44,7 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
             returnType.setOwner(this);
         this.body = body;
         body.setOwner(this);
+        localDataSize = -1;
     }
 
     @Override
@@ -99,7 +102,10 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
     }
 
     public void compile(CompilationUnit cu) throws SyntaxError {
+        assert (localDataSize >= 0);
+        cu.addInstruction(new Enter(localDataSize));
         body.compile(cu);
+        cu.addInstruction(new Leave(localDataSize));
         cu.addInstruction(new Return());
     }
 
@@ -136,10 +142,11 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
         Collector collector = new Collector();
         body.dfs(collector);
         variableList = collector.result;
-        int offset = 0;
+        localDataSize = 0;
         for  (Variable variable : variableList) {
-            offset -= variable.getType().getSize();
-            variable.setOffset(offset);
+            int size = variable.getType().getSize();
+            localDataSize += size ;
+            variable.setOffset(-localDataSize);
         }
     }
 
@@ -148,4 +155,5 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
     private DataType returnType;
     private StatementList body;
     private List<Variable> variableList;
+    private int localDataSize;
 }

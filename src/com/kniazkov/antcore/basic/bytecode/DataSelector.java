@@ -21,5 +21,21 @@ package com.kniazkov.antcore.basic.bytecode;
  */
 public final class DataSelector {
     public static final byte GLOBAL = 0;
-    public static final byte IMMEDIATE = 1;
+    public static final byte LOCAL = 1;
+    public static final byte IMMEDIATE = 2;
+    public static final byte LOCAL_POINTER = 3;
+
+    public static String toString(byte selector) {
+        switch(selector) {
+            case GLOBAL:
+                return "GLOBAL";
+            case LOCAL:
+                return "LOCAL";
+            case IMMEDIATE:
+                return "VAL ";
+            case LOCAL_POINTER:
+                return "PTR ";
+        }
+        return "?";
+    }
 }

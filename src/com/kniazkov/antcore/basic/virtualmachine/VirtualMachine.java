@@ -20,7 +20,6 @@ import com.kniazkov.antcore.lib.ByteBuffer;
 import com.kniazkov.antcore.lib.ByteList;
 
 import java.util.Map;
-import java.util.SplittableRandom;
 
 /**
  * The virtual machine that runs compiled code
@@ -38,6 +37,7 @@ public class VirtualMachine {
     public void run() {
         IP = 0;
         SP = memory.size();
+        LP = SP;
         power = true;
         error = ErrorCode.OK;
         while(power) {
@@ -53,8 +53,9 @@ public class VirtualMachine {
     Map<String, NativeFunction> functions;
     boolean power;
     ErrorCode error;
-    int IP;
-    int SP;
+    int IP;             // instruction pointer
+    int SP;             // stack pointer
+    int LP;             // local pointer
 
     final byte readOpcode() {
         return memory.get(IP);
@@ -116,8 +117,15 @@ public class VirtualMachine {
             (size) -> { // 0 -> GLOBAL
                 move(read_x1(), SP, size);
             },
-            (size) -> { // 1 -> INSTRUCTION
+            (size) -> { // 1 -> LOCAL
+                move(LP + read_x1(), SP, size);
+            },
+            (size) -> { // 2 -> IMMEDIATE
                 move(IP + 8, SP, size);
+            },
+            (size) -> { // 3 -> LOCAL_POINTER
+                assert (size == 4);
+                memory.setInt(SP, LP + read_x1());
             },
     };
 
@@ -128,6 +136,9 @@ public class VirtualMachine {
     final Store[] store = {
             (size) -> { // 0 -> GLOBAL
                 move(SP, read_x1(), size);
+            },
+            (size) -> { // 1 -> LOCAL
+                move(SP, LP + read_x1(), size);
             },
     };
 
@@ -255,12 +266,21 @@ public class VirtualMachine {
                 power = false;
                 IP = IP + 16;
             },
-            () -> { // 7 -> ADD
+            () -> { // 7 -> ENTER
+                pushInteger(LP);
+                LP = SP;
+                SP = SP - read_x0();
+                IP = IP + 16;
+            },
+            () -> { // 8 -> LEAVE
+                SP = SP + read_x0();
+                LP = popInteger();
+                IP = IP + 16;
+            },
+            () -> { // 9 -> ADD
                 add[read_p0()].exec();
                 IP = IP + 16;
             },
-            stub,
-            stub,
             stub, // 10
             stub,
             stub,

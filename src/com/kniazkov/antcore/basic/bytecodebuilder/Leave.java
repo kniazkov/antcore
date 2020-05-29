@@ -17,45 +17,23 @@
 package com.kniazkov.antcore.basic.bytecodebuilder;
 
 import com.kniazkov.antcore.basic.bytecode.Instruction;
-import com.kniazkov.antcore.basic.bytecode.DataSelector;
 import com.kniazkov.antcore.basic.bytecode.OpCode;
-import com.kniazkov.antcore.lib.Reference;
 
 /**
- * Store a value to the memory
+ * Leave function, i.e. restore stack and then old local pointer
  */
-public class Store extends RawInstruction {
-    public Store(byte selector, int size, Reference<Integer> offset) {
-        this.selector = selector;
-        assert(selector == DataSelector.GLOBAL);
+public class Leave extends RawInstruction {
+    public Leave(int size) {
         this.size = size;
-        this.offset = offset;
-        this.address = new Reference<>();
-    }
-
-    public Store(byte selector, int size, Reference<Integer> offset, int address) {
-        this.selector = selector;
-        this.size = size;
-        this.offset = offset;
-        this.address = new Reference<>(address);
     }
 
     @Override
     public Instruction generate() {
         Instruction i = new Instruction();
-        i.opcode = OpCode.STORE;
-        i.p0 = selector;
+        i.opcode = OpCode.LEAVE;
         i.x0 = size;
-        i.x1 = (offset != null ? offset.value : 0) + address.value;
         return i;
     }
 
-    public Reference<Integer> getAddressReference() {
-        return address;
-    }
-
-    private byte selector;
-    private int size;
-    private Reference<Integer> offset;
-    private Reference<Integer> address;
+    protected int size;
 }

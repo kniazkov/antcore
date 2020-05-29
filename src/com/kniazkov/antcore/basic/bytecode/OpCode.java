@@ -27,6 +27,8 @@ public final class OpCode {
     public static final byte POP = 4;
     public static final byte CALL = 5;
     public static final byte RET = 6;
-    public static final byte ADD = 7;
+    public static final byte ENTER = 7;
+    public static final byte LEAVE = 8;
+    public static final byte ADD = 9;
     public static final byte END = 127;
 }

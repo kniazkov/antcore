@@ -16,7 +16,11 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecode.DataSelector;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
+import com.kniazkov.antcore.basic.bytecodebuilder.Load;
+import com.kniazkov.antcore.basic.bytecodebuilder.RawInstruction;
+import com.kniazkov.antcore.basic.bytecodebuilder.Store;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.exceptions.IncompatibleTypes;
@@ -116,18 +120,22 @@ public class Variable extends LeftExpression implements DataTypeOwner, Expressio
     }
 
     @Override
-    public Expression getPointer() {
-        return null;
-    }
-
-    @Override
     public void genLoad(CompilationUnit cu) throws SyntaxError {
-
+        RawInstruction load = new Load(DataSelector.LOCAL,
+                type.getSize(), cu.getDynamicDataOffset(), offset);
+        cu.addInstruction(load);
     }
 
     @Override
     public void genStore(CompilationUnit cu) throws SyntaxError {
+        RawInstruction store = new Store(DataSelector.LOCAL,
+                type.getSize(), null, offset);
+        cu.addInstruction(store);
+    }
 
+    @Override
+    public Expression getPointer() {
+        return new LocalPointer(this, offset);
     }
 
     private VariableDeclaration owner;

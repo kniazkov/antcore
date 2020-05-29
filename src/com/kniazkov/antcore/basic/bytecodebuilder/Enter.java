@@ -17,45 +17,23 @@
 package com.kniazkov.antcore.basic.bytecodebuilder;
 
 import com.kniazkov.antcore.basic.bytecode.Instruction;
-import com.kniazkov.antcore.basic.bytecode.DataSelector;
 import com.kniazkov.antcore.basic.bytecode.OpCode;
-import com.kniazkov.antcore.lib.Reference;
 
 /**
- * Store a value to the memory
+ * Enter to function, i.e. set a new local pointer and reserve space on the stack for variables
  */
-public class Store extends RawInstruction {
-    public Store(byte selector, int size, Reference<Integer> offset) {
-        this.selector = selector;
-        assert(selector == DataSelector.GLOBAL);
+public class Enter extends RawInstruction {
+    public Enter(int size) {
         this.size = size;
-        this.offset = offset;
-        this.address = new Reference<>();
-    }
-
-    public Store(byte selector, int size, Reference<Integer> offset, int address) {
-        this.selector = selector;
-        this.size = size;
-        this.offset = offset;
-        this.address = new Reference<>(address);
     }
 
     @Override
     public Instruction generate() {
         Instruction i = new Instruction();
-        i.opcode = OpCode.STORE;
-        i.p0 = selector;
+        i.opcode = OpCode.ENTER;
         i.x0 = size;
-        i.x1 = (offset != null ? offset.value : 0) + address.value;
         return i;
     }
 
-    public Reference<Integer> getAddressReference() {
-        return address;
-    }
-
-    private byte selector;
-    private int size;
-    private Reference<Integer> offset;
-    private Reference<Integer> address;
+    protected int size;
 }

@@ -54,7 +54,9 @@ public class Disassembler {
                 buff.append("LOAD\t");
                 switch (i.p0) {
                     case DataSelector.GLOBAL:
-                        buff.append("GLOBAL\t").append(i.x0).append(", ").append(i.x1);
+                    case DataSelector.LOCAL:
+                    case DataSelector.LOCAL_POINTER:
+                        buff.append(DataSelector.toString(i.p0)).append('\t').append(i.x0).append(", ").append(i.x1);
                         break;
                     case DataSelector.IMMEDIATE:
                         buff.append("VAL \t").append(i.x0).append(", ").append(i.x1);
@@ -64,12 +66,7 @@ public class Disassembler {
                 }
             },
             (i, buff) -> { // 2 -> STORE
-                buff.append("STORE\t");
-                switch (i.p0) {
-                    case DataSelector.GLOBAL:
-                        buff.append("GLOBAL\t").append(i.x0).append(", ").append(i.x1);
-                        break;
-                }
+                buff.append("STORE\t").append(DataSelector.toString(i.p0)).append('\t').append(i.x0).append(", ").append(i.x1);
             },
             (i, buff) -> { // 3 -> CAST
                 buff.append("CAST \t").append(TypeSelector.toString(i.p0)).append(" ").append(i.x0).append(" -> ")
@@ -84,12 +81,16 @@ public class Disassembler {
             (i, buff) -> { // 6 -> RET
                 buff.append("RET");
             },
-            (i, buff) -> { // 7 -> ADD
+            (i, buff) -> { // 7 -> ENTER
+                buff.append("ENTER\t").append(i.x0);
+            },
+            (i, buff) -> { // 8 -> LEAVE
+                buff.append("LEAVE\t").append(i.x0);
+            },
+            (i, buff) -> { // 9 -> ADD
                 buff.append("ADD \t").append(TypeSelector.toString(i.p0)).append('\t')
                         .append(i.x0).append(", ").append(i.x1).append(" -> ").append(i.x2);
             },
-            stub,
-            stub,
             stub, // 10
             stub,
             stub,

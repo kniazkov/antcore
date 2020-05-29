@@ -6,6 +6,6 @@ MODULE SERVER
 	FUNCTION MAIN
 		VAR s AS STRING OF 20
 		s = "It works"
-		'print(s)
+		print(s)
 	END FUNCTION
 END MODULE
