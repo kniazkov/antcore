@@ -19,14 +19,14 @@ package com.kniazkov.antcore.basic.bytecodebuilder;
 import com.kniazkov.antcore.basic.bytecode.DataSelector;
 import com.kniazkov.antcore.basic.bytecode.Instruction;
 import com.kniazkov.antcore.basic.bytecode.OpCode;
-import com.kniazkov.antcore.lib.Reference;
+import com.kniazkov.antcore.basic.common.Offset;
 
 /**
  * Load a global pointer to the stack
  */
 public class PushGlobalPointer extends RawInstruction {
-    public PushGlobalPointer(Reference<Integer> offset, int address) {
-        this.offset = offset;
+    public PushGlobalPointer(Offset segment, Offset address) {
+        this.segment = segment;
         this.address = address;
     }
 
@@ -36,10 +36,10 @@ public class PushGlobalPointer extends RawInstruction {
         i.opcode = OpCode.LOAD;
         i.p0 = DataSelector.IMMEDIATE;
         i.x0 = 4;
-        i.x1 = offset.value + address;
+        i.x1 = segment.get() + address.get();
         return i;
     }
 
-    protected Reference<Integer> offset;
-    protected int address;
+    protected Offset segment;
+    protected Offset address;
 }

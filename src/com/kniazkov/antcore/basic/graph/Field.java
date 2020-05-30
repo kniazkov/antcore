@@ -16,7 +16,9 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.common.DeferredOffset;
 import com.kniazkov.antcore.basic.common.Fragment;
+import com.kniazkov.antcore.basic.common.Offset;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecode.*;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
@@ -33,6 +35,7 @@ public class Field extends LeftExpression implements DataTypeOwner {
         this.name = name;
         this.type = type;
         type.setOwner(this);
+        offset = new DeferredOffset();
     }
 
     @Override
@@ -83,13 +86,27 @@ public class Field extends LeftExpression implements DataTypeOwner {
         buff.append(name);
     }
 
-    public int getAbsoluteOffset() {
-        return owner.getOffset() + offset;
+    private static class AbsoluteOffset implements Offset {
+        @Override
+        public int get() {
+            return dataSetOffset.get() + fieldOffset.get();
+        }
+
+        Offset dataSetOffset;
+        Offset fieldOffset;
     }
 
-    void setOffset(int offset) {
-        assert(this.offset == null);
-        this.offset = offset;
+    public Offset getAbsoluteOffset() {
+        if (absoluteOffset == null) {
+            absoluteOffset = new AbsoluteOffset();
+            absoluteOffset.dataSetOffset = owner.getOffset();
+            absoluteOffset.fieldOffset = this.offset;
+        }
+        return absoluteOffset;
+    }
+
+    void setOffset(int value) {
+        offset.resolve(value);
     }
 
     @Override
@@ -115,5 +132,6 @@ public class Field extends LeftExpression implements DataTypeOwner {
     private Fragment fragment;
     private String name;
     private DataType type;
-    private Integer offset;
+    private DeferredOffset offset;
+    private AbsoluteOffset absoluteOffset;
 }

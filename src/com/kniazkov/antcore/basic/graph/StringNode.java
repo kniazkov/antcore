@@ -20,6 +20,7 @@ import com.kniazkov.antcore.basic.bytecode.DataSelector;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.Load;
 import com.kniazkov.antcore.basic.bytecodebuilder.RawInstruction;
+import com.kniazkov.antcore.basic.common.Offset;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
 import java.util.HashMap;
@@ -107,5 +108,5 @@ public class StringNode extends Expression {
 
     private String value;
     private DataType type;
-    private Map<Module, Integer> address;
+    private Map<Module, Offset> address;
 }

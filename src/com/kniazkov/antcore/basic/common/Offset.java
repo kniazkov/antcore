@@ -14,22 +14,14 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.bytecodebuilder;
-
-import com.kniazkov.antcore.basic.bytecode.Instruction;
-import com.kniazkov.antcore.basic.bytecode.OpCode;
+package com.kniazkov.antcore.basic.common;
 
 /**
- * Return from function
+ * Relative offset of field, variable, data
  */
-public class Return extends RawInstruction {
-    public Return() {
-    }
-
-    @Override
-    public Instruction generate() {
-        Instruction i = new Instruction();
-        i.opcode = OpCode.RET;
-        return i;
-    }
+public interface Offset {
+    /**
+     * @return integer offset value
+     */
+    int get();
 }

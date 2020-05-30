@@ -14,22 +14,25 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.lib;
-
-import java.sql.Ref;
+package com.kniazkov.antcore.basic.common;
 
 /**
- * Object contains another object
- * @param <T> Type
+ * Offset that returns value 0
  */
-public class Reference<T> {
-    public Reference() {
-        value = null;
+public class ZeroOffset implements Offset {
+    @Override
+    public int get() {
+        return 0;
     }
 
-    public Reference(T initValue) {
-        value = initValue;
+    private static Offset instance;
+
+    private ZeroOffset() {
     }
 
-    public T value;
+    public static Offset getInstance() {
+        if (instance == null)
+            instance = new ZeroOffset();
+        return instance;
+    }
 }

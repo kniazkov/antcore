@@ -21,8 +21,7 @@ import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.Load;
 import com.kniazkov.antcore.basic.bytecodebuilder.RawInstruction;
 import com.kniazkov.antcore.basic.bytecodebuilder.Store;
-import com.kniazkov.antcore.basic.common.Fragment;
-import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.basic.common.*;
 import com.kniazkov.antcore.basic.exceptions.IncompatibleTypes;
 
 /**
@@ -38,6 +37,7 @@ public class Variable extends LeftExpression implements DataTypeOwner, Expressio
         this.type = type;
         if (type != null)
             type.setOwner(this);
+        offset = new DeferredOffset();
     }
 
     @Override
@@ -118,22 +118,21 @@ public class Variable extends LeftExpression implements DataTypeOwner, Expressio
         }
     }
 
-    void setOffset(int offset) {
-        assert (this.offset == null);
-        this.offset = offset;
+    void setOffset(int value) {
+        offset.resolve(value);
     }
 
     @Override
     public void genLoad(CompilationUnit cu) throws SyntaxError {
         RawInstruction load = new Load(DataSelector.LOCAL,
-                type.getSize(), cu.getDynamicDataOffset(), offset);
+                type.getSize(), ZeroOffset.getInstance(), offset);
         cu.addInstruction(load);
     }
 
     @Override
     public void genStore(CompilationUnit cu) throws SyntaxError {
         RawInstruction store = new Store(DataSelector.LOCAL,
-                type.getSize(), null, offset);
+                type.getSize(), ZeroOffset.getInstance(), offset);
         cu.addInstruction(store);
     }
 
@@ -146,5 +145,5 @@ public class Variable extends LeftExpression implements DataTypeOwner, Expressio
     private String name;
     private Expression initValue;
     private DataType type;
-    private Integer offset;
+    private DeferredOffset offset;
 }

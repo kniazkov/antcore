@@ -17,27 +17,26 @@
 package com.kniazkov.antcore.basic.bytecodebuilder;
 
 import com.kniazkov.antcore.basic.bytecode.Instruction;
-import com.kniazkov.antcore.basic.bytecode.DataSelector;
 import com.kniazkov.antcore.basic.bytecode.OpCode;
-import com.kniazkov.antcore.lib.Reference;
+import com.kniazkov.antcore.basic.common.DeferredOffset;
+import com.kniazkov.antcore.basic.common.Offset;
 
 /**
  * Store a value to the memory
  */
 public class Store extends RawInstruction {
-    public Store(byte selector, int size, Reference<Integer> offset) {
+    public Store(byte selector, int size,  Offset segment) {
         this.selector = selector;
-        assert(selector == DataSelector.GLOBAL);
         this.size = size;
-        this.offset = offset;
-        this.address = new Reference<>();
+        this.segment = segment;
+        this.address = null;
     }
 
-    public Store(byte selector, int size, Reference<Integer> offset, int address) {
+    public Store(byte selector, int size, Offset segment, Offset address) {
         this.selector = selector;
         this.size = size;
-        this.offset = offset;
-        this.address = new Reference<>(address);
+        this.segment = segment;
+        this.address = address;
     }
 
     @Override
@@ -46,16 +45,19 @@ public class Store extends RawInstruction {
         i.opcode = OpCode.STORE;
         i.p0 = selector;
         i.x0 = size;
-        i.x1 = (offset != null ? offset.value : 0) + address.value;
+        i.x1 = segment.get() + address.get();
         return i;
     }
 
-    public Reference<Integer> getAddressReference() {
-        return address;
+    public DeferredOffset getAddressReference() {
+        DeferredOffset ref = new DeferredOffset();
+        assert (address == null);
+        address = ref;
+        return ref;
     }
 
     private byte selector;
     private int size;
-    private Reference<Integer> offset;
-    private Reference<Integer> address;
+    private Offset segment;
+    private Offset address;
 }

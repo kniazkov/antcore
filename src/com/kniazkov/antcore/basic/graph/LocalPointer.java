@@ -17,15 +17,14 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
-import com.kniazkov.antcore.basic.bytecodebuilder.PushGlobalPointer;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushLocalPointer;
-import com.kniazkov.antcore.lib.Reference;
+import com.kniazkov.antcore.basic.common.Offset;
 
 /**
  * The node represents pointer to a local object (a variable, an argument etc)
  */
 public class LocalPointer extends Expression {
-    public LocalPointer(Expression expression, int offset) {
+    public LocalPointer(Expression expression, Offset offset) {
         this.expression = expression;
         this.offset = offset;
     }
@@ -58,6 +57,6 @@ public class LocalPointer extends Expression {
     }
 
     private Expression expression;
-    private int offset;
+    private Offset offset;
     private DataType type;
 }

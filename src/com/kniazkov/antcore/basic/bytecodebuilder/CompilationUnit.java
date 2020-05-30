@@ -16,15 +16,14 @@
  */
 package com.kniazkov.antcore.basic.bytecodebuilder;
 
+import com.kniazkov.antcore.basic.common.DeferredOffset;
+import com.kniazkov.antcore.basic.common.Offset;
 import com.kniazkov.antcore.basic.graph.Module;
 import com.kniazkov.antcore.lib.ByteBuffer;
 import com.kniazkov.antcore.lib.ByteList;
-import com.kniazkov.antcore.lib.Reference;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /*
  The memory model:
@@ -37,23 +36,32 @@ import java.util.TreeMap;
  * The compilation unit (module with external functions)
  */
 public class CompilationUnit {
+    private static class SegmentOffset implements Offset {
+        int value = 0;
+
+        @Override
+        public int get() {
+            return value;
+        }
+    }
+
     public CompilationUnit(Module module, StaticDataBuilder staticData) {
         this.module = module;
         instructions = new ArrayList<>();
         this.staticData = staticData;
-        staticDataOffset = new Reference<>(0);
-        dynamicDataOffset = new Reference<>(0);
+        staticDataOffset = new SegmentOffset();
+        dynamicDataOffset = new SegmentOffset();
     }
 
     public Module getModule() {
         return module;
     }
 
-    public Reference<Integer> getStaticDataOffset() {
+    public Offset getStaticDataOffset() {
         return staticDataOffset;
     }
 
-    public Reference<Integer> getDynamicDataOffset() {
+    public Offset getDynamicDataOffset() {
         return dynamicDataOffset;
     }
 
@@ -76,7 +84,7 @@ public class CompilationUnit {
         return buff;
     }
 
-    private void updateOffsets() {
+    private void updateSegmentOffsets() {
         staticDataOffset.value = instructions.size() * 16;
         dynamicDataOffset.value = staticDataOffset.value + staticData.getSize();
     }
@@ -85,18 +93,18 @@ public class CompilationUnit {
         instructions.add(item);
         int count = instructions.size();
         item.setIndex(count);
-        updateOffsets();
+        updateSegmentOffsets();
     }
 
-    public int getStringOffset(String string) {
-        int offset = staticData.getStringOffset(string);
-        updateOffsets();
+    public Offset getStringOffset(String string) {
+        Offset offset = staticData.getStringOffset(string);
+        updateSegmentOffsets();
         return offset;
     }
 
     private Module module;
     private List<RawInstruction> instructions;
     private StaticDataBuilder staticData;
-    private Reference<Integer> staticDataOffset;
-    private Reference<Integer> dynamicDataOffset;
+    private SegmentOffset staticDataOffset;
+    private SegmentOffset dynamicDataOffset;
 }

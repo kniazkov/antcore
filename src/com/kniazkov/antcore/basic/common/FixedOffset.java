@@ -14,30 +14,20 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.bytecodebuilder;
-
-import com.kniazkov.antcore.basic.bytecode.DataSelector;
-import com.kniazkov.antcore.basic.bytecode.Instruction;
-import com.kniazkov.antcore.basic.bytecode.OpCode;
-import com.kniazkov.antcore.basic.common.Offset;
+package com.kniazkov.antcore.basic.common;
 
 /**
- * Load a local pointer (pointer to a variable or an argument) to the stack
+ * Offset that returns a fixed value
  */
-public class PushLocalPointer extends RawInstruction {
-    public PushLocalPointer(Offset offset) {
-        this.offset = offset;
+public class FixedOffset implements Offset {
+    public FixedOffset(int value) {
+        this.value = value;
     }
 
     @Override
-    public Instruction generate() {
-        Instruction i = new Instruction();
-        i.opcode = OpCode.LOAD;
-        i.p0 = DataSelector.LOCAL_POINTER;
-        i.x0 = 4;
-        i.x1 = offset.get();
-        return i;
+    public int get() {
+        return value;
     }
 
-    protected Offset offset;
+    private int value;
 }

@@ -16,7 +16,6 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.bytecodebuilder.StaticDataBuilder;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
 /**
@@ -31,9 +30,9 @@ public class Analyzer {
         root.mergeModulesAndCodeBlocks();
         bindTypes(root);
         bindNames(root);
-        calculateOffsets(root);
         buildStaticData(root);
         checkTypes(root);
+        calculateOffsets(root);
     }
 
     /**

@@ -18,15 +18,13 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushGlobalPointer;
-import com.kniazkov.antcore.lib.Reference;
-
-import java.util.Map;
+import com.kniazkov.antcore.basic.common.Offset;
 
 /**
  * The node represents pointer to a dynamic global object (a field, etc)
  */
 public class GlobalDynamicPointer extends Expression {
-    public GlobalDynamicPointer(Expression expression, int address) {
+    public GlobalDynamicPointer(Expression expression, Offset address) {
         this.expression = expression;
         this.address = address;
     }
@@ -40,7 +38,7 @@ public class GlobalDynamicPointer extends Expression {
 
     @Override
     public Object calculate() {
-        return address;
+        return null;
     }
 
     @Override
@@ -55,12 +53,10 @@ public class GlobalDynamicPointer extends Expression {
 
     @Override
     public void genLoad(CompilationUnit cu) {
-        assert(address >= 0);
-        Reference<Integer> offset = cu.getDynamicDataOffset();
-        cu.addInstruction(new PushGlobalPointer(offset, address));
+        cu.addInstruction(new PushGlobalPointer(cu.getDynamicDataOffset(), address));
     }
 
     private Expression expression;
-    private int address;
+    private Offset address;
     private DataType type;
 }

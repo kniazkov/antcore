@@ -16,9 +16,7 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.common.DataPrefix;
-import com.kniazkov.antcore.basic.common.Fragment;
-import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.basic.common.*;
 import com.kniazkov.antcore.basic.exceptions.FieldCanNotBeAbstract;
 import com.kniazkov.antcore.basic.exceptions.FieldCanNotBeConstant;
 import com.kniazkov.antcore.basic.exceptions.RecursiveNesting;
@@ -43,6 +41,7 @@ public class DataSet extends Node implements ExpressionOwner {
         }
 
         this.size = UNKNOWN_SIZE;
+        this.offset = new DeferredOffset();
     }
 
     @Override
@@ -124,13 +123,12 @@ public class DataSet extends Node implements ExpressionOwner {
         return newSize;
     }
 
-    public int getOffset() {
+    public Offset getOffset() {
         return offset;
     }
 
-    void setOffset(int offset) {
-        assert(this.offset == null);
-        this.offset = offset;
+    void setOffset(int value) {
+        offset.resolve(value);
     }
 
     public Field getFieldByName(String name) {
@@ -156,7 +154,7 @@ public class DataSet extends Node implements ExpressionOwner {
     private Map<String, Field> fieldMap;
     private List<Field> fieldList;
     private int size;
-    private Integer offset;
+    private DeferredOffset offset;
 
     private static final int UNKNOWN_SIZE = -1;
     private static final int INVALID_SIZE = -2;

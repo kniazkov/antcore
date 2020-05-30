@@ -18,9 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushGlobalPointer;
-import com.kniazkov.antcore.basic.bytecodebuilder.PushInteger;
-import com.kniazkov.antcore.lib.Reference;
-import com.sun.org.apache.xpath.internal.operations.Mod;
+import com.kniazkov.antcore.basic.common.Offset;
 
 import java.util.Map;
 
@@ -28,9 +26,9 @@ import java.util.Map;
  * The node represents pointer to a static global object (a constant, etc)
  */
 public class GlobalStaticPointer extends Expression {
-    public GlobalStaticPointer(Expression expression, Map<Module, Integer> address) {
+    public GlobalStaticPointer(Expression expression, Map<Module, Offset> addresses) {
         this.expression = expression;
-        this.address = address;
+        this.addresses = addresses;
     }
 
     @Override
@@ -42,7 +40,7 @@ public class GlobalStaticPointer extends Expression {
 
     @Override
     public Object calculate() {
-        return address;
+        return null;
     }
 
     @Override
@@ -58,12 +56,11 @@ public class GlobalStaticPointer extends Expression {
     @Override
     public void genLoad(CompilationUnit cu) {
         Module module = cu.getModule();
-        assert(address.containsKey(module));
-        Reference<Integer> offset = cu.getStaticDataOffset();
-        cu.addInstruction(new PushGlobalPointer(offset, address.get(module)));
+        assert(addresses.containsKey(module));
+        cu.addInstruction(new PushGlobalPointer(cu.getStaticDataOffset(), addresses.get(module)));
     }
 
     private Expression expression;
-    private Map<Module, Integer> address;
+    private Map<Module, Offset> addresses;
     private DataType type;
 }

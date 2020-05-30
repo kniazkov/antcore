@@ -14,25 +14,28 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.lib;
+package com.kniazkov.antcore.basic.common;
 
 /**
- * A pair of objects
+ * Offset that calculated later than required
  */
-public class Pair<K, V> {
-    public Pair(K key, V value) {
-        this.key = key;
-        this.value = value;
+public class DeferredOffset implements Offset {
+    public DeferredOffset() {
+        value = 0;
+        resolved = false;
     }
 
-    public K getKey() {
-        return key;
-    }
-
-    public V getValue() {
+    @Override
+    public int get() {
+        assert(resolved);
         return value;
     }
 
-    private K key;
-    private V value;
+    public void resolve(int value) {
+        this.value = value;
+        resolved = true;
+    }
+
+    private int value;
+    private boolean resolved;
 }

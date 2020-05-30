@@ -16,6 +16,8 @@
  */
 package com.kniazkov.antcore.basic.bytecodebuilder;
 
+import com.kniazkov.antcore.basic.common.FixedOffset;
+import com.kniazkov.antcore.basic.common.Offset;
 import com.kniazkov.antcore.basic.graph.Module;
 import com.kniazkov.antcore.lib.ByteBuffer;
 
@@ -40,10 +42,10 @@ public class StaticDataBuilder {
      * @param string the string
      * @return an offset
      */
-    public int getStringOffset(String string) {
+    public Offset getStringOffset(String string) {
         if (stringsMap.containsKey(string))
             return stringsMap.get(string);
-        int offset = staticDataSize;
+        Offset offset = new FixedOffset(staticDataSize);
         staticDataSize += string.length() * 2 + 8;
         stringsList.add(string);
         stringsMap.put(string, offset);
@@ -55,9 +57,9 @@ public class StaticDataBuilder {
      * @param buff the destination buffer
      * @param offset offset relative to the beginning of the buffer
      */
-    public void build(ByteBuffer buff, int offset) {
+    public void build(ByteBuffer buff, int segmentOffset) {
         for (String string : stringsList) {
-            int index = stringsMap.get(string) + offset;
+            int index = stringsMap.get(string).get() + segmentOffset;
             int length = string.length();
             // current length
             buff.setInt(index, length);
@@ -82,5 +84,5 @@ public class StaticDataBuilder {
     private Module module;
     private int staticDataSize;
     private List<String> stringsList;
-    private Map<String, Integer> stringsMap;
+    private Map<String, Offset> stringsMap;
 }

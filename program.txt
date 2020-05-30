@@ -4,8 +4,10 @@ END CODE
 
 MODULE SERVER
 	FUNCTION MAIN
-		VAR s AS STRING OF 20
-		s = "It works"
-		print(s)
+		VAR a = 2
+		VAR b = 3
+		VAR x = a + b
+'		VAR s = "x = " + x
+'		print(s)
 	END FUNCTION
 END MODULE
