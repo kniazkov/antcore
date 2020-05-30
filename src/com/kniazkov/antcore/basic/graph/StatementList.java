@@ -89,6 +89,14 @@ public class StatementList extends Node {
         return ((Node)owner).findVariableByName(name);
     }
 
+    /**
+     * Get a function containing this statement list
+     * @return function
+     */
+    public Function getFunction() {
+        return owner.getFunction();
+    }
+
     private StatementListOwner owner;
     private List<Statement> statements;
     private List<Variable> variableList;

@@ -116,7 +116,7 @@ public class Constant extends Expression implements DataTypeOwner, ExpressionOwn
     }
 
     @Override
-    public Expression getPointer() {
+    public Expression getPointer() throws SyntaxError {
         return value.getPointer();
     }
 

@@ -20,4 +20,9 @@ package com.kniazkov.antcore.basic.graph;
  * Marker interface for statement list owners
  */
 public interface StatementListOwner {
+    /**
+     * Get a function containing statement list
+     * @return function
+     */
+    Function getFunction();
 }

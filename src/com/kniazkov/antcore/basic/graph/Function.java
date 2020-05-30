@@ -44,7 +44,8 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
             returnType.setOwner(this);
         this.body = body;
         body.setOwner(this);
-        localDataSize = -1;
+        variableList = new ArrayList<>();
+        localDataSize = 0;
     }
 
     @Override
@@ -122,6 +123,25 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
         }
     }
 
+    @Override
+    public Function getFunction() {
+        return this;
+    }
+
+    /**
+     * Create a temporary variable for data conversion
+     * @param type the type of a variable
+     * @return a variable
+     */
+    public Variable createTemporaryVariable(DataType type) throws SyntaxError {
+        Variable variable = new Variable("$", null, type);
+        int size = type.getSize();
+        localDataSize += size;
+        variable.setOffset(-localDataSize);
+        variableList.add(variable);
+        return variable;
+    }
+
     /**
      * Go through all the statement lists and collect the variables,
      * then calculate offsets
@@ -145,12 +165,11 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
         for (Node child : children) {
             child.accept(collector);
         }
-        variableList = collector.result;
-        localDataSize = 0;
-        for  (Variable variable : variableList) {
+        for  (Variable variable : collector.result) {
             int size = variable.getType().getSize();
             localDataSize += size ;
             variable.setOffset(-localDataSize);
+            variableList.add(variable);
         }
     }
 

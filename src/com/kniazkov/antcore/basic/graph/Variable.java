@@ -120,6 +120,10 @@ public class Variable extends LeftExpression implements DataTypeOwner, Expressio
         offset.resolve(value);
     }
 
+    public Offset getOffset() {
+        return offset;
+    }
+
     @Override
     public void genLoad(CompilationUnit cu) throws SyntaxError {
         RawInstruction load = new Load(DataSelector.LOCAL,

@@ -48,6 +48,14 @@ public abstract class Statement extends Node {
      */
     public abstract void compile(CompilationUnit cu) throws SyntaxError;
 
+    /**
+     * Get a function containing this statement
+     * @return function
+     */
+    public Function getFunction() {
+        return owner.getFunction();
+    }
+
     private StatementList owner;
     private Fragment fragment;
 }

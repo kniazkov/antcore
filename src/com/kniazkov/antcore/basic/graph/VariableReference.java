@@ -88,7 +88,7 @@ public class VariableReference extends Expression implements ExpressionOwner {
     }
 
     @Override
-    public Expression getPointer() {
+    public Expression getPointer() throws SyntaxError {
         return expression.getPointer();
     }
 

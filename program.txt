@@ -4,10 +4,6 @@ END CODE
 
 MODULE SERVER
 	FUNCTION MAIN
-		VAR a = 2
-		VAR b = 3
-		VAR x = a + b
-		VAR s = "x = " + x
-		print(s)
+		print("hello, " + "pointers")
 	END FUNCTION
 END MODULE

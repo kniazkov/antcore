@@ -92,7 +92,27 @@ public abstract class Expression extends Node {
      * Generate pointer to the expression (if possible)
      * @return A pointer
      */
-    public Expression getPointer() {
+    public Expression getPointer() throws SyntaxError {
+        Statement statement = getStatement();
+        if (statement != null) {
+            Function function = statement.getFunction();
+            Variable tmpVar = function.createTemporaryVariable(getType());
+            return new TemporaryPointer(this, tmpVar);
+        }
+        return null;
+    }
+
+    /**
+     * Get a statement containing this expression
+     * @return function
+     */
+    public Statement getStatement() {
+        Node node = getOwner();
+        while(node != null) {
+            if (node instanceof Statement)
+                return (Statement)node;
+            node = node.getOwner();
+        }
         return null;
     }
 
