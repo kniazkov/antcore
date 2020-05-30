@@ -16,6 +16,7 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecodebuilder.Cast;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.bytecodebuilder.Add;
@@ -45,12 +46,23 @@ public class Addition extends BinaryOperation {
             return;
         }
 
-        if (leftType instanceof StringType && rightType instanceof StringType) {
+        if (leftType instanceof StringType) {
             StringType leftTypeString = (StringType) leftType;
-            StringType rightTypeString = (StringType) rightType;
-            int length = leftTypeString.getStringLength() + rightTypeString.getStringLength();
-            setType(new StringType(length));
-            return;
+            if (rightType instanceof StringType) {
+                StringType rightTypeString = (StringType) rightType;
+                int length = leftTypeString.getStringLength() + rightTypeString.getStringLength();
+                setType(new StringType(length));
+                return;
+            }
+
+            if (rightType instanceof IntegerType) {
+                Casting cast = new Casting(true, right, new StringType(lengthOfStringContainingInteger));
+                cast.setOwner(this);
+                right = cast;
+                int length = leftTypeString.getStringLength() + lengthOfStringContainingInteger;
+                setType(new StringType(length));
+                return;
+            }
         }
 
         throw new OperatorNotApplicable(getFragment(), getOperator(), leftType.getName(), rightType.getName());
@@ -97,4 +109,6 @@ public class Addition extends BinaryOperation {
 
         assert(false);
     }
+
+    protected final static int lengthOfStringContainingInteger = 11; // -2147483648
 }

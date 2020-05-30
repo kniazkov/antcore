@@ -148,7 +148,22 @@ public class VirtualMachine {
             stub,   // 2 -> BOOLEAN
             stub,   // 3 -> BYTE
             stub,   // 4 -> SHORT
-            stub,   // 5 -> INTEGER
+            () -> { // 5 -> INTEGER
+                assert(read_x0() == 4);
+                int newSize = read_x1();
+                int capacity = (newSize - 8) / 2;
+                int value = memory.getInt(SP);
+                String strValue = String.valueOf(value);
+                int strValueLength = strValue.length();
+                assert (capacity >= strValueLength);
+                SP -= newSize - 4;
+                memory.setInt(SP, strValueLength);
+                memory.setInt(SP + 4, capacity);
+                for (int k = 0; k < strValueLength; k++) {
+                    char ch = strValue.charAt(k);
+                    memory.setChar(SP + 8 + k * 2, ch);
+                }
+            },
             stub,   // 6 -> LONG
             stub,   // 7 -> REAL
             () -> { // 8 -> STRING
