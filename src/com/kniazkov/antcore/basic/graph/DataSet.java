@@ -50,11 +50,10 @@ public class DataSet extends Node implements ExpressionOwner {
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        for (Field field : fieldList) {
-            field.dfs(visitor);
-        }
-        accept(visitor);
+    protected Node[] getChildren() {
+        Node[] nodes = new Node[fieldList.size()];
+        fieldList.toArray(nodes);
+        return nodes;
     }
 
     void setOwner(DataSetOwner owner) {

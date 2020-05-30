@@ -19,6 +19,8 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
+import java.util.List;
+
 /**
  * The STRING data type without size specified
  */
@@ -77,5 +79,10 @@ public class AbstractStringType extends BuiltInType implements ExpressionOwner {
         if (instance == null)
             instance = new AbstractStringType();
         return instance;
+    }
+
+    @Override
+    protected Node[] getChildren() {
+        return null;
     }
 }

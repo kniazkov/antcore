@@ -46,12 +46,10 @@ public class Variable extends LeftExpression implements DataTypeOwner, Expressio
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        if (initValue != null)
-            initValue.dfs(visitor);
-        if (type != null)
-            type.dfs(visitor);
-        accept(visitor);
+    protected Node[] getChildren() {
+        if (initValue != null && type != null)
+            return new Node[] { initValue, type };
+        return  new Node[] { initValue !=  null ? initValue : type };
     }
 
     public String getName() {

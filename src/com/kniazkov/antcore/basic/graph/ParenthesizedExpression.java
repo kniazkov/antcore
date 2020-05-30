@@ -34,9 +34,8 @@ public class ParenthesizedExpression extends Expression implements ExpressionOwn
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        expression.dfs(visitor);
-        accept(visitor);
+    protected Node[] getChildren() {
+        return new Node[] { expression };
     }
 
     @Override

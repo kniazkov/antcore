@@ -41,11 +41,10 @@ public class FunctionCall extends Expression implements ExpressionOwner {
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        for (Expression argument : arguments) {
-            argument.dfs(visitor);
-        }
-        accept(visitor);
+    protected Node[] getChildren() {
+        Node[] nodes = new Node[arguments.size()];
+        arguments.toArray(nodes);
+        return nodes;
     }
 
     @Override

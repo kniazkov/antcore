@@ -33,6 +33,11 @@ public class DataTypeReference extends DataType {
         visitor.visit(this);
     }
 
+    @Override
+    protected Node[] getChildren() {
+        return type != null ? new Node[]{ type } : null;
+    }
+
     void setOwner(DataTypeOwner owner) {
         this.owner = owner;
     }

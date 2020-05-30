@@ -44,11 +44,10 @@ public class CodeBlock extends Node implements FunctionOwner {
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        for (NativeFunction function : nativeFunctionList) {
-            function.dfs(visitor);
-        }
-        accept(visitor);
+    protected Node[] getChildren() {
+        Node[] nodes = new Node[nativeFunctionList.size()];
+        nativeFunctionList.toArray(nodes);
+        return nodes;
     }
 
     void setOwner(Program owner) {

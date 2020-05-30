@@ -33,9 +33,8 @@ public class ConstantModifier extends DataType implements DataTypeOwner {
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        type.dfs(visitor);
-        accept(visitor);
+    protected Node[] getChildren() {
+        return new Node[]{ type };
     }
 
     @Override

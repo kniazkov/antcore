@@ -42,11 +42,10 @@ public class ConstantList extends Node implements ExpressionOwner {
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        for (Constant constant : constantList) {
-            constant.dfs(visitor);
-        }
-        accept(visitor);
+    protected Node[] getChildren() {
+        Node[] nodes = new Node[constantList.size()];
+        constantList.toArray(nodes);
+        return nodes;
     }
 
     void setOwner(ConstantListOwner owner) {

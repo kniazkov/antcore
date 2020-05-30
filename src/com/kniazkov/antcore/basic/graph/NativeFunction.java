@@ -26,6 +26,7 @@ import com.kniazkov.antcore.basic.exceptions.ArgumentCanNotBeConstant;
 import com.kniazkov.antcore.basic.exceptions.ReturnTypeCanNotBeAbstract;
 import com.kniazkov.antcore.basic.exceptions.ReturnTypeCanNotBeConstant;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,16 +53,15 @@ public class NativeFunction extends BaseFunction implements DataTypeOwner {
         visitor.visit(this);
     }
 
-    @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        if (arguments != null) {
-            for (DataType type : arguments) {
-                type.dfs(visitor);
-            }
-        }
+    protected Node[] getChildren() {
+        List<Node> list = new ArrayList<>();
+        if (arguments != null)
+            list.addAll(arguments);
         if (returnType != null)
-            returnType.dfs(visitor);
-        accept(visitor);
+            list.add(returnType);
+        Node[] array = new Node[list.size()];
+        list.toArray(array);
+        return array;
     }
 
     @Override

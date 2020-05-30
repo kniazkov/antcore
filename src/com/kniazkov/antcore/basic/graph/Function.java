@@ -53,13 +53,14 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
+    protected Node[] getChildren() {
+        if (arguments != null && returnType != null)
+            return new Node[] { arguments, returnType, body };
         if (arguments != null)
-            arguments.dfs(visitor);
+            return new Node[] { arguments, body };
         if (returnType != null)
-            returnType.dfs(visitor);
-        body.dfs(visitor);
-        accept(visitor);
+            return new Node[] { returnType, body };
+        return new Node[] { body };
     }
 
     @Override
@@ -140,7 +141,10 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
         }
 
         Collector collector = new Collector();
-        body.dfs(collector);
+        List<Node> children = body.enumerate();
+        for (Node child : children) {
+            child.accept(collector);
+        }
         variableList = collector.result;
         localDataSize = 0;
         for  (Variable variable : variableList) {

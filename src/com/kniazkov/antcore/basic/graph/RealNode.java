@@ -30,6 +30,11 @@ public class RealNode extends Expression {
     }
 
     @Override
+    protected Node[] getChildren() {
+        return null;
+    }
+
+    @Override
     public DataType getType() {
         return IntegerType.getInstance();
     }

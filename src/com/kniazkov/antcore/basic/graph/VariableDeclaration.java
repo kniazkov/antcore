@@ -38,9 +38,8 @@ public class VariableDeclaration extends Statement {
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        variable.dfs(visitor);
-        accept(visitor);
+    protected Node[] getChildren() {
+        return new Node[] { variable };
     }
 
     void setOwner(StatementList owner) {

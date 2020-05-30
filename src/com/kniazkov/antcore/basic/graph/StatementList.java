@@ -45,11 +45,10 @@ public class StatementList extends Node {
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        for (Statement statement : statements) {
-            statement.dfs(visitor);
-        }
-        accept(visitor);
+    protected Node[] getChildren() {
+        Node[] nodes = new Node[statements.size()];
+        statements.toArray(nodes);
+        return nodes;
     }
 
     void setOwner(StatementListOwner owner) {

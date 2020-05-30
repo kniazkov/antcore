@@ -80,20 +80,18 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
         visitor.visit(this);
     }
 
-    @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
+    protected Node[] getChildren() {
+        List<Node> list = new ArrayList<>();
         if (constants != null)
-            constants.dfs(visitor);
-        for (CodeBlock block : allBlocks) {
-            block.dfs(visitor);
-        }
+            list.add(constants);
+        list.addAll(allBlocks);
         for (Map.Entry<String, DataType> entry : types.entrySet()) {
-            entry.getValue().dfs(visitor);
+            list.add(entry.getValue());
         }
-        for (Module module : moduleList) {
-            module.dfs(visitor);
-        }
-        accept(visitor);
+        list.addAll(moduleList);
+        Node[] array = new Node[list.size()];
+        list.toArray(array);
+        return array;
     }
 
     @Override

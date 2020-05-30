@@ -18,6 +18,9 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * A binary operation
  */
@@ -35,10 +38,8 @@ public abstract class BinaryOperation extends Expression implements ExpressionOw
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        left.dfs(visitor);
-        right.dfs(visitor);
-        accept(visitor);
+    protected Node[] getChildren() {
+        return new Node[] { left, right };
     }
 
     @Override

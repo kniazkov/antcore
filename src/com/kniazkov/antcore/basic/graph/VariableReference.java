@@ -35,12 +35,9 @@ public class VariableReference extends Expression implements ExpressionOwner {
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        if (expression != null)
-            expression.dfs(visitor);
-        visitor.visit(this);
+    protected Node[] getChildren() {
+        return expression != null ? new Node[] { expression } : null;
     }
-
 
     public String getName() {
         return name;

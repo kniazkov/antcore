@@ -32,6 +32,13 @@ public class GlobalStaticPointer extends Expression {
     }
 
     @Override
+    protected Node[] getChildren() {
+        if (type != null)
+            return new Node[] { expression, type };
+        return new Node[] { expression };
+    }
+
+    @Override
     public DataType getType() {
         if (type == null)
             type = new Pointer(expression.getType());

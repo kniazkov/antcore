@@ -40,10 +40,8 @@ public class StringType extends DataType implements ExpressionOwner {
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        if (lengthNode != null)
-            lengthNode.dfs(visitor);
-        accept(visitor);
+    protected Node[] getChildren() {
+        return lengthNode != null ? new Node[] { lengthNode } : null;
     }
 
     @Override

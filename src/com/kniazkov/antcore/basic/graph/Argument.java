@@ -19,6 +19,9 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * The node represents an function (method) argument
  */
@@ -36,9 +39,8 @@ public class Argument extends LeftExpression implements DataTypeOwner {
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        type.dfs(visitor);
-        accept(visitor);
+    protected Node[] getChildren() {
+        return new Node[]{type};
     }
 
     public String getName() {

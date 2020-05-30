@@ -40,10 +40,8 @@ public class Assignment extends Statement implements ExpressionOwner {
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        left.dfs(visitor);
-        right.dfs(visitor);
-        accept(visitor);
+    protected Node[] getChildren() {
+        return new Node[] { left, right };
     }
 
     @Override

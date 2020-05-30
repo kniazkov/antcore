@@ -20,6 +20,11 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * The basic interface for node of syntax tree
  */
@@ -32,11 +37,36 @@ public abstract class Node {
     }
 
     /**
-     * Depth-first graph traversal
-     * @param visitor a visitor
+     * @return a list of child nodes
      */
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        accept(visitor);
+    protected abstract Node[] getChildren();
+
+    /**
+     * Recursively collect all nodes of the syntax tree into list
+     * @param list destination list
+     * @param set temporary set of nodes to exclude visited nodes
+     */
+    protected void enumerate(List<Node> list, Set<Node> set) {
+        if (set.contains(this))
+            return;
+        set.add(this);
+        Node[] children = getChildren();
+        if (children != null) {
+            for (Node child : children)
+                child.enumerate(list, set);
+        }
+        list.add(this);
+    }
+
+    /**
+     * Collect all nodes of the syntax tree into list
+     * @return a list of nodes
+     */
+    public List<Node> enumerate() {
+        List<Node> list = new ArrayList<>();
+        Set<Node> set = new HashSet<>();
+        enumerate(list, set);
+        return list;
     }
 
     /**

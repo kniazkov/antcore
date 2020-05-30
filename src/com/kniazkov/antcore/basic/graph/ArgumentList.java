@@ -42,11 +42,10 @@ public class ArgumentList extends Node implements ExpressionOwner {
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        for (Argument argument : arguments) {
-            argument.dfs(visitor);
-        }
-        accept(visitor);
+    protected Node[] getChildren() {
+        Node[] nodes = new Node[arguments.size()];
+        arguments.toArray(nodes);
+        return nodes;
     }
 
     void setOwner(Function owner) {

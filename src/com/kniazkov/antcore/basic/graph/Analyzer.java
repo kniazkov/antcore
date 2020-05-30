@@ -18,6 +18,8 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
+import java.util.List;
+
 /**
  * The syntax tree analyzer
  */
@@ -36,6 +38,18 @@ public class Analyzer {
     }
 
     /**
+     * Visit all nodes in the syntax tree
+     * @param root the root node
+     * @param visitor the visitor
+     */
+    protected static void visitAll(Node root, NodeVisitor visitor) throws SyntaxError {
+        List<Node> list = root.enumerate();
+        for (Node node : list) {
+            node.accept(visitor);
+        }
+    }
+
+    /**
      * Bind data types by name
      * @param root the root node
      */
@@ -47,7 +61,49 @@ public class Analyzer {
             }
         }
 
-        root.dfs(new Binder());
+        visitAll(root, new Binder());
+    }
+
+    /**
+     * Bind names of variables
+     * @param root the root node
+     */
+    protected static void bindNames(Program root) throws SyntaxError {
+        class Binder extends NodeVisitor {
+            @Override
+            public void visit(FunctionCall obj) throws SyntaxError {
+                obj.bindName();
+            }
+            @Override
+            public void visit(VariableReference obj) throws SyntaxError {
+                obj.bindName();
+            }
+        }
+
+        visitAll(root, new Binder());
+    }
+
+    /**
+     * Calculate offsets of all static blocks such as strings
+     * @param root the root node
+     */
+    protected static void buildStaticData(Program root) throws SyntaxError {
+        class Builder extends  NodeVisitor {
+            Module module;
+
+            Builder(Module module) {
+                this.module = module;
+            }
+
+            @Override
+            public void visit(StringNode obj) throws SyntaxError {
+                obj.calculateAddress(module);
+            }
+        }
+
+        for (Module module : root.getModuleList()) {
+            visitAll(module, new Builder(module));
+        }
     }
 
     /**
@@ -94,27 +150,9 @@ public class Analyzer {
             }
         }
 
-        root.dfs(new Checker());
+        visitAll(root, new Checker());
     }
 
-    /**
-     * Bind names of variables
-     * @param root the root node
-     */
-    protected static void bindNames(Program root) throws SyntaxError {
-        class Binder extends NodeVisitor {
-            @Override
-            public void visit(FunctionCall obj) throws SyntaxError {
-                obj.bindName();
-            }
-            @Override
-            public void visit(VariableReference obj) throws SyntaxError {
-                obj.bindName();
-            }
-        }
-
-        root.dfs(new Binder());
-    }
 
     /**
      * Calculate offsets of all fields of all data types, all arguments and
@@ -141,29 +179,7 @@ public class Analyzer {
             }
         }
 
-        root.dfs(new Calculator());
+        visitAll(root, new Calculator());
     }
 
-    /**
-     * Calculate offsets of all static blocks such as strings
-     * @param root the root node
-     */
-    protected static void buildStaticData(Program root) throws SyntaxError {
-        class Builder extends  NodeVisitor {
-            Module module;
-
-            Builder(Module module) {
-                this.module = module;
-            }
-
-            @Override
-            public void visit(StringNode obj) throws SyntaxError {
-                obj.calculateAddress(module);
-            }
-        }
-
-        for (Module module : root.getModuleList()) {
-            module.dfs(new Builder(module));
-        }
-    }
 }

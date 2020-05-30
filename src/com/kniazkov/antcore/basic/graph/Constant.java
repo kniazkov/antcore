@@ -41,11 +41,10 @@ public class Constant extends Expression implements DataTypeOwner, ExpressionOwn
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        value.dfs(visitor);
+    protected Node[] getChildren() {
         if (type != null)
-            type.dfs(visitor);
-        accept(visitor);
+            return new Node[] { value, type };
+        return new Node[] { value };
     }
 
     @Override

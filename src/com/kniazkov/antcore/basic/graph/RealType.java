@@ -29,6 +29,11 @@ public class RealType extends BuiltInType {
     }
 
     @Override
+    protected Node[] getChildren() {
+        return null;
+    }
+
+    @Override
     public int getSize() throws SyntaxError {
         return 8;
     }

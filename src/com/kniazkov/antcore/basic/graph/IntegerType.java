@@ -24,6 +24,11 @@ import com.kniazkov.antcore.basic.common.SyntaxError;
  */
 public class IntegerType extends BuiltInType {
     @Override
+    protected Node[] getChildren() {
+        return null;
+    }
+
+    @Override
     public String getName() {
         return "INTEGER";
     }

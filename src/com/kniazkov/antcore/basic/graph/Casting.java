@@ -36,10 +36,8 @@ public class Casting extends Expression implements ExpressionOwner, DataTypeOwne
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        expression.dfs(visitor);
-        newType.dfs(visitor);
-        accept(visitor);
+    protected Node[] getChildren() {
+        return new Node[] { expression, newType };
     }
 
     @Override

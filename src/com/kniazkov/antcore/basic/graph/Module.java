@@ -28,10 +28,7 @@ import com.kniazkov.antcore.basic.exceptions.DuplicateFunction;
 import com.kniazkov.antcore.basic.exceptions.FunctionMainNotFound;
 import com.kniazkov.antcore.basic.exceptions.IncorrectFunctionMain;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * The node that represents a module
@@ -67,17 +64,18 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
+    protected Node[] getChildren() {
+        List<Node> list = new ArrayList<>();
         if (localData != null)
-            localData.dfs(visitor);
+            list.add(localData);
         if (inputData != null)
-            inputData.dfs(visitor);
+            list.add(inputData);
         if (outputData != null)
-            outputData.dfs(visitor);
-        for (Function function : functionList) {
-            function.dfs(visitor);
-        }
-        accept(visitor);
+            list.add(outputData);
+        list.addAll(functionList);
+        Node[] array = new Node[list.size()];
+        list.toArray(array);
+        return array;
     }
 
     void setOwner(Program owner) {

@@ -40,9 +40,8 @@ public class Struct extends DataType implements DataSetOwner {
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        dataSet.dfs(visitor);
-        accept(visitor);
+    protected Node[] getChildren() {
+        return new Node[] { dataSet };
     }
 
     @Override

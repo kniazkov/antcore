@@ -41,6 +41,11 @@ public class StringNode extends Expression {
     }
 
     @Override
+    protected Node[] getChildren() {
+        return type != null ? new Node[] { type } : null;
+    }
+
+    @Override
     public DataType getType() {
         if (type == null)
             type = new ConstantModifier(new StringType(value.length()));

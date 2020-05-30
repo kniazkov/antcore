@@ -44,9 +44,8 @@ public class Field extends LeftExpression implements DataTypeOwner {
     }
 
     @Override
-    public void dfs(NodeVisitor visitor) throws SyntaxError {
-        type.dfs(visitor);
-        accept(visitor);
+    protected Node[] getChildren() {
+        return new Node[]{ type };
     }
 
     public String getName() {
