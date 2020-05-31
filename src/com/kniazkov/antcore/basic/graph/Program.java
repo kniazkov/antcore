@@ -69,6 +69,7 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
             entry.getValue().setOwner(this);
         }
 
+        types.put("SHORT", ShortType.getInstance());
         types.put("INTEGER", IntegerType.getInstance());
         types.put("REAL", RealType.getInstance());
 
