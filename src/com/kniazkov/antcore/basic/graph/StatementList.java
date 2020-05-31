@@ -60,6 +60,12 @@ public class StatementList extends Node {
         return (Node)owner;
     }
 
+    public void addVariable(Variable variable) {
+        String name = variable.getName();
+        assert (!variableMap.containsKey(name));
+        variableMap.put(variable.getName(), variable);
+    }
+
     @Override
     public void toSourceCode(StringBuilder buff, String i, String i0) {
         for (Statement statement : statements) {

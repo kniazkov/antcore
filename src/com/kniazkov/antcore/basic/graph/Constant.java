@@ -71,7 +71,7 @@ public class Constant extends Expression implements DataTypeOwner, ExpressionOwn
     }
     
     @Override
-    public DataType getType() {
+    public DataType getType() throws SyntaxError {
         return type != null ? type : value.getType();
     }
 

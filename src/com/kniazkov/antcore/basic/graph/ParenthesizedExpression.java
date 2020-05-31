@@ -39,7 +39,7 @@ public class ParenthesizedExpression extends Expression implements ExpressionOwn
     }
 
     @Override
-    public DataType getType() {
+    public DataType getType() throws SyntaxError {
         return expression.getType();
     }
 

@@ -44,13 +44,13 @@ public class VariableReference extends Expression implements ExpressionOwner {
     }
 
     @Override
-    public DataType getType() {
+    public DataType getType() throws SyntaxError {
         return expression.getType();
     }
 
     @Override
     public Object calculate() {
-        return expression.calculate();
+        return expression != null ? expression.calculate() : null;
     }
 
     @Override
@@ -73,8 +73,21 @@ public class VariableReference extends Expression implements ExpressionOwner {
         if (expression != null)
             return;
         expression = findVariableByName(name);
-        if (expression == null)
+        if (expression == null) {
+            Node owner = getOwner();
+            if (owner instanceof Assignment) {
+                Assignment assignment = (Assignment) owner;
+                if (assignment.getLeft() == this) {
+                    StatementList assignmentOwner = (StatementList) assignment.getOwner();
+                    Function function = assignmentOwner.getFunction();
+                    Variable newVariable = function.createVariable(name, assignment.getRight().getType().getPureType());
+                    assignmentOwner.addVariable(newVariable);
+                    expression = newVariable;
+                    return;
+                }
+            }
             throw new CannotResolveSymbol(getFragment(), name);
+        }
     }
 
     @Override

@@ -19,6 +19,7 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushGlobalPointer;
 import com.kniazkov.antcore.basic.common.Offset;
+import com.kniazkov.antcore.basic.common.SyntaxError;
 
 /**
  * The node represents pointer to a dynamic global object (a field, etc)
@@ -37,7 +38,7 @@ public class GlobalDynamicPointer extends Expression {
     }
 
     @Override
-    public DataType getType() {
+    public DataType getType() throws SyntaxError {
         if (type == null)
             type = new Pointer(expression.getType());
         return type;

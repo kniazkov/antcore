@@ -19,6 +19,7 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushGlobalPointer;
 import com.kniazkov.antcore.basic.common.Offset;
+import com.kniazkov.antcore.basic.common.SyntaxError;
 
 import java.util.Map;
 
@@ -39,7 +40,7 @@ public class GlobalStaticPointer extends Expression {
     }
 
     @Override
-    public DataType getType() {
+    public DataType getType() throws SyntaxError {
         if (type == null)
             type = new Pointer(expression.getType());
         return type;

@@ -41,7 +41,15 @@ public class Assignment extends Statement implements ExpressionOwner {
 
     @Override
     protected Node[] getChildren() {
-        return new Node[] { left, right };
+        return new Node[] { right, left };
+    }
+
+    public Expression getLeft() {
+        return left;
+    }
+
+    public Expression getRight() {
+        return right;
     }
 
     @Override

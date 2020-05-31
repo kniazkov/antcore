@@ -70,7 +70,7 @@ public class Variable extends LeftExpression implements DataTypeOwner, Expressio
     }
     
     @Override
-    public DataType getType() {
+    public DataType getType() throws SyntaxError {
         return type != null ? type : initValue.getType();
     }
 

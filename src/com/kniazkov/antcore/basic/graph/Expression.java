@@ -26,7 +26,7 @@ public abstract class Expression extends Node {
     /**
      * @return type of the expression
      */
-    public abstract DataType getType();
+    public abstract DataType getType() throws SyntaxError;
 
     /**
      * @return constant value of the expression

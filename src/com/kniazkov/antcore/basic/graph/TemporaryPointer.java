@@ -37,7 +37,7 @@ public class TemporaryPointer extends Expression {
     }
 
     @Override
-    public DataType getType() {
+    public DataType getType() throws SyntaxError {
         if (type == null)
             type = new Pointer(expression.getType());
         return type;

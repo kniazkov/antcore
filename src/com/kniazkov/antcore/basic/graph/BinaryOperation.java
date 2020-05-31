@@ -43,16 +43,15 @@ public abstract class BinaryOperation extends Expression implements ExpressionOw
     }
 
     @Override
-    public DataType getType() {
+    public DataType getType() throws SyntaxError {
+        if (type == null)
+            defineType();
         return type;
     }
 
     protected void setType(DataType type) {
         this.type = type;
     }
-
-    protected abstract String getOperator();
-    abstract void defineType() throws SyntaxError;
 
     @Override
     public void toDeclarationSourceCode(StringBuilder buff, String i) {
@@ -65,6 +64,9 @@ public abstract class BinaryOperation extends Expression implements ExpressionOw
         buff.append(" ").append(getOperator()).append(" ");
         right.toUsageSourceCode(buff);
     }
+
+    protected abstract String getOperator();
+    abstract void defineType() throws SyntaxError;
 
     private DataType type;
     protected Expression left;

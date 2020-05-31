@@ -129,6 +129,21 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
     }
 
     /**
+     * Create a variable
+     * @param name the name of a variable
+     * @param type the type of a variable
+     * @return a variable
+     */
+    public Variable createVariable(String name, DataType type) throws SyntaxError {
+        Variable variable = new Variable(name, null, type);
+        int size = type.getSize();
+        localDataSize += size;
+        variable.setOffset(-localDataSize);
+        variableList.add(variable);
+        return variable;
+    }
+
+    /**
      * Create a temporary variable for data conversion
      * @param type the type of a variable
      * @return a variable
