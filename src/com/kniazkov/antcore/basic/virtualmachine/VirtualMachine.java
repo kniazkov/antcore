@@ -280,6 +280,9 @@ public class VirtualMachine {
                 }
                 function.exec(memory, SP);
                 IP = popInteger();
+            },
+            () -> { // 1 -> USER_DEFINED
+                IP = read_x0();
             }
     };
 
@@ -339,8 +342,10 @@ public class VirtualMachine {
                 call[read_p0()].exec();
             },
             () -> { // 6 -> RET
-                power = false;
-                IP = IP + 16;
+                if (SP == memory.size())
+                    power = false;
+                else
+                    IP = popInteger();
             },
             () -> { // 7 -> ENTER
                 pushInteger(LP);

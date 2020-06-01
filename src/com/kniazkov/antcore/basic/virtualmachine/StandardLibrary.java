@@ -30,7 +30,7 @@ public class StandardLibrary {
             functions.put("print", (memory, SP) -> {
                 int address = memory.getInt(SP + 4);
                 StringData string = StringData.read(memory, address);
-                System.out.println(string);
+                System.out.print(string);
             });
 
             functions.put("chr", (memory, SP) -> {

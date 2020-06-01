@@ -55,8 +55,8 @@ public class RealNode extends Expression {
     }
 
     @Override
-    public void genLoad(CompilationUnit cu) {
-        cu.addInstruction(new PushReal(value));
+    public void genLoad(CompilationUnit unit) {
+        unit.addInstruction(new PushReal(value));
     }
 
     private FixedPoint value;

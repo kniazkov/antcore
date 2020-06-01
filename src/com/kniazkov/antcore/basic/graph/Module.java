@@ -218,7 +218,11 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
         if (mainFunction.getArgumentsCount() != 0 || mainFunction.getReturnType() != null)
             throw new IncorrectFunctionMain(fragment);
         CompilationUnit unit = new CompilationUnit(this, staticData);
-        mainFunction.compile(unit);
+        Function function = mainFunction;
+        do {
+            function.compile(unit);
+            function = unit.getNextNotCompiledFunction();
+        } while (function != null);
         unit.addInstruction(new End());
         return new CompiledModule(getNotNullExecutor(), name, unit.getBytecode());
     }

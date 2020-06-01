@@ -53,8 +53,8 @@ public class IntegerNode extends Expression {
     }
 
     @Override
-    public void genLoad(CompilationUnit cu) {
-        cu.addInstruction(new PushInteger(value));
+    public void genLoad(CompilationUnit unit) {
+        unit.addInstruction(new PushInteger(value));
     }
 
     private int value;

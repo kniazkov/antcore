@@ -44,9 +44,9 @@ public abstract class Statement extends Node {
 
     /**
      * Generate instructions
-     * @param cu the compilation unit
+     * @param unit the compilation unit
      */
-    public abstract void compile(CompilationUnit cu) throws SyntaxError;
+    public abstract void compile(CompilationUnit unit) throws SyntaxError;
 
     /**
      * Get a function containing this statement

@@ -61,8 +61,8 @@ public class ParenthesizedExpression extends Expression implements ExpressionOwn
     }
 
     @Override
-    public void genLoad(CompilationUnit cu) throws SyntaxError {
-        expression.genLoad(cu);
+    public void genLoad(CompilationUnit unit) throws SyntaxError {
+        expression.genLoad(unit);
     }
 
     private Expression expression;

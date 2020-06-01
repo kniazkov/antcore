@@ -60,8 +60,8 @@ public class GlobalDynamicPointer extends Expression {
     }
 
     @Override
-    public void genLoad(CompilationUnit cu) {
-        cu.addInstruction(new PushGlobalPointer(cu.getDynamicDataOffset(), address));
+    public void genLoad(CompilationUnit unit) {
+        unit.addInstruction(new PushGlobalPointer(unit.getDynamicDataOffset(), address));
     }
 
     private Expression expression;

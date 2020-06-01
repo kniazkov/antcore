@@ -99,19 +99,19 @@ public class Addition extends BinaryOperation {
     }
 
     @Override
-    public void genLoad(CompilationUnit cu) throws SyntaxError {
+    public void genLoad(CompilationUnit unit) throws SyntaxError {
         DataType leftType = left.getType().getPureType();
         DataType rightType = right.getType().getPureType();
 
-        right.genLoad(cu);
-        left.genLoad(cu);
+        right.genLoad(unit);
+        left.genLoad(unit);
         if (leftType instanceof IntegerType && rightType instanceof IntegerType) {
-            cu.addInstruction(new Add(TypeSelector.INTEGER,4, 4, 4));
+            unit.addInstruction(new Add(TypeSelector.INTEGER,4, 4, 4));
             return;
         }
 
         if (leftType instanceof StringType && rightType instanceof StringType) {
-            cu.addInstruction(new Add(TypeSelector.STRING,
+            unit.addInstruction(new Add(TypeSelector.STRING,
                     leftType.getSize(), rightType.getSize(), getType().getSize()));
             return;
         }

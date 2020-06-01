@@ -103,12 +103,12 @@ public class StringNode extends Expression {
     }
 
     @Override
-    public void genLoad(CompilationUnit cu) throws SyntaxError {
-        Module module = cu.getModule();
+    public void genLoad(CompilationUnit unit) throws SyntaxError {
+        Module module = unit.getModule();
         assert (address.containsKey(module));
         RawInstruction load = new Load(DataSelector.GLOBAL,
-                type.getSize(), cu.getStaticDataOffset(), address.get(module));
-        cu.addInstruction(load);
+                type.getSize(), unit.getStaticDataOffset(), address.get(module));
+        unit.addInstruction(load);
     }
 
     private String value;

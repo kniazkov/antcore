@@ -16,18 +16,19 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
-import com.kniazkov.antcore.basic.bytecodebuilder.Enter;
-import com.kniazkov.antcore.basic.bytecodebuilder.Leave;
+import com.kniazkov.antcore.basic.bytecode.FunctionSelector;
+import com.kniazkov.antcore.basic.bytecodebuilder.*;
+import com.kniazkov.antcore.basic.common.DeferredOffset;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
-import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
-import com.kniazkov.antcore.basic.bytecodebuilder.Return;
+import com.kniazkov.antcore.basic.common.ZeroOffset;
 import com.kniazkov.antcore.basic.exceptions.ReturnTypeCanNotBeAbstract;
 import com.kniazkov.antcore.basic.exceptions.ReturnTypeCanNotBeConstant;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The function
@@ -46,6 +47,7 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
         body.setOwner(this);
         variableList = new ArrayList<>();
         localDataSize = 0;
+        addresses = new HashMap<>();
     }
 
     @Override
@@ -93,22 +95,36 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
         return returnType;
     }
 
-    @Override
-    public void genCall(CompilationUnit cu) {
-        assert(false);
-    }
 
     @Override
     public List<DataType> getArgumentTypes() {
         return arguments != null ? arguments.getTypes() : null;
     }
 
-    public void compile(CompilationUnit cu) throws SyntaxError {
+    @Override
+    public void genCall(CompilationUnit unit) {
+        Module module = unit.getModule();
+        DeferredOffset address = addresses.get(module);
+        if (address == null) {
+            address = new DeferredOffset();
+            addresses.put(module, address);
+            unit.addNotCompiledFunction(this);
+        }
+        unit.addInstruction(new Call(FunctionSelector.USER_DEFINED, ZeroOffset.getInstance(), address));
+    }
+
+    public void compile(CompilationUnit unit) throws SyntaxError {
         assert (localDataSize >= 0);
-        cu.addInstruction(new Enter(localDataSize));
-        body.compile(cu);
-        cu.addInstruction(new Leave(localDataSize));
-        cu.addInstruction(new Return());
+        RawInstruction firstInstruction = new Enter(localDataSize);
+        unit.addInstruction(firstInstruction);
+        Module module = unit.getModule();
+        DeferredOffset address = addresses.get(module);
+        if (address != null) {
+            address.resolve(firstInstruction.getAddress());
+        }
+        body.compile(unit);
+        unit.addInstruction(new Leave(localDataSize));
+        unit.addInstruction(new Return());
     }
 
     /**
@@ -194,4 +210,5 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
     private StatementList body;
     private List<Variable> variableList;
     private int localDataSize;
+    private Map<Module, DeferredOffset> addresses;
 }

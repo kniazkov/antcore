@@ -35,7 +35,7 @@ public abstract class LeftExpression extends Expression {
 
     /**
      * Generate instructions for storing value to the memory
-     * @param cu the compilation unit
+     * @param unit the compilation unit
      */
-    public abstract void genStore(CompilationUnit cu) throws SyntaxError;
+    public abstract void genStore(CompilationUnit unit) throws SyntaxError;
 }

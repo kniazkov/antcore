@@ -62,10 +62,10 @@ public class GlobalStaticPointer extends Expression {
     }
 
     @Override
-    public void genLoad(CompilationUnit cu) {
-        Module module = cu.getModule();
+    public void genLoad(CompilationUnit unit) {
+        Module module = unit.getModule();
         assert(addresses.containsKey(module));
-        cu.addInstruction(new PushGlobalPointer(cu.getStaticDataOffset(), addresses.get(module)));
+        unit.addInstruction(new PushGlobalPointer(unit.getStaticDataOffset(), addresses.get(module)));
     }
 
     private Expression expression;

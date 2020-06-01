@@ -59,10 +59,10 @@ public class TemporaryPointer extends Expression {
     }
 
     @Override
-    public void genLoad(CompilationUnit cu) throws SyntaxError {
-        expression.genLoad(cu);
-        tmpVar.genStore(cu);
-        cu.addInstruction(new PushLocalPointer(tmpVar.getOffset()));
+    public void genLoad(CompilationUnit unit) throws SyntaxError {
+        expression.genLoad(unit);
+        tmpVar.genStore(unit);
+        unit.addInstruction(new PushLocalPointer(tmpVar.getOffset()));
     }
 
     private Expression expression;

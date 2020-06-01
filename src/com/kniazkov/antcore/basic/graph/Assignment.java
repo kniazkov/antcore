@@ -77,12 +77,12 @@ public class Assignment extends Statement implements ExpressionOwner {
     }
 
     @Override
-    public void compile(CompilationUnit cu) throws SyntaxError {
+    public void compile(CompilationUnit unit) throws SyntaxError {
         LeftExpression assignableExpression = left.toLeftExpression();
         if (assignableExpression == null)
             throw new ExpressionCannotBeAssigned(getFragment(), left.toString(), right.toString());
-        right.genLoad(cu);
-        assignableExpression.genStore(cu);
+        right.genLoad(unit);
+        assignableExpression.genStore(unit);
     }
 
     private Expression left;

@@ -125,17 +125,17 @@ public class Variable extends LeftExpression implements DataTypeOwner, Expressio
     }
 
     @Override
-    public void genLoad(CompilationUnit cu) throws SyntaxError {
+    public void genLoad(CompilationUnit unit) throws SyntaxError {
         RawInstruction load = new Load(DataSelector.LOCAL,
                 type.getSize(), ZeroOffset.getInstance(), offset);
-        cu.addInstruction(load);
+        unit.addInstruction(load);
     }
 
     @Override
-    public void genStore(CompilationUnit cu) throws SyntaxError {
+    public void genStore(CompilationUnit unit) throws SyntaxError {
         RawInstruction store = new Store(DataSelector.LOCAL,
                 type.getSize(), ZeroOffset.getInstance(), offset);
-        cu.addInstruction(store);
+        unit.addInstruction(store);
     }
 
     @Override

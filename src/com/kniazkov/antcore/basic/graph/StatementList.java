@@ -73,9 +73,9 @@ public class StatementList extends Node {
         }
     }
 
-    public void compile(CompilationUnit cu) throws SyntaxError {
+    public void compile(CompilationUnit unit) throws SyntaxError {
         for (Statement statement : statements) {
-            statement.compile(cu);
+            statement.compile(unit);
         }
     }
 

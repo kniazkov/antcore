@@ -60,8 +60,8 @@ public class LocalPointer extends Expression {
     }
 
     @Override
-    public void genLoad(CompilationUnit cu) {
-        cu.addInstruction(new PushLocalPointer(offset));
+    public void genLoad(CompilationUnit unit) {
+        unit.addInstruction(new PushLocalPointer(offset));
     }
 
     private Expression expression;

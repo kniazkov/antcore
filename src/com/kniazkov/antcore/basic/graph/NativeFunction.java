@@ -80,8 +80,8 @@ public class NativeFunction extends BaseFunction implements DataTypeOwner {
     }
 
     @Override
-    public void genCall(CompilationUnit cu) {
-        cu.addInstruction(new Call(FunctionSelector.NATIVE, cu.getStaticDataOffset(), cu.getStringOffset(name)));
+    public void genCall(CompilationUnit unit) {
+        unit.addInstruction(new Call(FunctionSelector.NATIVE, unit.getStaticDataOffset(), unit.getStringOffset(name)));
     }
 
     @Override

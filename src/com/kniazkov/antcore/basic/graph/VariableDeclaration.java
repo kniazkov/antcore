@@ -56,11 +56,11 @@ public class VariableDeclaration extends Statement {
     }
 
     @Override
-    public void compile(CompilationUnit cu) throws SyntaxError {
+    public void compile(CompilationUnit unit) throws SyntaxError {
         Expression initValue = variable.getInitValue();
         if (initValue != null) {
-            initValue.genLoad(cu);
-            variable.genStore(cu);
+            initValue.genLoad(unit);
+            variable.genStore(unit);
         }
     }
 

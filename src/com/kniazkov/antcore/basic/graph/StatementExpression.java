@@ -42,11 +42,11 @@ public class StatementExpression extends Statement implements ExpressionOwner {
     }
 
     @Override
-    public void compile(CompilationUnit cu) throws SyntaxError {
-        expression.genLoad(cu);
+    public void compile(CompilationUnit unit) throws SyntaxError {
+        expression.genLoad(unit);
         DataType returnType = expression.getType();
         if (returnType != null)
-            cu.addInstruction(new Pop(returnType.getSize()));
+            unit.addInstruction(new Pop(returnType.getSize()));
     }
 
     @Override

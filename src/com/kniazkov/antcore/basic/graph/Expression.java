@@ -84,9 +84,9 @@ public abstract class Expression extends Node {
 
     /**
      * Generate instructions for loading (calculating) value to the stack
-     * @param cu the compilation unit
+     * @param unit the compilation unit
      */
-    public abstract void genLoad(CompilationUnit cu) throws SyntaxError;
+    public abstract void genLoad(CompilationUnit unit) throws SyntaxError;
 
     /**
      * Generate pointer to the expression (if possible)

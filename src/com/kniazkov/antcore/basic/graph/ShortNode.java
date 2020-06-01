@@ -53,8 +53,8 @@ public class ShortNode extends Expression {
     }
 
     @Override
-    public void genLoad(CompilationUnit cu) {
-        cu.addInstruction(new PushShort(value));
+    public void genLoad(CompilationUnit unit) {
+        unit.addInstruction(new PushShort(value));
     }
 
     private short value;

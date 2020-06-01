@@ -119,30 +119,30 @@ public class FunctionCall extends Expression implements ExpressionOwner {
     }
 
     @Override
-    public void genLoad(CompilationUnit cu) throws SyntaxError {
+    public void genLoad(CompilationUnit unit) throws SyntaxError {
         int popSize = 0;
 
         // reserve place for return value
         DataType returnType = function.getReturnType();
         if (returnType != null)
-            cu.addInstruction(new PushZeros(returnType.getSize()));
+            unit.addInstruction(new PushZeros(returnType.getSize()));
 
         // place arguments to the stack
         if (arguments.size() > 0) {
             ListIterator<Expression> iterator = arguments.listIterator(arguments.size());
             while(iterator.hasPrevious()) {
                 Expression argument = iterator.previous();
-                argument.genLoad(cu);
+                argument.genLoad(unit);
                 popSize += argument.getType().getSize();
             }
         }
 
         // call
-        function.genCall(cu);
+        function.genCall(unit);
 
         // remove arguments from the stack
         if (popSize > 0) {
-            cu.addInstruction(new Pop(popSize));
+            unit.addInstruction(new Pop(popSize));
         }
 
         // the return value, if one exists, will remain on the stack

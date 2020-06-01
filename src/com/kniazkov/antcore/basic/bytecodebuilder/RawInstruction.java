@@ -22,19 +22,24 @@ import com.kniazkov.antcore.basic.bytecode.Instruction;
  * An instruction of bytecode
  */
 public abstract class RawInstruction {
+    public RawInstruction() {
+        index = -1;
+    }
+
     /**
      * @return set of bytes that represents an instruction
      */
     public abstract Instruction generate();
 
     void setIndex(int index) {
-        assert(this.index == null);
+        assert(this.index < 0);
         this.index = index;
     }
 
     public int getAddress() {
+        assert(this.index >= 0);
         return index * 16;
     }
 
-    private Integer index;
+    private int index;
 }

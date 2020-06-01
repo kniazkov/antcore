@@ -121,8 +121,8 @@ public class Constant extends Expression implements DataTypeOwner, ExpressionOwn
     }
 
     @Override
-    public void genLoad(CompilationUnit cu) throws SyntaxError {
-        value.genLoad(cu);
+    public void genLoad(CompilationUnit unit) throws SyntaxError {
+        value.genLoad(unit);
     }
 
     private ConstantList owner;

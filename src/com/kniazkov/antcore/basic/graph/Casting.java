@@ -67,12 +67,12 @@ public class Casting extends Expression implements ExpressionOwner, DataTypeOwne
     }
 
     @Override
-    public void genLoad(CompilationUnit cu) throws SyntaxError {
-        expression.genLoad(cu);
+    public void genLoad(CompilationUnit unit) throws SyntaxError {
+        expression.genLoad(unit);
         DataType currentType = expression.getType();
         Cast cast = new Cast(currentType.getSelector(), currentType.getSize(),
                 newType.getSelector(), newType.getSize());
-        cu.addInstruction(cast);
+        unit.addInstruction(cast);
     }
 
     private boolean implicit;

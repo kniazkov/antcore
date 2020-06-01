@@ -16,13 +16,14 @@
  */
 package com.kniazkov.antcore.basic.bytecodebuilder;
 
-import com.kniazkov.antcore.basic.common.DeferredOffset;
 import com.kniazkov.antcore.basic.common.Offset;
+import com.kniazkov.antcore.basic.graph.Function;
 import com.kniazkov.antcore.basic.graph.Module;
 import com.kniazkov.antcore.lib.ByteBuffer;
 import com.kniazkov.antcore.lib.ByteList;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /*
@@ -51,6 +52,7 @@ public class CompilationUnit {
         this.staticData = staticData;
         staticDataOffset = new SegmentOffset();
         dynamicDataOffset = new SegmentOffset();
+        notCompiledButUsedFunctions = new LinkedList<>();
     }
 
     public Module getModule() {
@@ -63,6 +65,14 @@ public class CompilationUnit {
 
     public Offset getDynamicDataOffset() {
         return dynamicDataOffset;
+    }
+
+    public void addNotCompiledFunction(Function function) {
+        notCompiledButUsedFunctions.addLast(function);
+    }
+
+    public Function getNextNotCompiledFunction() {
+        return notCompiledButUsedFunctions.isEmpty() ? null : notCompiledButUsedFunctions.removeFirst();
     }
 
     /**
@@ -90,8 +100,8 @@ public class CompilationUnit {
     }
 
     public void addInstruction(RawInstruction item) {
-        instructions.add(item);
         int count = instructions.size();
+        instructions.add(item);
         item.setIndex(count);
         updateSegmentOffsets();
     }
@@ -107,4 +117,5 @@ public class CompilationUnit {
     private StaticDataBuilder staticData;
     private SegmentOffset staticDataOffset;
     private SegmentOffset dynamicDataOffset;
+    private LinkedList<Function> notCompiledButUsedFunctions;
 }

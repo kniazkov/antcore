@@ -60,9 +60,9 @@ public abstract class BaseFunction extends Node {
 
     /**
      * Generate instruction(s) for calling this function
-     * @param cu the compilation unit
+     * @param unit the compilation unit
      */
-    public abstract void genCall(CompilationUnit cu);
+    public abstract void genCall(CompilationUnit unit);
 
     private FunctionOwner owner;
     private Fragment fragment;

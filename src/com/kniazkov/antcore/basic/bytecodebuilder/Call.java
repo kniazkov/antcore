@@ -25,12 +25,6 @@ import com.kniazkov.antcore.basic.common.Offset;
  * Call the function
  */
 public class Call extends RawInstruction {
-    public Call(byte selector, Offset segment) {
-        this.selector = selector;
-        this.segment = segment;
-        this.address = null;
-    }
-
     public Call(byte selector, Offset segment, Offset address) {
         this.selector = selector;
         this.segment = segment;
@@ -44,13 +38,6 @@ public class Call extends RawInstruction {
         i.p0 = selector;
         i.x0 = segment.get() + address.get();
         return i;
-    }
-
-    public DeferredOffset getAddressReference() {
-        DeferredOffset ref = new DeferredOffset();
-        assert (address == null);
-        address = ref;
-        return ref;
     }
 
     private byte selector;
