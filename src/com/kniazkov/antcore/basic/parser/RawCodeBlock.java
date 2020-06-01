@@ -16,13 +16,11 @@
  */
 package com.kniazkov.antcore.basic.parser;
 
-import com.kniazkov.antcore.basic.common.DataPrefix;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.graph.*;
-import com.kniazkov.antcore.basic.parser.exceptions.DuplicateDataSet;
 import com.kniazkov.antcore.basic.parser.exceptions.FunctionAlreadyExists;
-import com.kniazkov.antcore.basic.parser.exceptions.UnexpectedDataSet;
+import com.kniazkov.antcore.basic.parser.exceptions.FunctionCannotBeDeclared;
 
 import java.util.*;
 
@@ -35,6 +33,7 @@ public class RawCodeBlock extends Entity {
         this.executors = executors;
         this.body = Collections.unmodifiableList(body);
         this.rawNativeFunctions = new ArrayList<>();
+        this.rawFunctions = new ArrayList<>();
         this.allRawFunctions = new TreeMap<>();
     }
 
@@ -44,9 +43,21 @@ public class RawCodeBlock extends Entity {
 
     public void addNativeFunction(RawNativeFunction function) throws SyntaxError {
         String name = function.getName();
+        if (name.equals("MAIN"))
+            throw new FunctionCannotBeDeclared(function.getFragment(), name);
         if (allRawFunctions.containsKey(name))
             throw new FunctionAlreadyExists(function.getFragment(), name);
         rawNativeFunctions.add(function);
+        allRawFunctions.put(name, function);
+    }
+
+    public void addFunction(RawFunction function) throws SyntaxError {
+        String name = function.getName();
+        if (name.equals("MAIN"))
+            throw new FunctionCannotBeDeclared(function.getFragment(), name);
+        if (allRawFunctions.containsKey(name))
+            throw new FunctionAlreadyExists(function.getFragment(), name);
+        rawFunctions.add(function);
         allRawFunctions.put(name, function);
     }
 
@@ -56,12 +67,18 @@ public class RawCodeBlock extends Entity {
             NativeFunction function = rawFunction.toNode();
             nativeFunctions.add(function);
         }
-        return new CodeBlock(fragment, executors, nativeFunctions);
+        List<Function> functions = new ArrayList<>();
+        for (RawFunction rawFunction : rawFunctions) {
+            Function function = rawFunction.toNode();
+            functions.add(function);
+        }
+        return new CodeBlock(fragment, executors, nativeFunctions, functions);
     }
 
     private Fragment fragment;
     private List<String> executors;
     private List<Line> body;
     private List<RawNativeFunction> rawNativeFunctions;
+    private List<RawFunction> rawFunctions;
     private Map<String, RawBaseFunction> allRawFunctions;
 }

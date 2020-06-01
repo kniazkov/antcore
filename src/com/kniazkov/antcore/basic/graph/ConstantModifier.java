@@ -79,6 +79,9 @@ public class ConstantModifier extends DataType implements DataTypeOwner {
 
     @Override
     public boolean isBinaryAnalog(DataType otherType) throws SyntaxError {
+        if (otherType instanceof ConstantModifier) {
+            return type.isBinaryAnalog(((ConstantModifier) otherType).type);
+        }
         return type.isBinaryAnalog(otherType);
     }
 

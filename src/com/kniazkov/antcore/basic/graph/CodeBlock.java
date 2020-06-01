@@ -25,15 +25,24 @@ import java.util.*;
  * The node that represents a block of code
  */
 public class CodeBlock extends Node implements FunctionOwner {
-    public CodeBlock(Fragment fragment, List<String> executors, List<NativeFunction> nativeFunctions) {
+    public CodeBlock(Fragment fragment, List<String> executors, List<NativeFunction> nativeFunctions,
+                     List<Function> functions) {
         this.fragment = fragment;
         if (executors != null)
             this.executors = Collections.unmodifiableList(executors);
-        this.nativeFunctionList = Collections.unmodifiableList(nativeFunctions);
         List<BaseFunction> functionList = new ArrayList<>();
+        allFunctionMap = new TreeMap<>();
+        this.nativeFunctionList = Collections.unmodifiableList(nativeFunctions);
         for (NativeFunction function : nativeFunctions) {
             function.setOwner(this);
             functionList.add(function);
+            allFunctionMap.put(function.getName(), function);
+        }
+        this.functionList = Collections.unmodifiableList(functions);
+        for (Function function : functions) {
+            function.setOwner(this);
+            functionList.add(function);
+            allFunctionMap.put(function.getName(), function);
         }
         allFunctionList = Collections.unmodifiableList(functionList);
     }
@@ -45,9 +54,12 @@ public class CodeBlock extends Node implements FunctionOwner {
 
     @Override
     protected Node[] getChildren() {
-        Node[] nodes = new Node[nativeFunctionList.size()];
-        nativeFunctionList.toArray(nodes);
-        return nodes;
+        List<Node> list = new ArrayList<>();
+        list.addAll(nativeFunctionList);
+        list.addAll(functionList);
+        Node[] array = new Node[list.size()];
+        list.toArray(array);
+        return array;
     }
 
     void setOwner(Program owner) {
@@ -81,8 +93,16 @@ public class CodeBlock extends Node implements FunctionOwner {
             buff.append(i).append("CODE\n");
         }
         String i1 = i + i0;
+        boolean flag2 = false;
         for (NativeFunction function : nativeFunctionList) {
             function.toSourceCode(buff, i1, i0);
+            flag2 = true;
+        }
+        for (Function function : functionList) {
+            if (flag2)
+                buff.append('\n');
+            function.toSourceCode(buff, i1, i0);
+            flag2 = true;
         }
         buff.append(i).append("END CODE\n");
     }
@@ -95,9 +115,16 @@ public class CodeBlock extends Node implements FunctionOwner {
         return allFunctionList;
     }
 
+    @Override
+    protected BaseFunction findFunctionByName(String name) {
+        return allFunctionMap.get(name);
+    }
+
     private Program owner;
     private Fragment fragment;
     private List<String> executors;
     private List<NativeFunction> nativeFunctionList;
+    private List<Function> functionList;
     private List<BaseFunction> allFunctionList;
+    private Map<String, BaseFunction> allFunctionMap;
 }

@@ -567,13 +567,11 @@ public class Parser {
                 RawNativeFunction nativeFunction = parseNativeFunction(line);
                 block.addNativeFunction(nativeFunction);
             }
-            /*
             else if (tokens.get(0) instanceof KeywordFunction) {
                 RawFunction function = parseFunction(line, iterator);
                 block.addFunction(function);
                 rawFunctions.add(function);
             }
-            */
             else
                 throw new UnexpectedSequence(line);
         }
