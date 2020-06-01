@@ -64,6 +64,9 @@ public class Disassembler {
                         if (i.x0 > 4)
                             buff.append(", ").append(i.x2);
                         break;
+                    case DataSelector.ZERO:
+                        buff.append("ZERO\t").append(i.x0);
+                        break;
                 }
             },
             (i, buff) -> { // 2 -> STORE

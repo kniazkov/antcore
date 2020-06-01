@@ -14,31 +14,28 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.bytecode;
+package com.kniazkov.antcore.basic.bytecodebuilder;
+
+import com.kniazkov.antcore.basic.bytecode.DataSelector;
+import com.kniazkov.antcore.basic.bytecode.Instruction;
+import com.kniazkov.antcore.basic.bytecode.OpCode;
 
 /**
- * The list of data selectors
+ * Load a zero byte to the stack
  */
-public final class DataSelector {
-    public static final byte GLOBAL = 0;
-    public static final byte LOCAL = 1;
-    public static final byte IMMEDIATE = 2;
-    public static final byte LOCAL_POINTER = 3;
-    public static final byte ZERO = 4;
-
-    public static String toString(byte selector) {
-        switch(selector) {
-            case GLOBAL:
-                return "GLOBAL";
-            case LOCAL:
-                return "LOCAL";
-            case IMMEDIATE:
-                return "VAL ";
-            case LOCAL_POINTER:
-                return "PTR ";
-            case ZERO:
-                return "ZERO";
-        }
-        return "?";
+public class PushZeros extends RawInstruction {
+    public PushZeros(int count) {
+        this.count = count;
     }
+
+    @Override
+    public Instruction generate() {
+        Instruction i = new Instruction();
+        i.opcode = OpCode.LOAD;
+        i.p0 = DataSelector.ZERO;
+        i.x0 = count;
+        return i;
+    }
+
+    protected int count;
 }

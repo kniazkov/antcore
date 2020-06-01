@@ -26,10 +26,18 @@ public class StandardLibrary {
     public static Map<String, NativeFunction> getFunctions() {
         if (functions == null) {
             functions = new TreeMap<>();
+
             functions.put("print", (memory, SP) -> {
                 int address = memory.getInt(SP + 4);
                 StringData string = StringData.read(memory, address);
                 System.out.println(string);
+            });
+
+            functions.put("chr", (memory, SP) -> {
+                short code = memory.getShort(SP + 4);
+                memory.setInt(SP + 4 + 2, 1); // string length
+                memory.setInt(SP + 4 + 2 + 4, 1); // capacity
+                memory.setChar(SP + 4 + 2 + 8, (char)code); // symbol
             });
         }
         return functions;

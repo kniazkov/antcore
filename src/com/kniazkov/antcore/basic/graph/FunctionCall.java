@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.Pop;
+import com.kniazkov.antcore.basic.bytecodebuilder.PushZeros;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.exceptions.*;
 
@@ -120,6 +121,13 @@ public class FunctionCall extends Expression implements ExpressionOwner {
     @Override
     public void genLoad(CompilationUnit cu) throws SyntaxError {
         int popSize = 0;
+
+        // reserve place for return value
+        DataType returnType = function.getReturnType();
+        if (returnType != null)
+            cu.addInstruction(new PushZeros(returnType.getSize()));
+
+        // place arguments to the stack
         if (arguments.size() > 0) {
             ListIterator<Expression> iterator = arguments.listIterator(arguments.size());
             while(iterator.hasPrevious()) {
@@ -128,10 +136,16 @@ public class FunctionCall extends Expression implements ExpressionOwner {
                 popSize += argument.getType().getSize();
             }
         }
+
+        // call
         function.genCall(cu);
+
+        // remove arguments from the stack
         if (popSize > 0) {
             cu.addInstruction(new Pop(popSize));
         }
+
+        // the return value, if one exists, will remain on the stack
     }
 
     private String functionName;

@@ -142,6 +142,10 @@ public class VirtualMachine {
                 assert (size == 4);
                 memory.setInt(SP, LP + read_x1());
             },
+            (size) -> { // 4 -> ZERO
+                for (int k = 0; k < size; k++)
+                    memory.set(SP + k, (byte) 0);
+            }
     };
 
     interface Store {
