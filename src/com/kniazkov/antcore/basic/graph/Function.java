@@ -144,6 +144,10 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
         return this;
     }
 
+    public int getFirstArgumentOffset() {
+        return 8; // TODO : for methods +4
+    }
+
     /**
      * Create a variable
      * @param name the name of a variable
@@ -202,6 +206,17 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
             variable.setOffset(-localDataSize);
             variableList.add(variable);
         }
+    }
+
+    @Override
+    protected Expression findVariableByName(String name) {
+        if (arguments != null) {
+            Argument argument = arguments.findArgumentByName(name);
+            if (argument != null) {
+                return argument;
+            }
+        }
+        return getOwner().findVariableByName(name);
     }
 
     private String name;

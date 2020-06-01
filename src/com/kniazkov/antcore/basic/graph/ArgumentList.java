@@ -21,18 +21,18 @@ import com.kniazkov.antcore.basic.exceptions.ArgumentCanNotBeAbstract;
 import com.kniazkov.antcore.basic.exceptions.ArgumentCanNotBeConstant;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * The list of arguments
  */
 public class ArgumentList extends Node implements ExpressionOwner {
     public ArgumentList(List<Argument> arguments) {
-        this.arguments = Collections.unmodifiableList(arguments);
+        this.argumentList = Collections.unmodifiableList(arguments);
+        this.argumentMap = new TreeMap<>();
         for (Argument argument : arguments) {
             argument.setOwner(this);
+            argumentMap.put(argument.getName(), argument);
         }
     }
 
@@ -43,8 +43,8 @@ public class ArgumentList extends Node implements ExpressionOwner {
 
     @Override
     protected Node[] getChildren() {
-        Node[] nodes = new Node[arguments.size()];
-        arguments.toArray(nodes);
+        Node[] nodes = new Node[argumentList.size()];
+        argumentList.toArray(nodes);
         return nodes;
     }
 
@@ -61,7 +61,7 @@ public class ArgumentList extends Node implements ExpressionOwner {
     public void toSourceCode(StringBuilder buff, String i, String i0) {
         buff.append('(');
         boolean flag = false;
-        for (Argument argument : arguments) {
+        for (Argument argument : argumentList) {
             if (flag)
                 buff.append(", ");
             flag = true;
@@ -71,7 +71,7 @@ public class ArgumentList extends Node implements ExpressionOwner {
     }
 
     public int getCount() {
-        return arguments.size();
+        return argumentList.size();
     }
 
     /**
@@ -79,7 +79,7 @@ public class ArgumentList extends Node implements ExpressionOwner {
      */
     void calculateOffsets() throws SyntaxError {
         int offset = 0;
-        for (Argument argument : arguments) {
+        for (Argument argument : argumentList) {
             argument.setOffset(offset);
             offset += argument.getType().getSize();
         }
@@ -89,7 +89,7 @@ public class ArgumentList extends Node implements ExpressionOwner {
      * Check types of all arguments
      */
     void checkTypes() throws SyntaxError {
-        for (Argument argument : arguments) {
+        for (Argument argument : argumentList) {
             DataType type = argument.getType();
             if (type.isConstant())
                 throw new ArgumentCanNotBeConstant(getFragment());
@@ -103,8 +103,8 @@ public class ArgumentList extends Node implements ExpressionOwner {
      */
     public List<DataType> getTypes() {
         if (types == null) {
-            ArrayList<DataType> list = new ArrayList<>(arguments.size());
-            for (Argument argument : arguments) {
+            ArrayList<DataType> list = new ArrayList<>(argumentList.size());
+            for (Argument argument : argumentList) {
                 list.add(argument.getType());
             }
             types = Collections.unmodifiableList(list);
@@ -112,7 +112,12 @@ public class ArgumentList extends Node implements ExpressionOwner {
         return types;
     }
 
+    public Argument findArgumentByName(String name) {
+        return argumentMap.get(name);
+    }
+
     private Function owner;
-    private List<Argument> arguments;
+    private List<Argument> argumentList;
+    private Map<String, Argument> argumentMap;
     private List<DataType> types;
 }

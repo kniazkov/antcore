@@ -16,8 +16,13 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecode.DataSelector;
+import com.kniazkov.antcore.basic.bytecodebuilder.Load;
+import com.kniazkov.antcore.basic.bytecodebuilder.RawInstruction;
+import com.kniazkov.antcore.basic.common.FixedOffset;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
+import com.kniazkov.antcore.basic.common.ZeroOffset;
 
 import java.util.Collections;
 import java.util.List;
@@ -86,8 +91,10 @@ public class Argument extends LeftExpression implements DataTypeOwner {
     }
 
     @Override
-    public void genLoad(CompilationUnit unit) {
-        assert(false);
+    public void genLoad(CompilationUnit unit) throws SyntaxError {
+        RawInstruction load = new Load(DataSelector.LOCAL,
+                type.getSize(), ZeroOffset.getInstance(), new FixedOffset(offset + 8));
+        unit.addInstruction(load);
     }
 
     @Override
