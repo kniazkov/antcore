@@ -49,6 +49,10 @@ public class VirtualMachine {
         return error;
     }
 
+    public int getInstructionPointer() {
+        return IP;
+    }
+
     ByteBuffer memory;
     Map<String, NativeFunction> functions;
     boolean power;
@@ -87,6 +91,17 @@ public class VirtualMachine {
 
     final void move(int fromPos, int toPos, int size) {
         memory.move(fromPos, toPos, size);
+    }
+
+    final void pushShort(short value) {
+        SP = SP - 2;
+        memory.setShort(SP, value);
+    }
+
+    final short popShort() {
+        short value = memory.getShort(SP);
+        SP = SP + 2;
+        return value;
     }
 
     final void pushInteger(int value) {
@@ -142,27 +157,65 @@ public class VirtualMachine {
             },
     };
 
-    final Unit[] castToString = {
+    final Unit[] castToShort = {
             stub,
             stub,   // 1 -> POINTER
             stub,   // 2 -> BOOLEAN
             stub,   // 3 -> BYTE
             stub,   // 4 -> SHORT
             () -> { // 5 -> INTEGER
+                int value = popInteger();
+                if (value > Short.MAX_VALUE) pushShort(Short.MAX_VALUE);
+                else if (value < Short.MIN_VALUE) pushShort(Short.MIN_VALUE);
+                else pushShort((short)value);
+            },
+            stub,   // 6 -> LONG
+            stub,   // 7 -> REAL
+            stub,   // 8 -> STRING
+            stub,   // 9 -> ARRAY
+            stub    // 10 -> STRUCT
+    };
+
+    final Unit[] castToInteger = {
+            stub,
+            stub,   // 1 -> POINTER
+            stub,   // 2 -> BOOLEAN
+            stub,   // 3 -> BYTE
+            stub,   // 4 -> SHORT
+            stub,   // 5 -> INTEGER
+            stub,   // 6 -> LONG
+            stub,   // 7 -> REAL
+            stub,   // 8 -> STRING
+            stub,   // 9 -> ARRAY
+            stub    // 10 -> STRUCT
+    };
+
+    void castAnyToString(String strValue, int currentSize) {
+        int newSize = read_x1();
+        int capacity = (newSize - 8) / 2;
+        int strValueLength = strValue.length();
+        assert (capacity >= strValueLength);
+        SP -= newSize - currentSize;
+        memory.setInt(SP, strValueLength);
+        memory.setInt(SP + 4, capacity);
+        for (int k = 0; k < strValueLength; k++) {
+            char ch = strValue.charAt(k);
+            memory.setChar(SP + 8 + k * 2, ch);
+        }
+    }
+
+    final Unit[] castToString = {
+            stub,
+            stub,   // 1 -> POINTER
+            stub,   // 2 -> BOOLEAN
+            stub,   // 3 -> BYTE
+            () -> { // 4 -> SHORT
+                assert(read_x0() == 2);
+                castAnyToString(String.valueOf(memory.getShort(SP)), 2);
+            },
+            () -> { // 5 -> INTEGER
                 assert(read_x0() == 4);
-                int newSize = read_x1();
-                int capacity = (newSize - 8) / 2;
-                int value = memory.getInt(SP);
-                String strValue = String.valueOf(value);
-                int strValueLength = strValue.length();
-                assert (capacity >= strValueLength);
-                SP -= newSize - 4;
-                memory.setInt(SP, strValueLength);
-                memory.setInt(SP + 4, capacity);
-                for (int k = 0; k < strValueLength; k++) {
-                    char ch = strValue.charAt(k);
-                    memory.setChar(SP + 8 + k * 2, ch);
-                }
+                castAnyToString(String.valueOf(memory.getInt(SP)), 4);
             },
             stub,   // 6 -> LONG
             stub,   // 7 -> REAL
@@ -197,8 +250,12 @@ public class VirtualMachine {
             stub,   // 1 -> POINTER
             stub,   // 2 -> BOOLEAN
             stub,   // 3 -> BYTE
-            stub,   // 4 -> SHORT
-            stub,   // 5 -> INTEGER
+            () -> { // 4 -> SHORT
+                castToShort[read_p0()].exec();
+            },
+            () -> { // 5 -> INTEGER
+                castToInteger[read_p0()].exec();
+            },
             stub,   // 6 -> LONG
             stub,   // 7 -> REAL
             () -> { // 8 -> STRING

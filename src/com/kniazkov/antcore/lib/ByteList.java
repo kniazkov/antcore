@@ -60,7 +60,15 @@ public abstract class ByteList {
      * @return char (2 bytes) by index
      */
     public char getChar(int index) throws IndexOutOfBoundsException {
-        return (char)(((int)get(index) | ((int)get(index + 1) << 8)));
+        return (char)((get(index) & 0xFF) | ((get(index + 1) & 0xFF) << 8));
+    }
+
+    /**
+     * @param index the index
+     * @return short (2 bytes) by index
+     */
+    public short getShort(int index) throws IndexOutOfBoundsException {
+        return (short) ((get(index) & 0xFF) | ((get(index + 1) & 0xFF) << 8));
     }
 
     /**
@@ -68,8 +76,8 @@ public abstract class ByteList {
      * @return integer (4 bytes) by index
      */
     public int getInt(int index) throws IndexOutOfBoundsException {
-        return ((int)get(index)) | ((int)get(index + 1) << 8) |
-                ((int)get(index + 2) << 16) | ((int)get(index + 3) << 24);
+        return (get(index) & 0xFF) | ((get(index + 1) & 0xFF) << 8) |
+                ((get(index + 2) & 0xFF) << 16) | ((get(index + 3) & 0xFF) << 24);
     }
 
     private static class ArrayWrapper extends ByteList {

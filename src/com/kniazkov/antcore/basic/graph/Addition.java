@@ -55,6 +55,15 @@ public class Addition extends BinaryOperation {
                 return;
             }
 
+            if (rightType instanceof ShortType) {
+                Casting cast = new Casting(true, right, new StringType(lengthOfStringContainingShort));
+                cast.setOwner(this);
+                right = cast;
+                int length = leftTypeString.getStringLength() + lengthOfStringContainingShort;
+                setType(new StringType(length));
+                return;
+            }
+
             if (rightType instanceof IntegerType) {
                 Casting cast = new Casting(true, right, new StringType(lengthOfStringContainingInteger));
                 cast.setOwner(this);
@@ -110,5 +119,6 @@ public class Addition extends BinaryOperation {
         assert(false);
     }
 
+    protected final static int lengthOfStringContainingShort = 6; // -32768
     protected final static int lengthOfStringContainingInteger = 11; // -2147483648
 }

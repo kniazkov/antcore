@@ -30,6 +30,7 @@ public class Disassembler {
         StringBuilder dst = new StringBuilder();
         for (int index = 0; index < size; index = index + 16) {
             inst.read(src, index);
+            dst.append(index).append('\t');
             decoders[inst.opcode].decode(inst, dst);
             dst.append('\n');
             if (inst.opcode == OpCode.END)

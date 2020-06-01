@@ -67,6 +67,16 @@ public class ByteBuffer extends ByteList {
     }
 
     @Override
+    public short getShort(int index) throws IndexOutOfBoundsException {
+        return (short)((data[index] & 0xFF) | ((data[index + 1] & 0xFF) << 8));
+    }
+
+    public void setShort(int index, short value) throws IndexOutOfBoundsException {
+        data[index++] = (byte)(value);
+        data[index] = (byte)(value >> 8);
+    }
+
+    @Override
     public int getInt(int index) throws IndexOutOfBoundsException {
         // it is a kind of magic
         return (data[index] & 0xFF) | ((data[index + 1] & 0xFF) << 8) |

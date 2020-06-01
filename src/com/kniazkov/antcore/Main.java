@@ -24,10 +24,7 @@ import com.kniazkov.antcore.basic.graph.Analyzer;
 import com.kniazkov.antcore.basic.graph.Program;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.parser.Parser;
-import com.kniazkov.antcore.basic.virtualmachine.NativeFunction;
-import com.kniazkov.antcore.basic.virtualmachine.StandardLibrary;
-import com.kniazkov.antcore.basic.virtualmachine.StringData;
-import com.kniazkov.antcore.basic.virtualmachine.VirtualMachine;
+import com.kniazkov.antcore.basic.virtualmachine.*;
 import com.kniazkov.antcore.lib.FileIO;
 
 import java.util.Map;
@@ -49,6 +46,11 @@ public class Main {
                         VirtualMachine virtualMachine = new VirtualMachine(module.getBytecode(), 1024,
                                 StandardLibrary.getFunctions());
                         virtualMachine.run();
+                        ErrorCode errorCode = virtualMachine.getErrorCode();
+                        if (errorCode != ErrorCode.OK) {
+                            System.err.println("Virtual machine finished with code " + errorCode +
+                                    ", IP = " + virtualMachine.getInstructionPointer());
+                        }
                     }
                 }
             } catch (SyntaxError syntaxError) {

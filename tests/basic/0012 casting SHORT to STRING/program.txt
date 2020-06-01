@@ -1,6 +1,5 @@
 CODE SERVER
 	DECLARE FUNCTION print ( POINTER TO CONST STRING )
-	'DECLARE FUNCTION chr ( SHORT ) AS STRING OF 1
 END CODE
 
 MODULE SERVER
@@ -8,9 +7,6 @@ MODULE SERVER
 		VAR i AS SHORT
 		i = 1
 		print("value = " + i)
-		
-	'	s = chr(36)
-	'	print(s)
 	END FUNCTION
 END MODULE
 

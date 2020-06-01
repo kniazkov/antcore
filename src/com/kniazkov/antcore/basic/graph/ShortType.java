@@ -69,6 +69,8 @@ public class ShortType extends BuiltInType {
     public Expression dynamicCast(Expression expression, DataType otherType) throws SyntaxError {
         if (otherType == this)
             return expression;
+        if (otherType instanceof IntegerType) // TODO: static casting here?...
+            return new Casting(false, expression, this);
         return null;
     }
 
