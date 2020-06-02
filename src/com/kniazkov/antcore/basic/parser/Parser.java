@@ -28,6 +28,8 @@ import com.kniazkov.antcore.lib.FixedPoint;
 import com.kniazkov.antcore.lib.Math2;
 import com.kniazkov.antcore.lib.RollbackIterator;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -42,21 +44,10 @@ public class Parser {
      */
     public static Program parse(String fileName, String source) throws SyntaxError
     {
-        // prepare an array of lines:
+        // prepare an array of lines
 
-        String[] list = source.split("\n");
         ArrayList<Line> lines = new ArrayList<>();
-        for (int i = 0; i < list.length; i++) {
-            String code = list[i].trim();
-            if (code.length() > 0) {
-                Fragment fragment = new Fragment(fileName, i + 1, code);
-                List<Token> tokens = scan(fragment);
-                if (tokens != null && tokens.size() > 0) {
-                    tokens = parseBrackets(fragment, tokens);
-                    lines.add(new Line(fragment, tokens));
-                }
-            }
-        }
+        splitCode(fileName, source, lines, new TreeSet<>());
 
         // parse
 
@@ -85,6 +76,50 @@ public class Parser {
 
         return new Program(parser.globalConstantList != null ? parser.globalConstantList.toNode() : null,
             codeBlocks, modules, dataTypes);
+    }
+
+    /**
+     * Split code into separate lines, resolve imports
+     * @param fileName the source file name
+     * @param source the source file content
+     * @param lines destination array
+     * @param imports set that contains names of imported files
+     */
+    private static void splitCode(String fileName, String source,
+                                  ArrayList<Line> lines, Set<String> imports) throws SyntaxError {
+        String[] list = source.split("\n");
+        for (int i = 0; i < list.length; i++) {
+            String code = list[i].trim();
+            if (code.length() > 0) {
+                Fragment fragment = new Fragment(fileName, i + 1, code);
+                if (code.startsWith("IMPORT")) {
+                    String importedFileName = code.substring(6).trim();
+                    if (importedFileName.length() == 0)
+                        throw new ExpectedFileName(fragment);
+                    if (!imports.contains(importedFileName)) {
+                        imports.add(importedFileName);
+                        java.io.File file = new java.io.File(importedFileName);
+                        if (!file.exists())
+                            file = new java.io.File("lib/" + importedFileName);
+                        if (!file.exists())
+                            throw new CannotFindFile(fragment, importedFileName);
+                        try {
+                            byte[] data = Files.readAllBytes(file.toPath());
+                            splitCode(importedFileName, new String(data), lines, imports);
+                        } catch (IOException e) {
+                            throw new CannotReadFile(fragment, importedFileName);
+                        }
+                    }
+                }
+                else {
+                    List<Token> tokens = scan(fragment);
+                    if (tokens != null && tokens.size() > 0) {
+                        tokens = parseBrackets(fragment, tokens);
+                        lines.add(new Line(fragment, tokens));
+                    }
+                }
+            }
+        }
     }
 
     /**
