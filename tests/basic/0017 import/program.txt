@@ -1,0 +1,8 @@
+IMPORT stdlib
+
+MODULE SERVER
+	FUNCTION MAIN
+		println("first line")
+		println("second line")
+	END FUNCTION
+END MODULE
