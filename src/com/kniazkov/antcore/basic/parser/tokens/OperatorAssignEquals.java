@@ -16,8 +16,8 @@
  */
 package com.kniazkov.antcore.basic.parser.tokens;
 
-import com.kniazkov.antcore.basic.graph.Addition;
 import com.kniazkov.antcore.basic.graph.BinaryOperation;
+import com.kniazkov.antcore.basic.graph.Equals;
 import com.kniazkov.antcore.basic.graph.Expression;
 import com.kniazkov.antcore.basic.parser.Token;
 
@@ -43,6 +43,6 @@ public class OperatorAssignEquals extends Operator {
 
     @Override
     public BinaryOperation createBinaryOperation(Expression left, Expression right) {
-        return null;
+        return new Equals(left, right);
     }
 }

@@ -992,6 +992,7 @@ public class Parser {
 
         sequence = parseIdentifiers(line, sequence);
         sequence = parseBinaryOperators(line, sequence, new Class<?>[]{OperatorPlus.class});
+        sequence = parseBinaryOperators(line, sequence, new Class<?>[]{OperatorAssignEquals.class});
 
         if (sequence.size() != 1)
             throw new UnrecognizedSequence(line);
@@ -1076,6 +1077,7 @@ public class Parser {
 
                 BinaryOperation binaryOperation = operator.createBinaryOperation(((TokenExpression) leftOperand).toNode(),
                         ((TokenExpression) rightOperand).toNode());
+                assert (binaryOperation != null);
                 leftSequence.addLast(new TokenExpression(binaryOperation));
             }
         }

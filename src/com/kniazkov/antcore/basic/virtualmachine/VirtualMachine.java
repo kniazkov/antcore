@@ -93,6 +93,17 @@ public class VirtualMachine {
         memory.move(fromPos, toPos, size);
     }
 
+    final void pushBoolean(boolean value) {
+        SP = SP - 1;
+        memory.set(SP, (byte) (value ? 1 : 0));
+    }
+
+    final boolean popBoolean() {
+        boolean value = memory.get(SP) == 0;
+        SP = SP + 1;
+        return value;
+    }
+
     final void pushShort(short value) {
         SP = SP - 2;
         memory.setShort(SP, value);
@@ -316,6 +327,55 @@ public class VirtualMachine {
             stub    // 10 -> STRUCT
     };
 
+    final Unit[] compareInteger = {
+            () -> { // 0 -> EQUAL
+                int left = popInteger();
+                int right = popInteger();
+                pushBoolean(left == right);
+            },
+            () -> { // 1 -> DIFF
+                int left = popInteger();
+                int right = popInteger();
+                pushBoolean(left != right);
+            },
+            () -> { // 2 -> LESS
+                int left = popInteger();
+                int right = popInteger();
+                pushBoolean(left < right);
+            },
+            () -> { // 3 -> LESS_EQUAL
+                int left = popInteger();
+                int right = popInteger();
+                pushBoolean(left <= right);
+            },
+            () -> { // 4 -> GREATER
+                int left = popInteger();
+                int right = popInteger();
+                pushBoolean(left > right);
+            },
+            () -> { // 4 -> GREATER_EQUAL
+                int left = popInteger();
+                int right = popInteger();
+                pushBoolean(left >= right);
+            }
+    };
+
+    final Unit[] compare = {
+            stub,
+            stub,   // 1 -> POINTER
+            stub,   // 2 -> BOOLEAN
+            stub,   // 3 -> BYTE
+            stub,   // 4 -> SHORT
+            () -> { // 5 -> INTEGER
+                compareInteger[read_p1()].exec();
+            },
+            stub,   // 6 -> LONG
+            stub,   // 7 -> REAL
+            stub,   // 8 -> STRING
+            stub,   // 9 -> ARRAY
+            stub    // 10 -> STRUCT
+    };
+
     final Unit[] units = {
             () -> { // 0 -> NOP
                 IP = IP + 16;
@@ -365,7 +425,10 @@ public class VirtualMachine {
                 add[read_p0()].exec();
                 IP = IP + 16;
             },
-            stub, // 10
+            () -> { // 10 -> CMP
+                compare[read_p0()].exec();
+                IP = IP + 16;
+            },
             stub,
             stub,
             stub,

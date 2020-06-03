@@ -95,7 +95,11 @@ public class Disassembler {
                 buff.append("ADD \t").append(TypeSelector.toString(i.p0)).append('\t')
                         .append(i.x0).append(", ").append(i.x1).append(" -> ").append(i.x2);
             },
-            stub, // 10
+            (i, buff) -> { // 10 -> CMP
+                buff.append("CMP \t").append(TypeSelector.toString(i.p0)).append('\t')
+                        .append(ComparatorSelector.toString(i.p1)).append('\t')
+                        .append(i.x0).append(", ").append(i.x1);
+            },
             stub,
             stub,
             stub,
