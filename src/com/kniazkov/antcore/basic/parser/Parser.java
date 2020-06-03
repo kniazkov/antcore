@@ -206,6 +206,10 @@ public class Parser {
                 case "VAR":
                 case "VARIABLE":
                     return KeywordVar.getInstance();
+                case "TRUE":
+                    return new TokenExpression(new BooleanNode(true));
+                case "FALSE":
+                    return new TokenExpression(new BooleanNode(false));
             }
             return new Identifier(name);
         }

@@ -211,7 +211,10 @@ public class VirtualMachine {
     final Unit[] castToString = {
             stub,
             stub,   // 1 -> POINTER
-            stub,   // 2 -> BOOLEAN
+            () -> { // 2 -> BOOLEAN
+                assert(read_x0() == 1);
+                castAnyToString(memory.get(SP) == 0 ? "FALSE" : "TRUE", 1);
+            },
             stub,   // 3 -> BYTE
             () -> { // 4 -> SHORT
                 assert(read_x0() == 2);

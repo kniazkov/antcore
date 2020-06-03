@@ -55,20 +55,29 @@ public class Addition extends BinaryOperation {
                 return;
             }
 
-            if (rightType instanceof ShortType) {
-                Casting cast = new Casting(true, right, new StringType(lengthOfStringContainingShort));
+            if (rightType instanceof BooleanType) {
+                Casting cast = new Casting(true, right, new StringType(booleanToStrLength));
                 cast.setOwner(this);
                 right = cast;
-                int length = leftTypeString.getStringLength() + lengthOfStringContainingShort;
+                int length = leftTypeString.getStringLength() + booleanToStrLength;
+                setType(new StringType(length));
+                return;
+            }
+
+            if (rightType instanceof ShortType) {
+                Casting cast = new Casting(true, right, new StringType(shortToStrLength));
+                cast.setOwner(this);
+                right = cast;
+                int length = leftTypeString.getStringLength() + shortToStrLength;
                 setType(new StringType(length));
                 return;
             }
 
             if (rightType instanceof IntegerType) {
-                Casting cast = new Casting(true, right, new StringType(lengthOfStringContainingInteger));
+                Casting cast = new Casting(true, right, new StringType(integerToStrLength));
                 cast.setOwner(this);
                 right = cast;
-                int length = leftTypeString.getStringLength() + lengthOfStringContainingInteger;
+                int length = leftTypeString.getStringLength() + integerToStrLength;
                 setType(new StringType(length));
                 return;
             }
@@ -119,6 +128,7 @@ public class Addition extends BinaryOperation {
         assert(false);
     }
 
-    protected final static int lengthOfStringContainingShort = 6; // -32768
-    protected final static int lengthOfStringContainingInteger = 11; // -2147483648
+    protected final static int booleanToStrLength = 5; // FALSE
+    protected final static int shortToStrLength = 6; // -32768
+    protected final static int integerToStrLength = 11; // -2147483648
 }
