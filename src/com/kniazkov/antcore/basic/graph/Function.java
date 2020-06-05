@@ -86,6 +86,15 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
         buff.append(i).append("END FUNCTION\n");
     }
 
+    @Override
+    public Function getFunction() {
+        return this;
+    }
+
+    public int getFirstArgumentOffset() {
+        return 8; // TODO : for methods +4
+    }
+
     public int getArgumentsCount() {
         return arguments != null ? arguments.getCount() : 0;
     }
@@ -95,10 +104,21 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
         return returnType;
     }
 
-
     @Override
     public List<DataType> getArgumentTypes() {
         return arguments != null ? arguments.getTypes() : null;
+    }
+
+    int getReturnValueOffset() {
+        assert(returnType != null);
+        if (arguments != null)
+            return getFirstArgumentOffset() + arguments.getSize();
+        else
+            return getFirstArgumentOffset();
+    }
+
+    int getLocalDataSize() {
+        return localDataSize;
     }
 
     @Override
@@ -114,7 +134,6 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
     }
 
     public void compile(CompilationUnit unit) throws SyntaxError {
-        assert (localDataSize >= 0);
         RawInstruction firstInstruction = new Enter(localDataSize);
         unit.addInstruction(firstInstruction);
         Module module = unit.getModule();
@@ -123,8 +142,10 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
             address.resolve(firstInstruction.getAddress());
         }
         body.compile(unit);
-        unit.addInstruction(new Leave(localDataSize));
-        unit.addInstruction(new Return());
+        if (!(body.getLastStatement() instanceof Return)) {
+            unit.addInstruction(new Leave(localDataSize));
+            unit.addInstruction(new ReturnInstruction());
+        }
     }
 
     /**
@@ -137,15 +158,6 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
             if (returnType.isAbstract())
                 throw new ReturnTypeCanNotBeAbstract(getFragment());
         }
-    }
-
-    @Override
-    public Function getFunction() {
-        return this;
-    }
-
-    public int getFirstArgumentOffset() {
-        return 8; // TODO : for methods +4
     }
 
     /**

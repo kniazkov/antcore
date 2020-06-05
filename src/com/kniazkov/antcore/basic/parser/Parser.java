@@ -210,6 +210,8 @@ public class Parser {
                     return new TokenExpression(new BooleanNode(true));
                 case "FALSE":
                     return new TokenExpression(new BooleanNode(false));
+                case "RETURN":
+                    return KeywordReturn.getInstance();
             }
             return new Identifier(name);
         }
@@ -1164,6 +1166,10 @@ public class Parser {
                 variables.put(name, variableDeclaration);
                 result.add(variableDeclaration);
             }
+            else if (firstToken instanceof KeywordReturn) {
+                RawStatement statement = parseReturnStatement(line);
+                result.add(statement);
+            }
             else
                 throw new UnrecognizedSequence(line);
         }
@@ -1236,5 +1242,21 @@ public class Parser {
         }
 
         return new RawVariableDeclaration(declaration.getFragment(), name, initValue, type);
+    }
+
+    /**
+     * Parse line contains a return statement
+     * @param line the line of source code
+     */
+    private RawReturn parseReturnStatement(Line line) throws SyntaxError {
+        RollbackIterator<Token> tokens = new RollbackIterator<>(line.getTokens().iterator());
+        Token token = tokens.next();
+        assert(token instanceof KeywordReturn);
+
+        if(!tokens.hasNext())
+            return new RawReturn(line.getFragment(), null);
+
+        TokenExpression value = parseExpression(line, tokens, false);
+        return new RawReturn(line.getFragment(), value);
     }
 }

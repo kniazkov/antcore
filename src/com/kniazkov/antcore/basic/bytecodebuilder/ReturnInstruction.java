@@ -18,32 +18,18 @@ package com.kniazkov.antcore.basic.bytecodebuilder;
 
 import com.kniazkov.antcore.basic.bytecode.Instruction;
 import com.kniazkov.antcore.basic.bytecode.OpCode;
-import com.kniazkov.antcore.basic.common.DeferredOffset;
-import com.kniazkov.antcore.basic.common.Offset;
 
 /**
- * Store a value to the memory
+ * Return from function
  */
-public class Store extends RawInstruction {
-    public Store(byte selector, int size, Offset segment, Offset address) {
-        this.selector = selector;
-        this.size = size;
-        this.segment = segment;
-        this.address = address;
+public class ReturnInstruction extends RawInstruction {
+    public ReturnInstruction() {
     }
 
     @Override
     public Instruction generate() {
         Instruction i = new Instruction();
-        i.opcode = OpCode.STORE;
-        i.p0 = selector;
-        i.x0 = size;
-        i.x1 = segment.get() + address.get();
+        i.opcode = OpCode.RET;
         return i;
     }
-
-    private byte selector;
-    private int size;
-    private Offset segment;
-    private Offset address;
 }

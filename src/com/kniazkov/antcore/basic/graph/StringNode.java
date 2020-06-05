@@ -107,7 +107,7 @@ public class StringNode extends Expression {
         Module module = unit.getModule();
         assert (address.containsKey(module));
         RawInstruction load = new Load(DataSelector.GLOBAL,
-                type.getSize(), unit.getStaticDataOffset(), address.get(module));
+                getType().getSize(), unit.getStaticDataOffset(), address.get(module));
         unit.addInstruction(load);
     }
 

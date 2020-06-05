@@ -103,6 +103,10 @@ public class StatementList extends Node {
         return owner.getFunction();
     }
 
+    public Statement getLastStatement() {
+        return statements.isEmpty() ? null : statements.get(statements.size() - 1);
+    }
+
     private StatementListOwner owner;
     private List<Statement> statements;
     private List<Variable> variableList;

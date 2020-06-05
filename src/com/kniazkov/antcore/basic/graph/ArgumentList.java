@@ -57,6 +57,10 @@ public class ArgumentList extends Node implements ExpressionOwner {
         return owner;
     }
 
+    public Function getFunction() {
+        return owner;
+    }
+
     @Override
     public void toSourceCode(StringBuilder buff, String i, String i0) {
         buff.append('(');
@@ -74,15 +78,20 @@ public class ArgumentList extends Node implements ExpressionOwner {
         return argumentList.size();
     }
 
+    public int getSize() {
+        return size;
+    }
+
     /**
      * Calculate offsets of all arguments
      */
-    void calculateOffsets() throws SyntaxError {
+    void calculateSizeAndOffsets() throws SyntaxError {
         int offset = 0;
         for (Argument argument : argumentList) {
             argument.setOffset(offset);
             offset += argument.getType().getSize();
         }
+        size = offset;
     }
 
     /**
@@ -119,5 +128,6 @@ public class ArgumentList extends Node implements ExpressionOwner {
     private Function owner;
     private List<Argument> argumentList;
     private Map<String, Argument> argumentMap;
+    private Integer size;
     private List<DataType> types;
 }

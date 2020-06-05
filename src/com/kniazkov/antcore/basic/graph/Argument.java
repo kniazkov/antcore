@@ -19,6 +19,7 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.bytecode.DataSelector;
 import com.kniazkov.antcore.basic.bytecodebuilder.Load;
 import com.kniazkov.antcore.basic.bytecodebuilder.RawInstruction;
+import com.kniazkov.antcore.basic.bytecodebuilder.Store;
 import com.kniazkov.antcore.basic.common.FixedOffset;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
@@ -93,13 +94,17 @@ public class Argument extends LeftExpression implements DataTypeOwner {
     @Override
     public void genLoad(CompilationUnit unit) throws SyntaxError {
         RawInstruction load = new Load(DataSelector.LOCAL,
-                type.getSize(), ZeroOffset.getInstance(), new FixedOffset(offset + 8));
+                type.getSize(), ZeroOffset.getInstance(),
+                new FixedOffset(offset + owner.getFunction().getFirstArgumentOffset()));
         unit.addInstruction(load);
     }
 
     @Override
     public void genStore(CompilationUnit unit) throws SyntaxError {
-        assert(false);
+        RawInstruction store = new Store(DataSelector.LOCAL,
+                type.getSize(), ZeroOffset.getInstance(),
+                new FixedOffset(offset + owner.getFunction().getFirstArgumentOffset()));
+        unit.addInstruction(store);
     }
 
     private ArgumentList owner;

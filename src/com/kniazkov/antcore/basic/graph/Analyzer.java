@@ -163,7 +163,7 @@ public class Analyzer {
         class Calculator extends NodeVisitor {
             @Override
             public void visit(ArgumentList obj) throws SyntaxError {
-                obj.calculateOffsets();
+                obj.calculateSizeAndOffsets();
             }
             @Override
             public void visit(DataSet obj) throws SyntaxError {
