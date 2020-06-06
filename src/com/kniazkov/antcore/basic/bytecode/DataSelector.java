@@ -33,9 +33,9 @@ public final class DataSelector {
             case LOCAL:
                 return "LOCAL";
             case IMMEDIATE:
-                return "VAL ";
+                return "VALUE";
             case LOCAL_POINTER:
-                return "PTR ";
+                return "PTR";
             case ZERO:
                 return "ZERO";
         }

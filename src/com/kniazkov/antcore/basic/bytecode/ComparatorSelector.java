@@ -31,17 +31,17 @@ public final class ComparatorSelector {
     public static String toString(byte selector) {
         switch(selector) {
             case EQUAL:
-                return "EQ  ";
+                return "EQ";
             case DIFF:
                 return "DIFF";
             case LESS:
                 return "LESS";
             case LESS_EQUAL:
-                return "LEQ ";
+                return "LEQ";
             case GREATER:
-                return "GT  ";
+                return "GT";
             case GREATER_EQUAL:
-                return "GEQ ";
+                return "GEQ";
         }
         return "?";
     }

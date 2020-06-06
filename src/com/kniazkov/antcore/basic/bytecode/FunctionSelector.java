@@ -28,7 +28,7 @@ public final class FunctionSelector {
             case NATIVE:
                 return "NATIVE";
             case USER_DEFINED:
-                return "DEF ";
+                return "DEF";
         }
         return "?";
     }

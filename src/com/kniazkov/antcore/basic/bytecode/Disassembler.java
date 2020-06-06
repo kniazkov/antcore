@@ -27,78 +27,140 @@ public class Disassembler {
     public static String convert(ByteList src) {
         int size = src.size();
         Instruction inst = new Instruction();
-        StringBuilder dst = new StringBuilder();
-        for (int index = 0; index < size; index = index + 16) {
-            inst.read(src, index);
-            dst.append(index).append('\t');
-            decoders[inst.opcode].decode(inst, dst);
-            dst.append('\n');
+        Formatter formatter = new Formatter();
+        for (int address = 0; address < size; address = address + 16) {
+            inst.read(src, address);
+            decoders[inst.opcode].decode(address, inst, formatter);
             if (inst.opcode == OpCode.END)
                 break;
         }
-        return dst.toString();
+        return formatter.toString();
+    }
+
+    static class Formatter {
+        public Formatter() {
+            buff = new StringBuilder();
+        }
+
+        @Override
+        public String toString() {
+            return buff.toString();
+        }
+
+        public void add(int address, String oper) {
+            append(String.valueOf(address), 8).append(oper)
+                    .append('\n');
+        }
+
+        public void add(int address, String oper, String p0, String p1, String p2, int x0) {
+            append(String.valueOf(address), 8).append(oper, 8)
+                    .append(p0, 8).append(p1, 8).append(p2, 8)
+                    .append(x0)
+                    .append('\n');
+        }
+
+        public void add(int address, String oper, String p0, String p1, String p2, int x0, int x1) {
+            append(String.valueOf(address), 8).append(oper, 8)
+                    .append(p0, 8).append(p1, 8).append(p2, 8)
+                    .append(x0).append(", ").append(x1)
+                    .append('\n');
+        }
+
+        public void add(int address, String oper, String p0, String p1, String p2, int x0, int x1, int x2) {
+            append(String.valueOf(address), 8).append(oper, 8)
+                    .append(p0, 8).append(p1, 8).append(p2, 8)
+                    .append(x0).append(", ").append(x1).append(", ").append(x2)
+                    .append('\n');
+        }
+
+        private Formatter append(String string, int tab) {
+            int k = 0;
+            if (string != null) {
+                k = string.length();
+                buff.append(string);
+            }
+            while(k != tab) {
+                buff.append(' ');
+                k++;
+            }
+            return this;
+        }
+
+        private Formatter append(String string) {
+            buff.append(string);
+            return this;
+        }
+
+        private Formatter append(int intValue) {
+            buff.append(intValue);
+            return this;
+        }
+
+        private Formatter append(char charValue) {
+            buff.append(charValue);
+            return this;
+        }
+
+        private StringBuilder buff;
     }
 
     interface Decoder {
-        void decode(Instruction inst, StringBuilder buff);
+        void decode(int address, Instruction inst, Formatter buff);
     }
 
-    final static Decoder stub = (i, buff) -> {
+    final static Decoder stub = (a, i, buff) -> {
 
     };
 
     final static Decoder[] decoders = {
-            (i, buff) -> { // 0 -> NOP
-                buff.append("NOP");
+            (a, i, buff) -> { // 0 -> NOP
+                buff.add(a, "NOP");
             },
-            (i, buff) -> { // 1 -> LOAD
-                buff.append("LOAD\t");
+            (a, i, buff) -> { // 1 -> LOAD
                 switch (i.p0) {
                     case DataSelector.GLOBAL:
                     case DataSelector.LOCAL:
                     case DataSelector.LOCAL_POINTER:
-                        buff.append(DataSelector.toString(i.p0)).append('\t').append(i.x0).append(", ").append(i.x1);
+                        buff.add(a, "LOAD", DataSelector.toString(i.p0), null, null, i.x0, i.x1);
                         break;
                     case DataSelector.IMMEDIATE:
-                        buff.append("VAL \t").append(i.x0).append(", ").append(i.x1);
                         if (i.x0 > 4)
-                            buff.append(", ").append(i.x2);
+                            buff.add(a, "LOAD", "VALUE", null, null, i.x0, i.x1, i.x2);
+                        else
+                            buff.add(a, "LOAD", "VALUE", null, null, i.x0, i.x1);
                         break;
                     case DataSelector.ZERO:
-                        buff.append("ZERO\t").append(i.x0);
+                        buff.add(a, "LOAD", "ZERO", null, null, i.x0);
                         break;
                 }
             },
-            (i, buff) -> { // 2 -> STORE
-                buff.append("STORE\t").append(DataSelector.toString(i.p0)).append('\t').append(i.x0).append(", ").append(i.x1);
+            (a, i, buff) -> { // 2 -> STORE
+                buff.add(a, "STORE", DataSelector.toString(i.p0), null, null, i.x0, i.x1);
             },
-            (i, buff) -> { // 3 -> CAST
-                buff.append("CAST \t").append(TypeSelector.toString(i.p0)).append(" ").append(i.x0).append(" -> ")
-                        .append(TypeSelector.toString(i.p1)).append(" ").append(i.x1);
+            (a, i, buff) -> { // 3 -> CAST
+                buff.add(a, "CAST", TypeSelector.toString(i.p0), TypeSelector.toString(i.p1), null, i.x0, i.x1);
             },
-            (i, buff) -> { // 4 -> POP
-                buff.append("POP \t").append(i.x0);
+            (a, i, buff) -> { // 4 -> POP
+                buff.add(a, "POP", null, null, null, i.x0);
             },
-            (i, buff) -> { // 5 -> CALL
-                buff.append("CALL\t").append(FunctionSelector.toString(i.p0)).append('\t').append(i.x0);
+            (a, i, buff) -> { // 5 -> CALL
+                buff.add(a, "CALL", FunctionSelector.toString(i.p0), null, null, i.x0);
             },
-            (i, buff) -> { // 6 -> RET
-                buff.append("RET");
+            (a, i, buff) -> { // 6 -> RET
+                buff.add(a, "RET");
             },
-            (i, buff) -> { // 7 -> ENTER
-                buff.append("ENTER\t").append(i.x0);
+            (a, i, buff) -> { // 7 -> ENTER
+                buff.add(a, "ENTER", null, null, null, i.x0);
             },
-            (i, buff) -> { // 8 -> LEAVE
-                buff.append("LEAVE\t").append(i.x0);
+            (a, i, buff) -> { // 8 -> LEAVE
+                buff.add(a, "LEAVE", null, null, null, i.x0);
             },
-            (i, buff) -> { // 9 -> ADD
-                buff.append("ADD \t").append(TypeSelector.toString(i.p0)).append('\t')
-                        .append(i.x0).append(", ").append(i.x1).append(" -> ").append(i.x2);
+            (a, i, buff) -> { // 9 -> ADD
+                buff.add(a, "ADD", TypeSelector.toString(i.p0), null, null, i.x0, i.x1, i.x2);
             },
-            (i, buff) -> { // 10 -> CMP
-                buff.append("CMP \t").append(TypeSelector.toString(i.p0)).append('\t')
-                        .append(ComparatorSelector.toString(i.p1)).append('\t')
-                        .append(i.x0).append(", ").append(i.x1);
+            (a, i, buff) -> { // 10 -> CMP
+                buff.add(a, "CMP", TypeSelector.toString(i.p0), ComparatorSelector.toString(i.p1), null,
+                        i.x0, i.x1);
             },
             stub,
             stub,
@@ -216,8 +278,8 @@ public class Disassembler {
             stub,
             stub,
             stub,
-            (i, buff) -> { // 127 -> END
-                buff.append("END");
+            (a, i, buff) -> { // 127 -> END
+                buff.add(a, "END");
             },
     };
 }
