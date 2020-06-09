@@ -64,6 +64,9 @@ public abstract class NodeVisitor {
     public void visit(FunctionCall obj) throws SyntaxError {
     }
 
+    public void visit(If obj) throws SyntaxError {
+    }
+
     public void visit(Module obj) throws SyntaxError {
     }
 

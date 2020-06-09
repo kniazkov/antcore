@@ -14,23 +14,25 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.bytecode;
+package com.kniazkov.antcore.basic.parser.exceptions;
+
+import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.basic.parser.Line;
+import com.kniazkov.antcore.basic.parser.tokens.Keyword;
 
 /**
- * The list of opcodes
+ * The exception "Expected an 'END ...' construction"
  */
-public final class OpCode {
-    public static final byte NOP = 0;
-    public static final byte LOAD = 1;
-    public static final byte STORE = 2;
-    public static final byte CAST = 3;
-    public static final byte POP = 4;
-    public static final byte CALL = 5;
-    public static final byte RET = 6;
-    public static final byte ENTER = 7;
-    public static final byte LEAVE = 8;
-    public static final byte ADD = 9;
-    public static final byte CMP = 10;
-    public static final byte IF = 11;
-    public static final byte END = 127;
+public class ExpectedEndConstruction extends SyntaxError {
+    public ExpectedEndConstruction(Line line, Keyword terminator) {
+        super(line.getFragment());
+        this.terminator = terminator;
+    }
+
+    @Override
+    protected String getErrorMessage() {
+        return "Expected an 'END " + terminator.toString() + "' construction";
+    }
+
+    private Keyword terminator;
 }

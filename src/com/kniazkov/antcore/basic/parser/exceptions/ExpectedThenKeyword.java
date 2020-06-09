@@ -14,23 +14,21 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.bytecode;
+package com.kniazkov.antcore.basic.parser.exceptions;
+
+import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.basic.parser.Line;
 
 /**
- * The list of opcodes
+ * The exception "Expected a ' THEN' keyword"
  */
-public final class OpCode {
-    public static final byte NOP = 0;
-    public static final byte LOAD = 1;
-    public static final byte STORE = 2;
-    public static final byte CAST = 3;
-    public static final byte POP = 4;
-    public static final byte CALL = 5;
-    public static final byte RET = 6;
-    public static final byte ENTER = 7;
-    public static final byte LEAVE = 8;
-    public static final byte ADD = 9;
-    public static final byte CMP = 10;
-    public static final byte IF = 11;
-    public static final byte END = 127;
+public class ExpectedThenKeyword extends SyntaxError {
+    public ExpectedThenKeyword(Line line) {
+        super(line.getFragment());
+    }
+
+    @Override
+    protected String getErrorMessage() {
+        return "Expected a 'THEN' keyword";
+    }
 }

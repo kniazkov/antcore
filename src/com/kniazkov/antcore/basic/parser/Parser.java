@@ -212,6 +212,10 @@ public class Parser {
                     return new TokenExpression(new BooleanNode(false));
                 case "RETURN":
                     return KeywordReturn.getInstance();
+                case "IF":
+                    return KeywordIf.getInstance();
+                case "THEN":
+                    return KeywordThen.getInstance();
             }
             return new Identifier(name);
         }
@@ -1138,16 +1142,18 @@ public class Parser {
      */
     private void parseFunctionBody(RawFunction function) throws SyntaxError {
         List<RawStatement> statements = new ArrayList<>();
-        parseStatementList(function.getRawBody().iterator(), statements);
+        parseStatementList(null, function.getRawBody().iterator(), statements, null);
         function.setRawStatementList(statements);
     }
 
     /**
      * Parse a list of statements (function/cycle/condition body)
+     * @param declaration line contains declaration of the list of statements
      * @param iterator the iterator by lines
      * @param result the destination list
+     * @param terminator the keyword terminates the sequence: END IF, END FOR, etc
      */
-    private void parseStatementList(Iterator<Line> iterator, List<RawStatement> result) throws SyntaxError {
+    private void parseStatementList(Line declaration, Iterator<Line> iterator, List<RawStatement> result, Keyword terminator) throws SyntaxError {
         Map<String, RawVariableDeclaration> variables = new TreeMap<>();
         while(iterator.hasNext()) {
             Line line = iterator.next();
@@ -1170,8 +1176,21 @@ public class Parser {
                 RawStatement statement = parseReturnStatement(line);
                 result.add(statement);
             }
+            else if (firstToken instanceof KeywordIf) {
+                RawStatement statement = parseIfStatement(line, iterator);
+                result.add(statement);
+            }
+            else if (terminator != null && firstToken instanceof KeywordEnd) {
+                if (tokens.size() < 2 || tokens.get(1) != terminator)
+                    throw new ExpectedEndConstruction(line, terminator);
+                return;
+            }
             else
                 throw new UnrecognizedSequence(line);
+        }
+
+        if (terminator != null) {
+            throw new ExpectedEndConstruction(declaration, terminator);
         }
     }
 
@@ -1258,5 +1277,31 @@ public class Parser {
 
         TokenExpression value = parseExpression(line, tokens, false);
         return new RawReturn(line.getFragment(), value);
+    }
+
+    /**
+     * Parse an "IF" statement
+     * @param declaration the line that contains statement declaration
+     * @param iterator the iterator by lines
+     * @return a parsed statement
+     */
+    private RawStatement parseIfStatement(Line declaration, Iterator<Line> iterator) throws SyntaxError {
+        RollbackIterator<Token> tokens = new RollbackIterator<>(declaration.getTokens().iterator());
+        Token token = tokens.next();
+        assert(token instanceof KeywordIf);
+
+        TokenExpression condition = parseExpression(declaration, tokens, false);
+        if (!tokens.hasNext())
+            throw new ExpectedThenKeyword(declaration);
+        Token thenKeyword = tokens.next();
+        if (!(thenKeyword instanceof KeywordThen))
+            throw new ExpectedThenKeyword(declaration);
+        if (tokens.hasNext())
+            throw new UnexpectedSequence(declaration);
+
+        List<RawStatement> statements = new ArrayList<>();
+        parseStatementList(declaration, iterator, statements, KeywordIf.getInstance());
+
+        return new RawIf(declaration.getFragment(), condition, statements);
     }
 }

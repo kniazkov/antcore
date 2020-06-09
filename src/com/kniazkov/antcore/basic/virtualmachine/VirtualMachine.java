@@ -99,7 +99,7 @@ public class VirtualMachine {
     }
 
     final boolean popBoolean() {
-        boolean value = memory.get(SP) == 0;
+        boolean value = memory.get(SP) != 0;
         SP = SP + 1;
         return value;
     }
@@ -429,7 +429,14 @@ public class VirtualMachine {
                 compare[read_p0()].exec();
                 IP = IP + 16;
             },
-            stub,
+            () -> { // 11 -> IF
+                boolean value = popBoolean();
+                boolean condition = read_p0() > 0;
+                if (value == condition)
+                    IP = read_x0();
+                else
+                    IP = IP + 16;
+            },
             stub,
             stub,
             stub,

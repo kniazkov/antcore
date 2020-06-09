@@ -162,7 +162,9 @@ public class Disassembler {
                 buff.add(a, "CMP", TypeSelector.toString(i.p0), ComparatorSelector.toString(i.p1), null,
                         i.x0, i.x1);
             },
-            stub,
+            (a, i, buff) -> { // 11 -> IF
+                buff.add(a, "IF", i.p0 > 0 ? "TRUE" : "FALSE", null, null, i.x0);
+            },
             stub,
             stub,
             stub,

@@ -14,23 +14,28 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.bytecode;
+
+package com.kniazkov.antcore.basic.parser.tokens;
+
+import com.kniazkov.antcore.basic.parser.Token;
 
 /**
- * The list of opcodes
+    The "THEN" keyword
  */
-public final class OpCode {
-    public static final byte NOP = 0;
-    public static final byte LOAD = 1;
-    public static final byte STORE = 2;
-    public static final byte CAST = 3;
-    public static final byte POP = 4;
-    public static final byte CALL = 5;
-    public static final byte RET = 6;
-    public static final byte ENTER = 7;
-    public static final byte LEAVE = 8;
-    public static final byte ADD = 9;
-    public static final byte CMP = 10;
-    public static final byte IF = 11;
-    public static final byte END = 127;
+public class KeywordThen extends Keyword {
+    @Override
+    public String toString() {
+        return "THEN";
+    }
+
+    private KeywordThen() {
+    }
+
+    private static KeywordThen instance;
+
+    public static Token getInstance() {
+        if (instance == null)
+            instance = new KeywordThen();
+        return instance;
+    }
 }

@@ -16,6 +16,7 @@
  */
 package com.kniazkov.antcore.basic.bytecodebuilder;
 
+import com.kniazkov.antcore.basic.common.DeferredOffset;
 import com.kniazkov.antcore.basic.common.Offset;
 import com.kniazkov.antcore.basic.graph.Function;
 import com.kniazkov.antcore.basic.graph.Module;
@@ -104,6 +105,10 @@ public class CompilationUnit {
         instructions.add(item);
         item.setIndex(count);
         updateSegmentOffsets();
+    }
+
+    public void resolveOffset(DeferredOffset offset) {
+        offset.resolve(instructions.size() * 16);
     }
 
     public Offset getStringOffset(String string) {
