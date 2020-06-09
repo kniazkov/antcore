@@ -327,6 +327,24 @@ public class VirtualMachine {
             stub    // 10 -> STRUCT
     };
 
+    final Unit[] sub = {
+            stub,
+            stub,   // 1 -> POINTER
+            stub,   // 2 -> BOOLEAN
+            stub,   // 3 -> BYTE
+            stub,   // 4 -> SHORT
+            () -> { // 5 -> INTEGER
+                int left = popInteger();
+                int right = popInteger();
+                pushInteger(left - right);
+            },
+            stub,   // 6 -> LONG
+            stub,   // 7 -> REAL
+            stub,   // 8 -> STRING
+            stub,   // 9 -> ARRAY
+            stub    // 10 -> STRUCT
+    };
+
     final Unit[] compareInteger = {
             () -> { // 0 -> EQUAL
                 int left = popInteger();
@@ -425,11 +443,15 @@ public class VirtualMachine {
                 add[read_p0()].exec();
                 IP = IP + 16;
             },
-            () -> { // 10 -> CMP
+            () -> { // 10 -> SUB
+                sub[read_p0()].exec();
+                IP = IP + 16;
+            },
+            () -> { // 11 -> CMP
                 compare[read_p0()].exec();
                 IP = IP + 16;
             },
-            () -> { // 11 -> IF
+            () -> { // 12 -> IF
                 boolean value = popBoolean();
                 boolean condition = read_p0() > 0;
                 if (value == condition)

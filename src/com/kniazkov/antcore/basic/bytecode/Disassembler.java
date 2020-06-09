@@ -158,14 +158,16 @@ public class Disassembler {
             (a, i, buff) -> { // 9 -> ADD
                 buff.add(a, "ADD", TypeSelector.toString(i.p0), null, null, i.x0, i.x1, i.x2);
             },
-            (a, i, buff) -> { // 10 -> CMP
+            (a, i, buff) -> { // 10 -> SUB
+                buff.add(a, "SUB", TypeSelector.toString(i.p0), null, null, i.x0, i.x1, i.x2);
+            },
+            (a, i, buff) -> { // 11 -> CMP
                 buff.add(a, "CMP", TypeSelector.toString(i.p0), ComparatorSelector.toString(i.p1), null,
                         i.x0, i.x1);
             },
-            (a, i, buff) -> { // 11 -> IF
+            (a, i, buff) -> { // 12 -> IF
                 buff.add(a, "IF", i.p0 > 0 ? "TRUE" : "FALSE", null, null, i.x0);
             },
-            stub,
             stub,
             stub,
             stub,

@@ -30,7 +30,8 @@ public final class OpCode {
     public static final byte ENTER = 7;
     public static final byte LEAVE = 8;
     public static final byte ADD = 9;
-    public static final byte CMP = 10;
-    public static final byte IF = 11;
+    public static final byte SUB = 10;
+    public static final byte CMP = 11;
+    public static final byte IF = 12;
     public static final byte END = 127;
 }

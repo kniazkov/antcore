@@ -1,17 +1,20 @@
 IMPORT stdlib
 
 MODULE SERVER
-	FUNCTION doSomething(value AS INTEGER)
-		IF value = 7 THEN
-			println("it works.")
-		END IF
-		IF value = 13 THEN
-			println("sure, it works.")
-		END IF
-	END FUNCTION
+'	FUNCTION fibonacci(n AS INTEGER) AS INTEGER
+'		IF n = 0 THEN
+'			RETURN 0
+'		END IF
+'		IF n = 1 THEN
+'			RETURN 1
+'		END IF
+'		RETURN fibonacci(n - 1) + fibonacci(n - 2)
+'	END FUNCTION
 
 	FUNCTION MAIN
-		doSomething(7)
-		doSomething(13)
+		VAR x = 7 - 3
+		print("" + x)
+'		VAR f = fibonacci(13)
+'		print("" + f)
 	END FUNCTION
 END MODULE

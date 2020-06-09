@@ -294,6 +294,8 @@ public class Parser {
             switch (operator) {
                 case "+":
                     return OperatorPlus.getInstance();
+                case "-":
+                    return OperatorMinus.getInstance();
                 case "=":
                     return OperatorAssignEquals.getInstance();
             }
@@ -997,7 +999,7 @@ public class Parser {
             throw new ExpectedAnExpression(line);
 
         sequence = parseIdentifiers(line, sequence);
-        sequence = parseBinaryOperators(line, sequence, new Class<?>[]{OperatorPlus.class});
+        sequence = parseBinaryOperators(line, sequence, new Class<?>[]{OperatorPlus.class, OperatorMinus.class});
         sequence = parseBinaryOperators(line, sequence, new Class<?>[]{OperatorAssignEquals.class});
 
         if (sequence.size() != 1)
