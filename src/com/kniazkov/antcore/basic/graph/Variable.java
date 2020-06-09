@@ -104,10 +104,8 @@ public class Variable extends LeftExpression implements DataTypeOwner, Expressio
             type = initValue.getType().getPureType();
         }
         else if (initValue != null) {
-            DataType expectedType = type.getPureType();
-            DataType actualType = initValue.getType().getPureType();
-            if (!expectedType.isBinaryAnalog(actualType)) {
-                Expression cast = expectedType.dynamicCast(initValue, actualType);
+            Expression cast = DataTypeCast.cast(type, initValue);
+            if (cast != initValue) {
                 if (cast == null)
                     throw new IncompatibleTypes(getFragment(), initValue.getType().getName(), type.getName());
                 initValue = cast;

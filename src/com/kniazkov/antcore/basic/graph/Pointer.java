@@ -43,6 +43,10 @@ public class Pointer extends DataType implements DataTypeOwner {
         return "POINTER TO " + type.getName();
     }
 
+    public DataType getType() {
+        return type;
+    }
+
     @Override
     public int getSize() {
         return 4;
@@ -94,12 +98,6 @@ public class Pointer extends DataType implements DataTypeOwner {
 
     @Override
     public Expression dynamicCast(Expression expression, DataType otherType) throws SyntaxError {
-        if (otherType instanceof Pointer) {
-            if (type.isBinaryAnalog(((Pointer) otherType).type))
-                return expression;
-        }
-        if (type.isBinaryAnalog(otherType) || otherType.isInheritedFrom(type.getPureType()))
-            return expression.getPointer();
         return null;
     }
 

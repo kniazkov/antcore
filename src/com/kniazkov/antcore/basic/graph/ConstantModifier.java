@@ -73,11 +73,6 @@ public class ConstantModifier extends DataType implements DataTypeOwner {
     }
 
     @Override
-    public DataType getPureType() {
-        return type;
-    }
-
-    @Override
     public boolean isBinaryAnalog(DataType otherType) throws SyntaxError {
         if (otherType instanceof ConstantModifier) {
             return type.isBinaryAnalog(((ConstantModifier) otherType).type);
@@ -103,6 +98,10 @@ public class ConstantModifier extends DataType implements DataTypeOwner {
     @Override
     public Node getOwner() {
         return (Node)owner;
+    }
+
+    public DataType getNonConstantType() {
+        return type;
     }
 
     private DataTypeOwner owner;

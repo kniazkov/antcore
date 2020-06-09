@@ -38,8 +38,8 @@ public class Addition extends BinaryOperation {
 
     @Override
     void defineType() throws SyntaxError {
-        DataType leftType = left.getType().getPureType();
-        DataType rightType = right.getType().getPureType();
+        DataType leftType = getLeftPureNonConstantType();
+        DataType rightType = getRightPureNonConstantType();
 
         if (leftType instanceof IntegerType && rightType instanceof IntegerType) {
             setType(leftType);
@@ -109,8 +109,8 @@ public class Addition extends BinaryOperation {
 
     @Override
     public void genLoad(CompilationUnit unit) throws SyntaxError {
-        DataType leftType = left.getType().getPureType();
-        DataType rightType = right.getType().getPureType();
+        DataType leftType = getLeftPureNonConstantType();
+        DataType rightType = getRightPureNonConstantType();
 
         right.genLoad(unit);
         left.genLoad(unit);

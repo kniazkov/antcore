@@ -98,15 +98,12 @@ public class FunctionCall extends Expression implements ExpressionOwner {
             Iterator<Expression> argumentsIterator = arguments.iterator();
             for (int k = 0; k < expectedNumberOfArguments; k++) {
                 DataType expectedType = typeIterator.next();
-                DataType pureExpectedType = expectedType.getPureType();
                 Expression argument = argumentsIterator.next();
-                DataType actualType = argument.getType();
-                DataType pureActualType = actualType.getPureType();
-                if (!pureExpectedType.isBinaryAnalog(pureActualType)) {
-                    Expression cast = pureExpectedType.dynamicCast(argument, pureActualType);
+                Expression cast = DataTypeCast.cast(expectedType, argument);
+                if (cast != argument) {
                     if (cast == null)
                         throw new IncompatibleArgumentType(getFragment(), functionName, k + 1,
-                                expectedType.getName(), actualType.getName());
+                                expectedType.getName(), argument.getType().getName());
                     cast.setOwner(this);
                     transformedArguments.add(cast);
                 }

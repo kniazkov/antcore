@@ -65,14 +65,12 @@ public class Assignment extends Statement implements ExpressionOwner {
      * Check data type or inference it
      */
     void checkType() throws SyntaxError {
-        DataType leftType = left.getType().getPureType();
-        DataType rightType = right.getType().getPureType();
-        if (!leftType.isBinaryAnalog(rightType)) {
-            Expression cast = leftType.dynamicCast(right, rightType);
+        Expression cast = DataTypeCast.cast(left.getType(), right);
+        if (cast != right) {
             if (cast == null)
                 throw new IncompatibleTypes(getFragment(), right.getType().getName(), left.getType().getName());
             right = cast;
-            cast.setOwner(this);
+            right.setOwner(this);
         }
     }
 

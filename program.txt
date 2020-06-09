@@ -1,11 +1,11 @@
 IMPORT stdlib
 
 MODULE SERVER
+	DATA
+		s AS STRING OF 20
+	END DATA
 	FUNCTION MAIN
-		print(getValue())
-	END FUNCTION
-	
-	FUNCTION getValue AS STRING OF 3
-		RETURN "Ok."
+		s = "It " + "works"
+		print(s)
 	END FUNCTION
 END MODULE

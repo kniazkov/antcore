@@ -65,6 +65,20 @@ public abstract class BinaryOperation extends Expression implements ExpressionOw
         right.toUsageSourceCode(buff);
     }
 
+    protected DataType getLeftPureNonConstantType () throws SyntaxError {
+        DataType type = left.getType().getPureType();
+        if (type instanceof ConstantModifier)
+            return ((ConstantModifier) type).getNonConstantType();
+        return type;
+    }
+
+    protected DataType getRightPureNonConstantType () throws SyntaxError {
+        DataType type = right.getType().getPureType();
+        if (type instanceof ConstantModifier)
+            return ((ConstantModifier) type).getNonConstantType();
+        return type;
+    }
+
     protected abstract String getOperator();
     abstract void defineType() throws SyntaxError;
 
