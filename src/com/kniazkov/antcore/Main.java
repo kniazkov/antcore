@@ -43,7 +43,7 @@ public class Main {
                     for (CompiledModule module : compiledProgram.getModulesByExecutor(executor)) {
                         System.out.println(Disassembler.convert(module.getBytecode()));
 
-                        VirtualMachine virtualMachine = new VirtualMachine(module.getBytecode(), 1024,
+                        VirtualMachine virtualMachine = new VirtualMachine(module.getBytecode(), 65536,
                                 StandardLibrary.getFunctions());
                         virtualMachine.run();
                         ErrorCode errorCode = virtualMachine.getErrorCode();
