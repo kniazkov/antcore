@@ -17,21 +17,35 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
+import com.kniazkov.antcore.basic.bytecodebuilder.Jump;
 import com.kniazkov.antcore.basic.bytecodebuilder.JumpIf;
 import com.kniazkov.antcore.basic.common.DeferredOffset;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
- * If condition
+ * The 'IF' statement
  */
 public class If extends Statement implements ExpressionOwner, StatementListOwner {
-    public If(Fragment fragment, Expression condition, StatementList body) {
+    public If(Fragment fragment, Expression condition, StatementList body, List<ElseIf> elseIfBlocks, Else elseBlock) {
         super(fragment);
         this.condition = condition;
         condition.setOwner(this);
         this.body = body;
         body.setOwner(this);
+        if (elseIfBlocks != null) {
+            this.elseIfBlocks = Collections.unmodifiableList(elseIfBlocks);
+            for(ElseIf elseIfBlock : elseIfBlocks) {
+                elseIfBlock.setOwner(this);
+            }
+        }
+        this.elseBlock = elseBlock;
+        if (elseBlock != null)
+            elseBlock.setOwner(this);
     }
 
     @Override
@@ -40,17 +54,50 @@ public class If extends Statement implements ExpressionOwner, StatementListOwner
     }
 
     @Override
-    public void compile(CompilationUnit unit) throws SyntaxError {
-        condition.genLoad(unit);
-        DeferredOffset jumpIfNot = new DeferredOffset();
-        unit.addInstruction(new JumpIf(false, jumpIfNot));
-        body.compile(unit);
-        unit.resolveOffset(jumpIfNot);
+    protected Node[] getChildren() {
+        List<Node> list = new ArrayList<>();
+            list.add(condition);
+        list.add(body);
+        if (elseIfBlocks != null)
+            list.addAll(elseIfBlocks);
+        if (elseBlock != null)
+            list.add(elseBlock);
+        Node[] array = new Node[list.size()];
+        list.toArray(array);
+        return array;
     }
 
     @Override
-    protected Node[] getChildren() {
-        return new Node[] { condition, body };
+    public void compile(CompilationUnit unit) throws SyntaxError {
+        condition.genLoad(unit);
+        DeferredOffset jumpIfNot = new DeferredOffset();
+        DeferredOffset endAddress = null;
+        unit.addInstruction(new JumpIf(false, jumpIfNot));
+        body.compile(unit);
+        if (elseIfBlocks != null) {
+            endAddress = new DeferredOffset();
+            for (ElseIf elseIfBlock : elseIfBlocks) {
+                unit.addInstruction(new Jump(endAddress));
+                unit.resolveOffset(jumpIfNot);
+                elseIfBlock.getCondition().genLoad(unit);
+                jumpIfNot = new DeferredOffset();
+                unit.addInstruction(new JumpIf(false, jumpIfNot));
+                elseIfBlock.getBody().compile(unit);
+            }
+        }
+        if (elseBlock != null) {
+            if (endAddress == null)
+                endAddress = new DeferredOffset();
+            unit.addInstruction(new Jump(endAddress));
+            unit.resolveOffset(jumpIfNot);
+            jumpIfNot = null;
+            elseBlock.getBody().compile(unit);
+        }
+
+        if (jumpIfNot != null)
+            unit.resolveOffset(jumpIfNot);
+        if (endAddress != null)
+            unit.resolveOffset(endAddress);
     }
 
     @Override
@@ -60,9 +107,19 @@ public class If extends Statement implements ExpressionOwner, StatementListOwner
         buff.append(" THEN\n");
         String i1 = i + i0;
         body.toSourceCode(buff, i1, i0);
+        if (elseIfBlocks != null) {
+            for (ElseIf elseIfBlock : elseIfBlocks) {
+                elseIfBlock.toSourceCode(buff, i, i0);
+            }
+        }
+        if (elseBlock != null) {
+            elseBlock.toSourceCode(buff, i, i0);
+        }
         buff.append(i).append("END IF\n");
     }
 
     private Expression condition;
     private StatementList body;
+    private List<ElseIf> elseIfBlocks;
+    private Else elseBlock;
 }

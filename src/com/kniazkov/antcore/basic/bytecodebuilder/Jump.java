@@ -14,21 +14,27 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.parser.exceptions;
+package com.kniazkov.antcore.basic.bytecodebuilder;
 
-import com.kniazkov.antcore.basic.common.SyntaxError;
-import com.kniazkov.antcore.basic.parser.Line;
+import com.kniazkov.antcore.basic.bytecode.Instruction;
+import com.kniazkov.antcore.basic.bytecode.OpCode;
+import com.kniazkov.antcore.basic.common.Offset;
 
 /**
- * The exception "Expected a 'THEN' keyword"
+ * Jump to address with no conditions
  */
-public class ExpectedThenKeyword extends SyntaxError {
-    public ExpectedThenKeyword(Line line) {
-        super(line.getFragment());
+public class Jump extends RawInstruction {
+    public Jump(Offset address) {
+        this.address = address;
     }
 
     @Override
-    protected String getErrorMessage() {
-        return "Expected a 'THEN' keyword";
+    public Instruction generate() {
+        Instruction i = new Instruction();
+        i.opcode = OpCode.JUMP;
+        i.x0 = address.get();
+        return i;
     }
+
+    private Offset address;
 }

@@ -20,15 +20,15 @@ import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.parser.Line;
 
 /**
- * The exception "Expected a 'THEN' keyword"
+ * The exception "Expected an 'IF' keyword"
  */
-public class ExpectedThenKeyword extends SyntaxError {
-    public ExpectedThenKeyword(Line line) {
+public class ExpectedIfKeyword extends SyntaxError {
+    public ExpectedIfKeyword(Line line) {
         super(line.getFragment());
     }
 
     @Override
     protected String getErrorMessage() {
-        return "Expected a 'THEN' keyword";
+        return "Expected an 'IF' keyword";
     }
 }

@@ -55,6 +55,12 @@ public abstract class NodeVisitor {
     public void visit(DataTypeReference obj) throws SyntaxError {
     }
 
+    public void visit(Else obj) throws SyntaxError {
+    }
+
+    public void visit(ElseIf obj) throws SyntaxError {
+    }
+
     public void visit(Field obj) throws SyntaxError {
     }
 

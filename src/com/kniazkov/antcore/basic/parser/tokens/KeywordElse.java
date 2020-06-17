@@ -14,21 +14,28 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.parser.exceptions;
 
-import com.kniazkov.antcore.basic.common.SyntaxError;
-import com.kniazkov.antcore.basic.parser.Line;
+package com.kniazkov.antcore.basic.parser.tokens;
+
+import com.kniazkov.antcore.basic.parser.Token;
 
 /**
- * The exception "Expected a 'THEN' keyword"
+    The "ELSE" keyword
  */
-public class ExpectedThenKeyword extends SyntaxError {
-    public ExpectedThenKeyword(Line line) {
-        super(line.getFragment());
+public class KeywordElse extends Keyword {
+    @Override
+    public String toString() {
+        return "ELSE";
     }
 
-    @Override
-    protected String getErrorMessage() {
-        return "Expected a 'THEN' keyword";
+    private KeywordElse() {
+    }
+
+    private static KeywordElse instance;
+
+    public static Token getInstance() {
+        if (instance == null)
+            instance = new KeywordElse();
+        return instance;
     }
 }

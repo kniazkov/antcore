@@ -20,15 +20,15 @@ import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.parser.Line;
 
 /**
- * The exception "Expected a 'THEN' keyword"
+ * The exception "An 'ELSE' block must be single and last"
  */
-public class ExpectedThenKeyword extends SyntaxError {
-    public ExpectedThenKeyword(Line line) {
+public class ElseBlockMustBeSingle extends SyntaxError {
+    public ElseBlockMustBeSingle(Line line) {
         super(line.getFragment());
     }
 
     @Override
     protected String getErrorMessage() {
-        return "Expected a 'THEN' keyword";
+        return "An 'ELSE' block must be single and last";
     }
 }

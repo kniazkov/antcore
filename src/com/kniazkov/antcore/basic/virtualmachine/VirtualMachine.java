@@ -459,8 +459,9 @@ public class VirtualMachine {
                 else
                     IP = IP + 16;
             },
-            stub,
-            stub,
+            () -> { // 13 -> JUMP
+                IP = read_x0();
+            },
             stub,
             stub,
             stub,

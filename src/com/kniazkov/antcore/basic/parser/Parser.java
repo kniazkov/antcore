@@ -216,6 +216,8 @@ public class Parser {
                     return KeywordIf.getInstance();
                 case "THEN":
                     return KeywordThen.getInstance();
+                case "ELSE":
+                    return KeywordElse.getInstance();
             }
             return new Identifier(name);
         }
@@ -1154,8 +1156,9 @@ public class Parser {
      * @param iterator the iterator by lines
      * @param result the destination list
      * @param terminator the keyword terminates the sequence: END IF, END FOR, etc
+     * @return not parsed line or null if all lines were parsed and the iterator by lines is empty
      */
-    private void parseStatementList(Line declaration, Iterator<Line> iterator, List<RawStatement> result, Keyword terminator) throws SyntaxError {
+    private Line parseStatementList(Line declaration, Iterator<Line> iterator, List<RawStatement> result, Keyword terminator) throws SyntaxError {
         Map<String, RawVariableDeclaration> variables = new TreeMap<>();
         while(iterator.hasNext()) {
             Line line = iterator.next();
@@ -1182,10 +1185,13 @@ public class Parser {
                 RawStatement statement = parseIfStatement(line, iterator);
                 result.add(statement);
             }
+            else if (firstToken instanceof KeywordElse) {
+                return line;
+            }
             else if (terminator != null && firstToken instanceof KeywordEnd) {
                 if (tokens.size() < 2 || tokens.get(1) != terminator)
                     throw new ExpectedEndConstruction(line, terminator);
-                return;
+                return null;
             }
             else
                 throw new UnrecognizedSequence(line);
@@ -1194,6 +1200,7 @@ public class Parser {
         if (terminator != null) {
             throw new ExpectedEndConstruction(declaration, terminator);
         }
+        return null;
     }
 
     /**
@@ -1282,7 +1289,7 @@ public class Parser {
     }
 
     /**
-     * Parse an "IF" statement
+     * Parse an "IF..ELSE IF..ELSE..END IF" statement
      * @param declaration the line that contains statement declaration
      * @param iterator the iterator by lines
      * @return a parsed statement
@@ -1292,7 +1299,7 @@ public class Parser {
         Token token = tokens.next();
         assert(token instanceof KeywordIf);
 
-        TokenExpression condition = parseExpression(declaration, tokens, false);
+        TokenExpression conditionIf = parseExpression(declaration, tokens, false);
         if (!tokens.hasNext())
             throw new ExpectedThenKeyword(declaration);
         Token thenKeyword = tokens.next();
@@ -1301,9 +1308,48 @@ public class Parser {
         if (tokens.hasNext())
             throw new UnexpectedSequence(declaration);
 
-        List<RawStatement> statements = new ArrayList<>();
-        parseStatementList(declaration, iterator, statements, KeywordIf.getInstance());
+        List<RawStatement> statementsIf = new ArrayList<>();
+        List<RawElseIf> elseIfBlocks = null;
+        RawElse elseBlock = null;
 
-        return new RawIf(declaration.getFragment(), condition, statements);
+        Line elseIfDeclaration = parseStatementList(declaration, iterator, statementsIf, KeywordIf.getInstance());
+        while (elseIfDeclaration != null) {
+            if (elseBlock != null)
+                throw new ElseBlockMustBeSingle(elseIfDeclaration);
+
+            tokens = new RollbackIterator<>(elseIfDeclaration.getTokens().iterator());
+            token = tokens.next();
+            assert(token instanceof KeywordElse);
+
+            if (!tokens.hasNext()) {
+                List<RawStatement> statementsElse = new ArrayList<>();
+                elseBlock = new RawElse(elseIfDeclaration.getFragment(), statementsElse);
+                elseIfDeclaration = parseStatementList(elseIfDeclaration, iterator, statementsElse,
+                        KeywordIf.getInstance());
+            }
+            else {
+                Token ifKeyword = tokens.next();
+                if (!(ifKeyword instanceof KeywordIf))
+                    throw new ExpectedIfKeyword(elseIfDeclaration);
+                TokenExpression conditionElseIf = parseExpression(elseIfDeclaration, tokens, false);
+                if (!tokens.hasNext())
+                    throw new ExpectedThenKeyword(elseIfDeclaration);
+                thenKeyword = tokens.next();
+                if (!(thenKeyword instanceof KeywordThen))
+                    throw new ExpectedThenKeyword(elseIfDeclaration);
+                if (tokens.hasNext())
+                    throw new UnexpectedSequence(declaration);
+                List<RawStatement> statementsElseIf = new ArrayList<>();
+                RawElseIf elseIfBlock = new RawElseIf(elseIfDeclaration.getFragment(),
+                        conditionElseIf, statementsElseIf);
+                if (elseIfBlocks == null)
+                    elseIfBlocks = new ArrayList<>();
+                elseIfBlocks.add(elseIfBlock);
+                elseIfDeclaration = parseStatementList(elseIfDeclaration, iterator, statementsElseIf,
+                        KeywordIf.getInstance());
+            }
+        }
+
+        return new RawIf(declaration.getFragment(), conditionIf, statementsIf, elseIfBlocks, elseBlock);
     }
 }

@@ -168,7 +168,9 @@ public class Disassembler {
             (a, i, buff) -> { // 12 -> IF
                 buff.add(a, "IF", i.p0 > 0 ? "TRUE" : "FALSE", null, null, i.x0);
             },
-            stub,
+            (a, i, buff) -> { // 13 -> JUMP
+                buff.add(a, "JUMP", null, null, null, i.x0);
+            },
             stub,
             stub,
             stub,

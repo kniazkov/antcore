@@ -17,48 +17,33 @@
 package com.kniazkov.antcore.basic.parser;
 
 import com.kniazkov.antcore.basic.common.Fragment;
-import com.kniazkov.antcore.basic.graph.*;
+import com.kniazkov.antcore.basic.graph.Else;
+import com.kniazkov.antcore.basic.graph.Statement;
+import com.kniazkov.antcore.basic.graph.StatementList;
 import com.kniazkov.antcore.basic.parser.tokens.TokenExpression;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A parsed IF statement
+ * A parsed ELSE statement
  */
-public class RawIf extends RawStatement {
-    public RawIf(Fragment fragment, TokenExpression condition, List<RawStatement> rawStatements,
-                 List<RawElseIf> elseIfBlocks, RawElse elseBlock) {
-        super(fragment);
-        this.condition = condition;
+public class RawElse extends Entity {
+    public RawElse(Fragment fragment, List<RawStatement> rawStatements) {
+        this.fragment = fragment;
         this.rawStatements = rawStatements;
-        this.rawElseIfBlocks = elseIfBlocks;
-        this.rawElseBlock = elseBlock;
     }
 
-    @Override
-    public Statement toNode() {
+    public Else toNode() {
         List<Statement> body = new ArrayList<>();
         for (RawStatement rawStatement : rawStatements) {
             Statement statement = rawStatement.toNode();
             body.add(statement);
         }
 
-        List<ElseIf> elseIfBlocks = null;
-        if (rawElseIfBlocks != null) {
-            elseIfBlocks = new ArrayList<>();
-            for (RawElseIf rawElseIfBlock : rawElseIfBlocks) {
-                ElseIf elseIfBlock = rawElseIfBlock.toNode();
-                elseIfBlocks.add(elseIfBlock);
-            }
-        }
-
-        return new If(getFragment(), condition.toNode(), new StatementList(body), elseIfBlocks,
-                rawElseBlock != null ? rawElseBlock.toNode() : null);
+        return new Else(fragment, new StatementList(body));
     }
 
-    private TokenExpression condition;
+    private Fragment fragment;
     private List<RawStatement> rawStatements;
-    private List<RawElseIf> rawElseIfBlocks;
-    private RawElse rawElseBlock;
 }
