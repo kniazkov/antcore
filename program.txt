@@ -1,18 +1,15 @@
 IMPORT stdlib
 
 MODULE SERVER
-	FUNCTION fibonacci(n AS INTEGER) AS INTEGER
-		IF n = 0 THEN
-			RETURN 0
-		ELSE IF n = 1 THEN
-			RETURN 1
-		ELSE
-			RETURN fibonacci(n - 1) + fibonacci(n - 2)
-		END IF
-	END FUNCTION
-
 	FUNCTION MAIN
-		VAR f = fibonacci(21)
-		print("" + f)
+'		VAR i AS INTEGER
+'		
+'		FOR i = 0 TO 10 STEP 1
+'			println("" + i)
+'		NEXT i
+
+		IF 1 = 1 THEN
+			println("ok.")
+		END IF
 	END FUNCTION
 END MODULE

@@ -133,12 +133,20 @@ public class Analyzer {
                 obj.checkTypes();
             }
             @Override
+            public void visit(ElseIf obj) throws SyntaxError {
+                obj.checkType();
+            }
+            @Override
             public void visit(Function obj) throws SyntaxError {
                 obj.checkReturnType();
             }
             @Override
             public void visit(FunctionCall obj) throws SyntaxError {
                 obj.checkArguments();
+            }
+            @Override
+            public void visit(If obj) throws SyntaxError {
+                obj.checkType();
             }
             @Override
             public void visit(NativeFunction obj) throws SyntaxError {

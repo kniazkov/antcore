@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.basic.exceptions.ConditionMustBeBoolean;
 
 /**
  * The 'ELSE IF' block
@@ -75,6 +76,16 @@ public class ElseIf extends Node implements ExpressionOwner, StatementListOwner 
         buff.append(" THEN\n");
         String i1 = i + i0;
         body.toSourceCode(buff, i1, i0);
+    }
+
+    void checkType() throws SyntaxError {
+        Expression cast = DataTypeCast.cast(BooleanType.getInstance(), condition);
+        if (cast != condition) {
+            if (cast == null)
+                throw new ConditionMustBeBoolean(getFragment(), condition.getType().getName());
+            condition = cast;
+            cast.setOwner(this);
+        }
     }
 
     private If owner;

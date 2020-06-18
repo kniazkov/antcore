@@ -22,6 +22,7 @@ import com.kniazkov.antcore.basic.bytecodebuilder.JumpIf;
 import com.kniazkov.antcore.basic.common.DeferredOffset;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.basic.exceptions.ConditionMustBeBoolean;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -116,6 +117,16 @@ public class If extends Statement implements ExpressionOwner, StatementListOwner
             elseBlock.toSourceCode(buff, i, i0);
         }
         buff.append(i).append("END IF\n");
+    }
+
+    void checkType() throws SyntaxError {
+        Expression cast = DataTypeCast.cast(BooleanType.getInstance(), condition);
+        if (cast != condition) {
+            if (cast == null)
+                throw new ConditionMustBeBoolean(getFragment(), condition.getType().getName());
+            condition = cast;
+            cast.setOwner(this);
+        }
     }
 
     private Expression condition;
