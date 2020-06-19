@@ -62,6 +62,15 @@ public class ShortType extends BuiltInType {
     public Expression staticCast(Expression expression, DataType otherType) throws SyntaxError {
         if (otherType == this)
             return expression;
+        if (otherType instanceof IntegerType) {
+            Object value = expression.calculate();
+            if (value != null) {
+                int intValue = (Integer) value;
+                if (intValue >= Short.MIN_VALUE && intValue <= Short.MAX_VALUE)
+                    return new ShortNode((short)intValue);
+            }
+            return null;
+        }
         return null;
     }
 
@@ -69,8 +78,6 @@ public class ShortType extends BuiltInType {
     public Expression dynamicCast(Expression expression, DataType otherType) throws SyntaxError {
         if (otherType == this)
             return expression;
-        if (otherType instanceof IntegerType) // TODO: static casting here?...
-            return new Casting(false, expression, this);
         return null;
     }
 

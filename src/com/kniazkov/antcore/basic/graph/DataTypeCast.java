@@ -30,7 +30,6 @@ public class DataTypeCast {
      * @return an expression itself if no casting needed, or null if casting is impossible, or casted expression
      */
     public static Expression cast(DataType expectedType, Expression expression) throws SyntaxError {
-        Expression result = null;
         expectedType = expectedType.getPureType();
         DataType actualType = expression.getType().getPureType();
 
@@ -67,12 +66,15 @@ public class DataTypeCast {
         }
 
         if (expectedType.isBinaryAnalog(actualType)) {
-            result = expression;
-        }
-        else {
-            result = expectedType.dynamicCast(expression, actualType);
+            return expression;
         }
 
-        return result;
+        if (!(expectedType instanceof StringType)) {
+            Expression sc = expectedType.staticCast(expression, actualType);
+            if (sc != null)
+                return sc;
+        }
+
+        return expectedType.dynamicCast(expression, actualType);
     }
 }
