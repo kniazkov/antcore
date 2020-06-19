@@ -18,21 +18,20 @@ package com.kniazkov.antcore.basic.parser.exceptions;
 
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.parser.Line;
-import com.kniazkov.antcore.basic.parser.tokens.Keyword;
 
 /**
- * The exception "Expected an 'END ...' construction"
+ * The exception "Expected '...' construction"
  */
 public class ExpectedEndConstruction extends SyntaxError {
-    public ExpectedEndConstruction(Line line, Keyword terminator) {
+    public ExpectedEndConstruction(Line line, String terminator) {
         super(line.getFragment());
         this.terminator = terminator;
     }
 
     @Override
     protected String getErrorMessage() {
-        return "Expected an 'END " + terminator.toString() + "' construction";
+        return "Expected '" + terminator + "' construction";
     }
 
-    private Keyword terminator;
+    private String terminator;
 }

@@ -75,6 +75,11 @@ public class DataTypeReference extends DataType {
     }
 
     @Override
+    public boolean isNumeric() {
+        return type.isNumeric();
+    }
+
+    @Override
     public Node getOwner() {
         return (Node)owner;
     }

@@ -79,7 +79,7 @@ public class If extends Statement implements ExpressionOwner, StatementListOwner
             endAddress = new DeferredOffset();
             for (ElseIf elseIfBlock : elseIfBlocks) {
                 unit.addInstruction(new Jump(endAddress));
-                unit.resolveOffset(jumpIfNot);
+                unit.resolveAddress(jumpIfNot);
                 elseIfBlock.getCondition().genLoad(unit);
                 jumpIfNot = new DeferredOffset();
                 unit.addInstruction(new JumpIf(false, jumpIfNot));
@@ -90,15 +90,15 @@ public class If extends Statement implements ExpressionOwner, StatementListOwner
             if (endAddress == null)
                 endAddress = new DeferredOffset();
             unit.addInstruction(new Jump(endAddress));
-            unit.resolveOffset(jumpIfNot);
+            unit.resolveAddress(jumpIfNot);
             jumpIfNot = null;
             elseBlock.getBody().compile(unit);
         }
 
         if (jumpIfNot != null)
-            unit.resolveOffset(jumpIfNot);
+            unit.resolveAddress(jumpIfNot);
         if (endAddress != null)
-            unit.resolveOffset(endAddress);
+            unit.resolveAddress(endAddress);
     }
 
     @Override

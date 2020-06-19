@@ -52,6 +52,11 @@ public class Disassembler {
                     .append('\n');
         }
 
+        public void add(int address, String oper, String p0) {
+            append(String.valueOf(address), 8).append(oper, 8)
+                    .append(p0).append('\n');
+        }
+
         public void add(int address, String oper, String p0, String p1, String p2, int x0) {
             append(String.valueOf(address), 8).append(oper, 8)
                     .append(p0, 8).append(p1, 8).append(p2, 8)
@@ -143,36 +148,40 @@ public class Disassembler {
             (a, i, buff) -> { // 4 -> POP
                 buff.add(a, "POP", null, null, null, i.x0);
             },
-            (a, i, buff) -> { // 5 -> CALL
+            (a, i, buff) -> { // 5 -> DUP
+                buff.add(a, "DUP", null, null, null, i.x0);
+            },
+            (a, i, buff) -> { // 6 -> CALL
                 buff.add(a, "CALL", FunctionSelector.toString(i.p0), null, null, i.x0);
             },
-            (a, i, buff) -> { // 6 -> RET
+            (a, i, buff) -> { // 7 -> RET
                 buff.add(a, "RET");
             },
-            (a, i, buff) -> { // 7 -> ENTER
+            (a, i, buff) -> { // 8 -> ENTER
                 buff.add(a, "ENTER", null, null, null, i.x0);
             },
-            (a, i, buff) -> { // 8 -> LEAVE
+            (a, i, buff) -> { // 9 -> LEAVE
                 buff.add(a, "LEAVE", null, null, null, i.x0);
             },
-            (a, i, buff) -> { // 9 -> ADD
+            (a, i, buff) -> { // 10 -> ADD
                 buff.add(a, "ADD", TypeSelector.toString(i.p0), null, null, i.x0, i.x1, i.x2);
             },
-            (a, i, buff) -> { // 10 -> SUB
+            (a, i, buff) -> { // 11 -> SUB
                 buff.add(a, "SUB", TypeSelector.toString(i.p0), null, null, i.x0, i.x1, i.x2);
             },
-            (a, i, buff) -> { // 11 -> CMP
+            (a, i, buff) -> { // 12 -> CMP
                 buff.add(a, "CMP", TypeSelector.toString(i.p0), ComparatorSelector.toString(i.p1), null,
                         i.x0, i.x1);
             },
-            (a, i, buff) -> { // 12 -> IF
+            (a, i, buff) -> { // 13 -> SIGN
+                buff.add(a, "SIGN", TypeSelector.toString(i.p0));
+            },
+            (a, i, buff) -> { // 14 -> IF
                 buff.add(a, "IF", i.p0 > 0 ? "TRUE" : "FALSE", null, null, i.x0);
             },
-            (a, i, buff) -> { // 13 -> JUMP
+            (a, i, buff) -> { // 15 -> JUMP
                 buff.add(a, "JUMP", null, null, null, i.x0);
             },
-            stub,
-            stub,
             stub,
             stub,
             stub,

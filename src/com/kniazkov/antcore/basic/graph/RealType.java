@@ -49,6 +49,11 @@ public class RealType extends BuiltInType {
     }
 
     @Override
+    public boolean isNumeric() {
+        return true;
+    }
+
+    @Override
     public boolean isBinaryAnalog(DataType otherType) throws SyntaxError {
         return otherType == this;
     }

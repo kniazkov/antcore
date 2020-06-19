@@ -14,27 +14,26 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.bytecodebuilder;
+package com.kniazkov.antcore.basic.parser.exceptions;
 
-import com.kniazkov.antcore.basic.bytecode.Instruction;
-import com.kniazkov.antcore.basic.bytecode.OpCode;
-import com.kniazkov.antcore.basic.common.Size;
+import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.basic.parser.Line;
 
 /**
- * Leave function, i.e. restore stack and then old local pointer
+ * The exception "Counter variable does not match declared"
  */
-public class Leave extends RawInstruction {
-    public Leave(Size size) {
-        this.size = size;
+public class CounterDoesNotMatch extends SyntaxError {
+    public CounterDoesNotMatch(Line line, String expected, String actual) {
+        super(line.getFragment());
+        this.expected = expected;
+        this.actual = actual;
     }
 
     @Override
-    public Instruction generate() {
-        Instruction i = new Instruction();
-        i.opcode = OpCode.LEAVE;
-        i.x0 = size.get();
-        return i;
+    protected String getErrorMessage() {
+        return "The counter variable '" + actual + "' does not match declared '" + expected + '\'';
     }
 
-    protected Size size;
+    private String expected;
+    private String actual;
 }

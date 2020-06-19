@@ -39,11 +39,11 @@ public class Parser {
 
     /**
      * Parses a source code
+     *
      * @param source The source code
      * @return The syntax tree
      */
-    public static Program parse(String fileName, String source) throws SyntaxError
-    {
+    public static Program parse(String fileName, String source) throws SyntaxError {
         // prepare an array of lines
 
         ArrayList<Line> lines = new ArrayList<>();
@@ -75,15 +75,16 @@ public class Parser {
         }
 
         return new Program(parser.globalConstantList != null ? parser.globalConstantList.toNode() : null,
-            codeBlocks, modules, dataTypes);
+                codeBlocks, modules, dataTypes);
     }
 
     /**
      * Split code into separate lines, resolve imports
+     *
      * @param fileName the source file name
-     * @param source the source file content
-     * @param lines destination array
-     * @param imports set that contains names of imported files
+     * @param source   the source file content
+     * @param lines    destination array
+     * @param imports  set that contains names of imported files
      */
     private static void splitCode(String fileName, String source,
                                   ArrayList<Line> lines, Set<String> imports) throws SyntaxError {
@@ -110,8 +111,7 @@ public class Parser {
                             throw new CannotReadFile(fragment, importedFileName);
                         }
                     }
-                }
-                else {
+                } else {
                     List<Token> tokens = scan(fragment);
                     if (tokens != null && tokens.size() > 0) {
                         tokens = parseBrackets(fragment, tokens);
@@ -124,6 +124,7 @@ public class Parser {
 
     /**
      * Scanner, splits string by tokens
+     *
      * @param fragment The fragment of code
      * @return The list of tokens
      */
@@ -140,7 +141,7 @@ public class Parser {
 
         ArrayList<Token> tokens = new ArrayList<>();
         Source source = new Source(text);
-        while(source.valid()) {
+        while (source.valid()) {
             Token token = getToken(fragment, source);
             tokens.add(token);
         }
@@ -149,6 +150,7 @@ public class Parser {
 
     /**
      * Tokenizer
+     *
      * @param src The source string
      * @return The next token
      */
@@ -165,7 +167,7 @@ public class Parser {
             do {
                 buff.append(c);
                 c = src.next();
-            } while(isLetter(c) || isDigit(c));
+            } while (isLetter(c) || isDigit(c));
             String name = buff.toString();
             switch (name) {
                 case "MODULE":
@@ -218,6 +220,12 @@ public class Parser {
                     return KeywordThen.getInstance();
                 case "ELSE":
                     return KeywordElse.getInstance();
+                case "FOR":
+                    return KeywordFor.getInstance();
+                case "STEP":
+                    return KeywordStep.getInstance();
+                case "NEXT":
+                    return KeywordNext.getInstance();
             }
             return new Identifier(name);
         }
@@ -282,7 +290,7 @@ public class Parser {
                     buff.append('"');
                     flag = true;
                 }
-            } while(flag);
+            } while (flag);
             return new TokenExpression(new StringNode(buff.toString()));
         }
 
@@ -291,7 +299,7 @@ public class Parser {
             do {
                 buff.append(c);
                 c = src.next();
-            } while(isOperator(c));
+            } while (isOperator(c));
             String operator = buff.toString();
             switch (operator) {
                 case "+":
@@ -366,7 +374,7 @@ public class Parser {
     }
 
     private static boolean isOperator(char c) {
-        switch(c) {
+        switch (c) {
             case '+':
             case '-':
             case '*':
@@ -381,8 +389,9 @@ public class Parser {
 
     /**
      * Parsing of all brackets (including nested)
+     *
      * @param fragment the fragment of source code
-     * @param tokens the list of tokens
+     * @param tokens   the list of tokens
      * @return a list of tokens where some tokens combined into groups
      */
     private static List<Token> parseBrackets(Fragment fragment, List<Token> tokens) throws SyntaxError {
@@ -393,13 +402,14 @@ public class Parser {
 
     /**
      * Parsing of all brackets (recursive method)
-     * @param fragment fragment of source code
-     * @param src source iterator
-     * @param dst destination list
+     *
+     * @param fragment     fragment of source code
+     * @param src          source iterator
+     * @param dst          destination list
      * @param closeBracket a bracket that closes the sequence
      */
-     private static void parseBrackets(Fragment fragment, Iterator<Token> src, List<Token> dst, char closeBracket) throws SyntaxError {
-        while(src.hasNext()) {
+    private static void parseBrackets(Fragment fragment, Iterator<Token> src, List<Token> dst, char closeBracket) throws SyntaxError {
+        while (src.hasNext()) {
             Token token = src.next();
             if (token instanceof Bracket) {
                 Bracket bracket = (Bracket) token;
@@ -407,15 +417,13 @@ public class Parser {
                     if (bracket.getSymbol() != closeBracket)
                         throw new BracketDoesNotMatch(fragment, bracket.getPairSymbol(), closeBracket);
                     return;
-                }
-                else {
+                } else {
                     List<Token> sublist = new ArrayList<>();
                     parseBrackets(fragment, src, sublist, bracket.getPairSymbol());
                     BracketsPair bracketsPair = BracketsPair.create(bracket.getSymbol(), sublist);
                     dst.add(bracketsPair);
                 }
-            }
-            else {
+            } else {
                 dst.add(token);
             }
         }
@@ -438,6 +446,7 @@ public class Parser {
 
     /**
      * Parse a source code
+     *
      * @param lines The source code parsed to lines
      * @return The syntax tree
      */
@@ -456,38 +465,36 @@ public class Parser {
 
     /**
      * Parse a whole program and extract all modules
+     *
      * @param iterator the iterator by lines
      */
     private void parseProgram(Iterator<Line> iterator) throws SyntaxError {
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             Line line = iterator.next();
             List<Token> tokens = line.getTokens();
-            assert(tokens.size() > 0);
+            assert (tokens.size() > 0);
             Token firstToken = tokens.get(0);
             if (firstToken instanceof KeywordConst) {
                 if (globalConstantList == null)
                     globalConstantList = new RawConstantList();
                 RawConstant constant = parseConstant(line);
                 globalConstantList.addConstant(constant);
-            }
-            else if (firstToken instanceof KeywordType) {
+            } else if (firstToken instanceof KeywordType) {
                 parseStructure(line, iterator);
-            }
-            else if (firstToken instanceof KeywordCode) {
+            } else if (firstToken instanceof KeywordCode) {
                 parseCodeBlock(line, iterator);
-            }
-            else if (firstToken instanceof KeywordModule) {
+            } else if (firstToken instanceof KeywordModule) {
                 parseModule(line, iterator);
-            }
-            else
+            } else
                 throw new UnexpectedSequence(line);
         }
     }
 
     /**
      * Parse a module
+     *
      * @param declaration the line contains module declaration
-     * @param iterator the iterator by lines
+     * @param iterator    the iterator by lines
      */
     private void parseModule(Line declaration, Iterator<Line> iterator) throws SyntaxError {
         Iterator<Token> tokens = declaration.getTokens().iterator();
@@ -498,7 +505,7 @@ public class Parser {
         Token token = tokens.next();
         if (!(token instanceof Identifier))
             throw new ExpectedModuleName(declaration);
-        String name = ((Identifier)token).getName();
+        String name = ((Identifier) token).getName();
         if (rawModules.containsKey(name))
             throw new ModuleAlreadyExists(declaration, name);
 
@@ -507,7 +514,7 @@ public class Parser {
             token = tokens.next();
             if (!(token instanceof Identifier))
                 throw new ExpectedModuleExecutor(declaration);
-            executor = ((Identifier)token).getName();
+            executor = ((Identifier) token).getName();
         }
 
         if (tokens.hasNext())
@@ -515,7 +522,7 @@ public class Parser {
 
         Line line = declaration;
         List<Line> body = new ArrayList<>();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             line = iterator.next();
             List<Token> content = line.getTokens();
             if (content.size() >= 2
@@ -533,6 +540,7 @@ public class Parser {
 
     /**
      * Parse the body of a module
+     *
      * @param module Module
      */
     private void parseModuleBody(RawModule module) throws SyntaxError {
@@ -540,25 +548,24 @@ public class Parser {
         while (iterator.hasNext()) {
             Line line = iterator.next();
             List<Token> tokens = line.getTokens();
-            assert(tokens.size() > 0);
+            assert (tokens.size() > 0);
             if (tokens.get(0) instanceof KeywordData) {
                 RawDataSet dataSet = parseDataSet(line, iterator, DataPrefix.PRIVATE);
                 module.setData(dataSet);
-            }
-            else if (tokens.get(0) instanceof KeywordFunction) {
+            } else if (tokens.get(0) instanceof KeywordFunction) {
                 RawFunction function = parseFunction(line, iterator);
                 module.addFunction(function);
                 rawFunctions.add(function);
-            }
-            else
+            } else
                 throw new UnexpectedSequence(line);
         }
     }
 
     /**
      * Parse a code block
+     *
      * @param declaration the line contains module declaration
-     * @param iterator the iterator by lines
+     * @param iterator    the iterator by lines
      */
     private void parseCodeBlock(Line declaration, Iterator<Line> iterator) throws SyntaxError {
         Iterator<Token> tokens = declaration.getTokens().iterator();
@@ -567,7 +574,7 @@ public class Parser {
         List<String> executors = null;
         if (tokens.hasNext()) {
             executors = new ArrayList<>();
-            while(tokens.hasNext()) {
+            while (tokens.hasNext()) {
                 Token tokExecutor = tokens.next();
                 if (!(tokExecutor instanceof Identifier))
                     throw new ExpectedExecutor(declaration);
@@ -584,7 +591,7 @@ public class Parser {
 
         Line line = declaration;
         List<Line> body = new ArrayList<>();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             line = iterator.next();
             List<Token> content = line.getTokens();
             if (content.size() >= 2
@@ -602,6 +609,7 @@ public class Parser {
 
     /**
      * Parse the body of a code block
+     *
      * @param block Module
      */
     private void parseCodeBlockBody(RawCodeBlock block) throws SyntaxError {
@@ -609,27 +617,26 @@ public class Parser {
         while (iterator.hasNext()) {
             Line line = iterator.next();
             List<Token> tokens = line.getTokens();
-            int size  = tokens.size();
-            assert(size > 0);
+            int size = tokens.size();
+            assert (size > 0);
             if (size > 2 && tokens.get(0) instanceof KeywordDeclare &&
                     tokens.get(1) instanceof KeywordFunction) {
                 RawNativeFunction nativeFunction = parseNativeFunction(line);
                 block.addNativeFunction(nativeFunction);
-            }
-            else if (tokens.get(0) instanceof KeywordFunction) {
+            } else if (tokens.get(0) instanceof KeywordFunction) {
                 RawFunction function = parseFunction(line, iterator);
                 block.addFunction(function);
                 rawFunctions.add(function);
-            }
-            else
+            } else
                 throw new UnexpectedSequence(line);
         }
     }
 
     /**
      * Parse a data set
-     * @param declaration the line contains data set declaration
-     * @param iterator the iterator by lines
+     *
+     * @param declaration   the line contains data set declaration
+     * @param iterator      the iterator by lines
      * @param prefixDefault the default data prefix for this scope
      */
     private RawDataSet parseDataSet(Line declaration, Iterator<Line> iterator, DataPrefix prefixDefault) throws SyntaxError {
@@ -659,20 +666,19 @@ public class Parser {
         RawDataSet dataSet = new RawDataSet(declaration.getFragment(), prefix, prefixDefault);
 
         Line line = declaration;
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             line = iterator.next();
             List<Token> content = line.getTokens();
             if (content.size() >= 3 && content.get(0) instanceof Identifier) {
                 RollbackIterator<Token> lineIterator = new RollbackIterator<>(content.iterator());
-                Identifier name = (Identifier)lineIterator.next();
+                Identifier name = (Identifier) lineIterator.next();
                 Token asKeyword = lineIterator.next();
                 if (!(asKeyword instanceof KeywordAs))
                     throw new ExpectedAsKeyword(line);
                 RawDataType type = parseDataType(line, lineIterator);
                 RawField field = new RawField(line.getFragment(), name.getName(), type);
                 dataSet.addField(field);
-            }
-            else if (content.size() >= 2
+            } else if (content.size() >= 2
                     && content.get(0) instanceof KeywordEnd && content.get(1) instanceof KeywordData) {
                 if (content.size() > 2)
                     throw new UnrecognizedSequence(line);
@@ -688,7 +694,8 @@ public class Parser {
 
     /**
      * Parse a data type
-     * @param line the line of source code
+     *
+     * @param line     the line of source code
      * @param iterator the iterator by tokens
      * @param constant there was a constant modifier
      */
@@ -737,8 +744,9 @@ public class Parser {
 
     /**
      * Parse a struct
+     *
      * @param declaration the line contains struct declaration
-     * @param iterator the iterator by lines
+     * @param iterator    the iterator by lines
      */
     private void parseStructure(Line declaration, Iterator<Line> iterator) throws SyntaxError {
         Iterator<Token> tokens = declaration.getTokens().iterator();
@@ -759,20 +767,19 @@ public class Parser {
         RawStruct struct = new RawStruct(declaration.getFragment(), structName);
 
         Line line = declaration;
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             line = iterator.next();
             List<Token> content = line.getTokens();
             if (content.size() >= 3 && content.get(0) instanceof Identifier) {
                 RollbackIterator<Token> lineIterator = new RollbackIterator<>(content.iterator());
-                Identifier fieldName = (Identifier)lineIterator.next();
+                Identifier fieldName = (Identifier) lineIterator.next();
                 Token asKeyword = lineIterator.next();
                 if (!(asKeyword instanceof KeywordAs))
                     throw new ExpectedAsKeyword(line);
                 RawDataType type = parseDataType(line, lineIterator);
                 RawField field = new RawField(line.getFragment(), fieldName.getName(), type);
                 struct.addField(field);
-            }
-            else if (content.size() >= 2
+            } else if (content.size() >= 2
                     && content.get(0) instanceof KeywordEnd && content.get(1) instanceof KeywordType) {
                 if (content.size() > 2)
                     throw new UnrecognizedSequence(line);
@@ -785,19 +792,20 @@ public class Parser {
 
     /**
      * Parse line contains a constant declaration
+     *
      * @param declaration the line of source code
      */
     private RawConstant parseConstant(Line declaration) throws SyntaxError {
         RollbackIterator<Token> tokens = new RollbackIterator<>(declaration.getTokens().iterator());
         Token token = tokens.next();
-        assert(token instanceof KeywordConst);
+        assert (token instanceof KeywordConst);
 
         if (!tokens.hasNext())
             throw new ExpectedConstantName(declaration);
         token = tokens.next();
         if (!(token instanceof Identifier))
             throw new ExpectedConstantName(declaration);
-        String name = ((Identifier)token).getName();
+        String name = ((Identifier) token).getName();
 
         if (!tokens.hasNext())
             throw new ExpectedAssignmentOperator(declaration);
@@ -824,21 +832,22 @@ public class Parser {
 
     /**
      * Parse a native function
+     *
      * @param declaration the line contains native function declaration
      */
     private RawNativeFunction parseNativeFunction(Line declaration) throws SyntaxError {
         RollbackIterator<Token> tokens = new RollbackIterator<>(declaration.getTokens().iterator());
         Token token = tokens.next();
-        assert(token instanceof KeywordDeclare);
+        assert (token instanceof KeywordDeclare);
         token = tokens.next();
-        assert(token instanceof KeywordFunction);
+        assert (token instanceof KeywordFunction);
 
         if (!tokens.hasNext())
             throw new ExpectedFunctionName(declaration);
         token = tokens.next();
         if (!(token instanceof Identifier))
             throw new ExpectedFunctionName(declaration);
-        String name = ((Identifier)token).getName();
+        String name = ((Identifier) token).getName();
 
         Token nextToken = null;
         List<RawDataType> arguments = null;
@@ -849,9 +858,8 @@ public class Parser {
                         new RollbackIterator<>(((RoundBracketsPair) nextToken).getTokens().iterator());
                 boolean oneMoreArg = false;
                 arguments = new ArrayList<>();
-                while(true) {
-                    if (!argIterator.hasNext())
-                    {
+                while (true) {
+                    if (!argIterator.hasNext()) {
                         if (!oneMoreArg)
                             break;
                         throw new ExpectedArgument(declaration);
@@ -863,8 +871,7 @@ public class Parser {
                         if (!(comma instanceof Comma))
                             throw new ExpectedComma(declaration);
                         oneMoreArg = true;
-                    }
-                    else
+                    } else
                         break;
                 }
                 nextToken = tokens.hasNext() ? tokens.next() : null;
@@ -885,20 +892,21 @@ public class Parser {
 
     /**
      * Parse a function
+     *
      * @param declaration the line contains function declaration
-     * @param iterator the iterator by lines
+     * @param iterator    the iterator by lines
      */
     private RawFunction parseFunction(Line declaration, Iterator<Line> iterator) throws SyntaxError {
         RollbackIterator<Token> tokens = new RollbackIterator<>(declaration.getTokens().iterator());
         Token token = tokens.next();
-        assert(token instanceof KeywordFunction);
+        assert (token instanceof KeywordFunction);
 
         if (!tokens.hasNext())
             throw new ExpectedFunctionName(declaration);
         token = tokens.next();
         if (!(token instanceof Identifier))
             throw new ExpectedFunctionName(declaration);
-        String name = ((Identifier)token).getName();
+        String name = ((Identifier) token).getName();
 
         Token nextToken = null;
         List<RawArgument> arguments = null;
@@ -909,9 +917,8 @@ public class Parser {
                         new RollbackIterator<Token>(((RoundBracketsPair) nextToken).getTokens().iterator());
                 boolean oneMoreArg = false;
                 arguments = new ArrayList<>();
-                while(true) {
-                    if (!argIterator.hasNext())
-                    {
+                while (true) {
+                    if (!argIterator.hasNext()) {
                         if (!oneMoreArg)
                             break;
                         throw new ExpectedArgument(declaration);
@@ -933,8 +940,7 @@ public class Parser {
                         if (!(comma instanceof Comma))
                             throw new ExpectedComma(declaration);
                         oneMoreArg = true;
-                    }
-                    else
+                    } else
                         break;
                 }
                 nextToken = tokens.hasNext() ? tokens.next() : null;
@@ -952,7 +958,7 @@ public class Parser {
 
         Line line = declaration;
         List<Line> body = new ArrayList<>();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             line = iterator.next();
             List<Token> content = line.getTokens();
             if (content.size() >= 2
@@ -968,8 +974,9 @@ public class Parser {
 
     /**
      * Parse an expression
-     * @param line the line of source code
-     * @param iterator the iterator by tokens
+     *
+     * @param line             the line of source code
+     * @param iterator         the iterator by tokens
      * @param ignoreAssignment do not parse assignment operator
      */
     private TokenExpression parseExpression(Line line, RollbackIterator<Token> iterator,
@@ -978,7 +985,7 @@ public class Parser {
             throw new ExpectedAnExpression(line);
 
         LinkedList<Token> sequence = new LinkedList<>();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             Token token = iterator.next();
             if (token instanceof OperatorAssignEquals) {
                 if (ignoreAssignment) {
@@ -986,12 +993,10 @@ public class Parser {
                     break;
                 }
                 sequence.add(token);
-            }
-            else if (token instanceof Identifier || token instanceof TokenExpression || token instanceof Operator
+            } else if (token instanceof Identifier || token instanceof TokenExpression || token instanceof Operator
                     || token instanceof BracketsPair) {
                 sequence.add(token);
-            }
-            else {
+            } else {
                 iterator.rollback(token);
                 break;
             }
@@ -1013,41 +1018,37 @@ public class Parser {
     }
 
     /**
-     * Parse variables, accessing fields, accessing array elements, calling functions and methods 
-     * @param line the line of source code
+     * Parse variables, accessing fields, accessing array elements, calling functions and methods
+     *
+     * @param line          the line of source code
      * @param rightSequence the sequence of tokens that possibly contains a variable, field access, etc.
      * @return a new token sequence in which identifiers are converted to expressions
      */
     private LinkedList<Token> parseIdentifiers(Line line, LinkedList<Token> rightSequence) throws SyntaxError {
         LinkedList<Token> leftSequence = new LinkedList<>();
-        while(!rightSequence.isEmpty()) {
+        while (!rightSequence.isEmpty()) {
             Token token = rightSequence.removeFirst();
             if (token instanceof Identifier) {
                 String name = ((Identifier) token).getName();
                 leftSequence.addLast(new TokenExpression(new VariableReference(name, null)));
-            }
-            else if (token instanceof RoundBracketsPair) {
+            } else if (token instanceof RoundBracketsPair) {
                 if (leftSequence.isEmpty() || leftSequence.peekLast() instanceof Operator) {
                     // expression in brackets
                     TokenExpression expression = parseParenthesizedExpression(line, (RoundBracketsPair) token);
                     leftSequence.addLast(new TokenExpression(new ParenthesizedExpression(expression.toNode())));
-                }
-                else if (leftSequence.peekLast() instanceof TokenExpression) {
+                } else if (leftSequence.peekLast() instanceof TokenExpression) {
                     Expression expression = ((TokenExpression) leftSequence.peekLast()).getExpression();
                     if (expression instanceof VariableReference) {
                         // function call
-                        String functionName = ((VariableReference)expression).getName();
+                        String functionName = ((VariableReference) expression).getName();
                         List<Expression> arguments = parseFunctionCallArguments(line, (RoundBracketsPair) token);
                         leftSequence.removeLast();
                         leftSequence.addLast(new TokenExpression(new FunctionCall(functionName, arguments)));
-                    }
-                    else
+                    } else
                         throw new UnrecognizedSequence(line);
-                }
-                else
+                } else
                     throw new UnrecognizedSequence(line);
-            }
-            else
+            } else
                 leftSequence.addLast(token);
         }
         return leftSequence;
@@ -1055,16 +1056,17 @@ public class Parser {
 
     /**
      * Parse binary operators
-     * @param line the line of source code
+     *
+     * @param line          the line of source code
      * @param rightSequence the sequence of tokens that possibly contains an operator
-     * @param operators the list of operators
+     * @param operators     the list of operators
      * @return a new token sequence in which operators are converted to expressions
      */
     private LinkedList<Token> parseBinaryOperators(Line line, LinkedList<Token> rightSequence, Class<?>[] operators) throws SyntaxError {
         if (rightSequence.size() < 3)
             return rightSequence;
         LinkedList<Token> leftSequence = new LinkedList<>();
-        while(!rightSequence.isEmpty()) {
+        while (!rightSequence.isEmpty()) {
             Token token = rightSequence.removeFirst();
             boolean flag = false;
             for (Class<?> operator : operators) {
@@ -1075,9 +1077,8 @@ public class Parser {
             }
             if (!flag) {
                 leftSequence.addLast(token);
-            }
-            else {
-                Operator operator = (Operator)token;
+            } else {
+                Operator operator = (Operator) token;
                 Token leftOperand = leftSequence.removeLast();
                 if (!(leftOperand instanceof TokenExpression))
                     throw new ExpectedLeftExpOper(line, operator.toString());
@@ -1096,7 +1097,8 @@ public class Parser {
 
     /**
      * Parse expression in brackets
-     * @param line the line of source code
+     *
+     * @param line         the line of source code
      * @param bracketsPair the pair of brackets that contains an expression
      * @return an expression
      */
@@ -1110,7 +1112,8 @@ public class Parser {
 
     /**
      * Parse function call arguments
-     * @param line the line of source code
+     *
+     * @param line         the line of source code
      * @param bracketsPair the pair of brackets that contains arguments
      * @return a list contains function call arguments
      */
@@ -1119,9 +1122,8 @@ public class Parser {
         RollbackIterator<Token> iterator = new RollbackIterator<>(bracketsPair.getTokens().iterator());
         List<Expression> result = new ArrayList<>();
         boolean oneMoreArg = false;
-        while(true) {
-            if (!iterator.hasNext())
-            {
+        while (true) {
+            if (!iterator.hasNext()) {
                 if (!oneMoreArg)
                     break;
                 throw new ExpectedArgument(line);
@@ -1133,8 +1135,7 @@ public class Parser {
                 if (!(comma instanceof Comma))
                     throw new ExpectedComma(line);
                 oneMoreArg = true;
-            }
-            else
+            } else
                 break;
         }
         return result;
@@ -1142,12 +1143,33 @@ public class Parser {
 
     /**
      * Parse a function body
+     *
      * @param function the function
      */
     private void parseFunctionBody(RawFunction function) throws SyntaxError {
         List<RawStatement> statements = new ArrayList<>();
-        parseStatementList(null, function.getRawBody().iterator(), statements, null);
+        parseStatementList(null, function.getRawBody().iterator(), statements, StatementTerminator.NOTHING);
         function.setRawStatementList(statements);
+    }
+
+    /**
+     * The expected end of statement list
+     */
+    enum StatementTerminator {
+        NOTHING (""),
+        END_IF ("END IF"),
+        NEXT ("NEXT");
+
+        StatementTerminator(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+
+        private String value;
     }
 
     /**
@@ -1155,10 +1177,10 @@ public class Parser {
      * @param declaration line contains declaration of the list of statements
      * @param iterator the iterator by lines
      * @param result the destination list
-     * @param terminator the keyword terminates the sequence: END IF, END FOR, etc
+     * @param terminator the expected end of statement list
      * @return not parsed line or null if all lines were parsed and the iterator by lines is empty
      */
-    private Line parseStatementList(Line declaration, Iterator<Line> iterator, List<RawStatement> result, Keyword terminator) throws SyntaxError {
+    private Line parseStatementList(Line declaration, Iterator<Line> iterator, List<RawStatement> result, StatementTerminator terminator) throws SyntaxError {
         Map<String, RawVariableDeclaration> variables = new TreeMap<>();
         while(iterator.hasNext()) {
             Line line = iterator.next();
@@ -1185,20 +1207,31 @@ public class Parser {
                 RawStatement statement = parseIfStatement(line, iterator);
                 result.add(statement);
             }
-            else if (firstToken instanceof KeywordElse) {
-                return line;
+            else if (firstToken instanceof KeywordFor) {
+                RawStatement statement = parseForStatement(line, iterator);
+                result.add(statement);
             }
-            else if (terminator != null && firstToken instanceof KeywordEnd) {
-                if (tokens.size() < 2 || tokens.get(1) != terminator)
-                    throw new ExpectedEndConstruction(line, terminator);
+            else if (firstToken instanceof KeywordElse) {
+                if (terminator == StatementTerminator.END_IF)
+                    return line;
+                throw new UnexpectedSequence(line);
+            }
+            else if (terminator == StatementTerminator.END_IF && firstToken instanceof KeywordEnd) {
+                if (tokens.size() < 2 || tokens.get(1) != KeywordIf.getInstance())
+                    throw new ExpectedEndConstruction(line, terminator.toString());
                 return null;
+            }
+            else if (firstToken instanceof KeywordNext) {
+                if (terminator == StatementTerminator.NEXT)
+                    return line;
+                throw new UnexpectedSequence(line);
             }
             else
                 throw new UnrecognizedSequence(line);
         }
 
-        if (terminator != null) {
-            throw new ExpectedEndConstruction(declaration, terminator);
+        if (terminator != StatementTerminator.NOTHING) {
+            throw new ExpectedEndConstruction(declaration, terminator.toString());
         }
         return null;
     }
@@ -1312,7 +1345,7 @@ public class Parser {
         List<RawElseIf> elseIfBlocks = null;
         RawElse elseBlock = null;
 
-        Line elseIfDeclaration = parseStatementList(declaration, iterator, statementsIf, KeywordIf.getInstance());
+        Line elseIfDeclaration = parseStatementList(declaration, iterator, statementsIf, StatementTerminator.END_IF);
         while (elseIfDeclaration != null) {
             if (elseBlock != null)
                 throw new ElseBlockMustBeSingle(elseIfDeclaration);
@@ -1325,7 +1358,7 @@ public class Parser {
                 List<RawStatement> statementsElse = new ArrayList<>();
                 elseBlock = new RawElse(elseIfDeclaration.getFragment(), statementsElse);
                 elseIfDeclaration = parseStatementList(elseIfDeclaration, iterator, statementsElse,
-                        KeywordIf.getInstance());
+                        StatementTerminator.END_IF);
             }
             else {
                 Token ifKeyword = tokens.next();
@@ -1346,10 +1379,61 @@ public class Parser {
                     elseIfBlocks = new ArrayList<>();
                 elseIfBlocks.add(elseIfBlock);
                 elseIfDeclaration = parseStatementList(elseIfDeclaration, iterator, statementsElseIf,
-                        KeywordIf.getInstance());
+                        StatementTerminator.END_IF);
             }
         }
 
         return new RawIf(declaration.getFragment(), conditionIf, statementsIf, elseIfBlocks, elseBlock);
+    }
+
+    /**
+     * Parse a "FOR..NEXT" statement
+     * @param declaration the line that contains statement declaration
+     * @param iterator the iterator by lines
+     * @return a parsed statement
+     */
+    private RawStatement parseForStatement(Line declaration, Iterator<Line> iterator) throws SyntaxError {
+        RollbackIterator<Token> tokens = new RollbackIterator<>(declaration.getTokens().iterator());
+        Token token = tokens.next();
+        assert(token instanceof KeywordFor);
+
+        TokenExpression variable = parseExpression(declaration, tokens, true);
+        if (!tokens.hasNext())
+            throw new ExpectedAssignmentOperator(declaration);
+        Token assignment = tokens.next();
+        if (!(assignment instanceof OperatorAssignEquals))
+            throw new ExpectedAssignmentOperator(declaration);
+        TokenExpression start = parseExpression(declaration, tokens, false);
+        if (!tokens.hasNext())
+            throw new ExpectedToKeyword(declaration);
+        Token toKeyword = tokens.next();
+        if (!(toKeyword instanceof KeywordTo))
+            throw new ExpectedToKeyword(declaration);
+        TokenExpression end = parseExpression(declaration, tokens, false);
+        TokenExpression step = null;
+        if (tokens.hasNext()) {
+            Token stepKeyword = tokens.next();
+            if (!(stepKeyword instanceof KeywordStep))
+                throw new ExpectedStepKeyword(declaration);
+            step = parseExpression(declaration, tokens, false);
+        }
+
+        List<RawStatement> statements = new ArrayList<>();
+        Line terminator = parseStatementList(declaration, iterator, statements, StatementTerminator.NEXT);
+        assert(terminator != null);
+        tokens = new RollbackIterator<>(terminator.getTokens().iterator());
+        token = tokens.next();
+        assert(token instanceof KeywordNext);
+        if (tokens.hasNext()) {
+            TokenExpression terminatorVariable = parseExpression(declaration, tokens, true);
+            if (tokens.hasNext())
+                throw new UnrecognizedSequence(terminator);
+            String actual = terminatorVariable.toString();
+            String expected = variable.toString();
+            if (!expected.equals(actual))
+                throw new CounterDoesNotMatch(terminator, expected, actual);
+        }
+
+        return new RawFor(declaration.getFragment(), variable, start, end, step, statements);
     }
 }

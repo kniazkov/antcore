@@ -18,23 +18,22 @@ package com.kniazkov.antcore.basic.bytecodebuilder;
 
 import com.kniazkov.antcore.basic.bytecode.Instruction;
 import com.kniazkov.antcore.basic.bytecode.OpCode;
-import com.kniazkov.antcore.basic.common.Size;
 
 /**
- * Leave function, i.e. restore stack and then old local pointer
+ * Duplicates a value on the stack
  */
-public class Leave extends RawInstruction {
-    public Leave(Size size) {
+public class Dup extends RawInstruction {
+    public Dup(int size) {
         this.size = size;
     }
 
     @Override
     public Instruction generate() {
         Instruction i = new Instruction();
-        i.opcode = OpCode.LEAVE;
-        i.x0 = size.get();
+        i.opcode = OpCode.DUP;
+        i.x0 = size;
         return i;
     }
 
-    protected Size size;
+    protected int size;
 }

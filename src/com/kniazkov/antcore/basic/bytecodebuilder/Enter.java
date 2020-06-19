@@ -18,12 +18,13 @@ package com.kniazkov.antcore.basic.bytecodebuilder;
 
 import com.kniazkov.antcore.basic.bytecode.Instruction;
 import com.kniazkov.antcore.basic.bytecode.OpCode;
+import com.kniazkov.antcore.basic.common.Size;
 
 /**
  * Enter to function, i.e. set a new local pointer and reserve space on the stack for variables
  */
 public class Enter extends RawInstruction {
-    public Enter(int size) {
+    public Enter(Size size) {
         this.size = size;
     }
 
@@ -31,9 +32,9 @@ public class Enter extends RawInstruction {
     public Instruction generate() {
         Instruction i = new Instruction();
         i.opcode = OpCode.ENTER;
-        i.x0 = size;
+        i.x0 = size.get();
         return i;
     }
 
-    protected int size;
+    protected Size size;
 }

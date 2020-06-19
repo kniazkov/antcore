@@ -25,14 +25,16 @@ public final class OpCode {
     public static final byte STORE = 2;
     public static final byte CAST = 3;
     public static final byte POP = 4;
-    public static final byte CALL = 5;
-    public static final byte RET = 6;
-    public static final byte ENTER = 7;
-    public static final byte LEAVE = 8;
-    public static final byte ADD = 9;
-    public static final byte SUB = 10;
-    public static final byte CMP = 11;
-    public static final byte IF = 12;
-    public static final byte JUMP = 13;
+    public static final byte DUP = 5;
+    public static final byte CALL = 6;
+    public static final byte RET = 7;
+    public static final byte ENTER = 8;
+    public static final byte LEAVE = 9;
+    public static final byte ADD = 10;
+    public static final byte SUB = 11;
+    public static final byte CMP = 12;
+    public static final byte SIGN = 13;
+    public static final byte IF = 14;
+    public static final byte JUMP = 15;
     public static final byte END = 127;
 }

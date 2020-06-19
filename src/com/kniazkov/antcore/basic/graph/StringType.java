@@ -94,6 +94,11 @@ public class StringType extends DataType implements ExpressionOwner {
     }
 
     @Override
+    public boolean isNumeric() {
+        return false;
+    }
+
+    @Override
     void setOwner(DataTypeOwner owner) {
         this.owner = owner;
     }

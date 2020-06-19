@@ -14,27 +14,14 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.bytecodebuilder;
-
-import com.kniazkov.antcore.basic.bytecode.Instruction;
-import com.kniazkov.antcore.basic.bytecode.OpCode;
-import com.kniazkov.antcore.basic.common.Size;
+package com.kniazkov.antcore.basic.common;
 
 /**
- * Leave function, i.e. restore stack and then old local pointer
+ * Size of field, variable, data
  */
-public class Leave extends RawInstruction {
-    public Leave(Size size) {
-        this.size = size;
-    }
-
-    @Override
-    public Instruction generate() {
-        Instruction i = new Instruction();
-        i.opcode = OpCode.LEAVE;
-        i.x0 = size.get();
-        return i;
-    }
-
-    protected Size size;
+public interface Size {
+    /**
+     * @return integer value
+     */
+    int get();
 }

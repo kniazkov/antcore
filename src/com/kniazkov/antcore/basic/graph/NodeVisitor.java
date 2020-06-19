@@ -64,6 +64,9 @@ public abstract class NodeVisitor {
     public void visit(Field obj) throws SyntaxError {
     }
 
+    public void visit(For obj) throws SyntaxError {
+    }
+
     public void visit(Function obj) throws SyntaxError {
     }
 

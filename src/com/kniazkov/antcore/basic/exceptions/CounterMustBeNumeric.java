@@ -14,27 +14,21 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.bytecodebuilder;
+package com.kniazkov.antcore.basic.exceptions;
 
-import com.kniazkov.antcore.basic.bytecode.Instruction;
-import com.kniazkov.antcore.basic.bytecode.OpCode;
-import com.kniazkov.antcore.basic.common.Size;
+import com.kniazkov.antcore.basic.common.Fragment;
+import com.kniazkov.antcore.basic.common.SyntaxError;
 
 /**
- * Leave function, i.e. restore stack and then old local pointer
+ * The exception "Counter variable must be numeric"
  */
-public class Leave extends RawInstruction {
-    public Leave(Size size) {
-        this.size = size;
+public class CounterMustBeNumeric extends SyntaxError {
+    public CounterMustBeNumeric(Fragment fragment) {
+        super(fragment);
     }
 
     @Override
-    public Instruction generate() {
-        Instruction i = new Instruction();
-        i.opcode = OpCode.LEAVE;
-        i.x0 = size.get();
-        return i;
+    protected String getErrorMessage() {
+        return "Counter variable must be numeric";
     }
-
-    protected Size size;
 }

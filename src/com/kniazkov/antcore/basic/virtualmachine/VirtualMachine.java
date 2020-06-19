@@ -104,6 +104,17 @@ public class VirtualMachine {
         return value;
     }
 
+    final void pushByte(byte value) {
+        SP = SP - 1;
+        memory.set(SP, value);
+    }
+
+    final byte popByte() {
+        byte value = memory.get(SP);
+        SP = SP + 1;
+        return value;
+    }
+
     final void pushShort(short value) {
         SP = SP - 2;
         memory.setShort(SP, value);
@@ -345,6 +356,39 @@ public class VirtualMachine {
             stub    // 10 -> STRUCT
     };
 
+    final Unit[] compareByte = {
+            () -> { // 0 -> EQUAL
+                byte left = popByte();
+                byte right = popByte();
+                pushBoolean(left == right);
+            },
+            () -> { // 1 -> DIFF
+                byte left = popByte();
+                byte right = popByte();
+                pushBoolean(left != right);
+            },
+            () -> { // 2 -> LESS
+                byte left = popByte();
+                byte right = popByte();
+                pushBoolean(left < right);
+            },
+            () -> { // 3 -> LESS_EQUAL
+                byte left = popByte();
+                byte right = popByte();
+                pushBoolean(left <= right);
+            },
+            () -> { // 4 -> GREATER
+                byte left = popByte();
+                byte right = popByte();
+                pushBoolean(left > right);
+            },
+            () -> { // 4 -> GREATER_EQUAL
+                byte left = popByte();
+                byte right = popByte();
+                pushBoolean(left >= right);
+            }
+    };
+
     final Unit[] compareInteger = {
             () -> { // 0 -> EQUAL
                 int left = popInteger();
@@ -382,10 +426,38 @@ public class VirtualMachine {
             stub,
             stub,   // 1 -> POINTER
             stub,   // 2 -> BOOLEAN
-            stub,   // 3 -> BYTE
+            () -> { // 3 -> BYTE
+                compareByte[read_p1()].exec();
+            },
             stub,   // 4 -> SHORT
             () -> { // 5 -> INTEGER
                 compareInteger[read_p1()].exec();
+            },
+            stub,   // 6 -> LONG
+            stub,   // 7 -> REAL
+            stub,   // 8 -> STRING
+            stub,   // 9 -> ARRAY
+            stub    // 10 -> STRUCT
+    };
+
+    final Unit[] sign = {
+            stub,
+            stub,   // 1 -> POINTER
+            stub,   // 2 -> BOOLEAN
+            () -> { // 3 -> SIGN
+                byte value = popByte();
+                if (value == 0)
+                    pushByte((byte) 0);
+                else
+                    pushByte((byte) (value > 0 ? 1 : -1));
+            },
+            stub,   // 4 -> SHORT
+            () -> { // 5 -> INTEGER
+                int value = popInteger();
+                if (value == 0)
+                    pushByte((byte) 0);
+                else
+                    pushByte((byte) (value > 0 ? 1 : -1));
             },
             stub,   // 6 -> LONG
             stub,   // 7 -> REAL
@@ -418,40 +490,50 @@ public class VirtualMachine {
                 SP = SP + read_x0();
                 IP = IP + 16;
             },
-            () -> { // 5 -> CALL
+            () -> { // 5 -> DUP
+                int size = read_x0();
+                SP = SP - size;
+                move(SP + size, SP, size);
+                IP = IP + 16;
+            },
+            () -> { // 6 -> CALL
                 pushInteger(IP + 16);
                 call[read_p0()].exec();
             },
-            () -> { // 6 -> RET
+            () -> { // 7 -> RET
                 if (SP == memory.size())
                     power = false;
                 else
                     IP = popInteger();
             },
-            () -> { // 7 -> ENTER
+            () -> { // 8 -> ENTER
                 pushInteger(LP);
                 LP = SP;
                 SP = SP - read_x0();
                 IP = IP + 16;
             },
-            () -> { // 8 -> LEAVE
+            () -> { // 9 -> LEAVE
                 SP = SP + read_x0();
                 LP = popInteger();
                 IP = IP + 16;
             },
-            () -> { // 9 -> ADD
+            () -> { // 10 -> ADD
                 add[read_p0()].exec();
                 IP = IP + 16;
             },
-            () -> { // 10 -> SUB
+            () -> { // 11 -> SUB
                 sub[read_p0()].exec();
                 IP = IP + 16;
             },
-            () -> { // 11 -> CMP
+            () -> { // 12 -> CMP
                 compare[read_p0()].exec();
                 IP = IP + 16;
             },
-            () -> { // 12 -> IF
+            () -> { // 13 -> SIGN
+                sign[read_p0()].exec();
+                IP = IP + 16;
+            },
+            () -> { // 14 -> IF
                 boolean value = popBoolean();
                 boolean condition = read_p0() > 0;
                 if (value == condition)
@@ -459,11 +541,9 @@ public class VirtualMachine {
                 else
                     IP = IP + 16;
             },
-            () -> { // 13 -> JUMP
+            () -> { // 15 -> JUMP
                 IP = read_x0();
             },
-            stub,
-            stub,
             stub,
             stub,
             stub,

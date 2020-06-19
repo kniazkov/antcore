@@ -18,23 +18,24 @@ package com.kniazkov.antcore.basic.bytecodebuilder;
 
 import com.kniazkov.antcore.basic.bytecode.Instruction;
 import com.kniazkov.antcore.basic.bytecode.OpCode;
-import com.kniazkov.antcore.basic.common.Size;
+import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 
 /**
- * Leave function, i.e. restore stack and then old local pointer
+ * Calculates sign of a number
  */
-public class Leave extends RawInstruction {
-    public Leave(Size size) {
-        this.size = size;
+public class Sign extends RawInstruction {
+    public Sign(byte selector) {
+        this.selector = selector;
+        assert (selector == TypeSelector.BYTE || selector == TypeSelector.INTEGER);
     }
 
     @Override
     public Instruction generate() {
         Instruction i = new Instruction();
-        i.opcode = OpCode.LEAVE;
-        i.x0 = size.get();
+        i.opcode = OpCode.SIGN;
+        i.p0 = selector;
         return i;
     }
 
-    protected Size size;
+    private byte selector;
 }

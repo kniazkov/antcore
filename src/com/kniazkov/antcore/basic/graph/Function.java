@@ -18,10 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecode.FunctionSelector;
 import com.kniazkov.antcore.basic.bytecodebuilder.*;
-import com.kniazkov.antcore.basic.common.DeferredOffset;
-import com.kniazkov.antcore.basic.common.Fragment;
-import com.kniazkov.antcore.basic.common.SyntaxError;
-import com.kniazkov.antcore.basic.common.ZeroOffset;
+import com.kniazkov.antcore.basic.common.*;
 import com.kniazkov.antcore.basic.exceptions.ReturnTypeCanNotBeAbstract;
 import com.kniazkov.antcore.basic.exceptions.ReturnTypeCanNotBeConstant;
 
@@ -46,8 +43,17 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
         this.body = body;
         body.setOwner(this);
         variableList = new ArrayList<>();
-        localDataSize = 0;
+        localDataSize = new LocalDataSize();
         addresses = new HashMap<>();
+    }
+
+    private static class LocalDataSize implements Size {
+        @Override
+        public int get() {
+            return value;
+        }
+
+        int value;
     }
 
     @Override
@@ -117,7 +123,7 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
             return getFirstArgumentOffset();
     }
 
-    int getLocalDataSize() {
+    Size getLocalDataSize() {
         return localDataSize;
     }
 
@@ -169,8 +175,8 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
     public Variable createVariable(String name, DataType type) throws SyntaxError {
         Variable variable = new Variable(name, null, type);
         int size = type.getSize();
-        localDataSize += size;
-        variable.setOffset(-localDataSize);
+        localDataSize.value += size;
+        variable.setOffset(-localDataSize.value);
         variableList.add(variable);
         return variable;
     }
@@ -183,8 +189,8 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
     public Variable createTemporaryVariable(DataType type) throws SyntaxError {
         Variable variable = new Variable("$", null, type);
         int size = type.getSize();
-        localDataSize += size;
-        variable.setOffset(-localDataSize);
+        localDataSize.value += size;
+        variable.setOffset(-localDataSize.value);
         variableList.add(variable);
         return variable;
     }
@@ -214,8 +220,8 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
         }
         for  (Variable variable : collector.result) {
             int size = variable.getType().getSize();
-            localDataSize += size ;
-            variable.setOffset(-localDataSize);
+            localDataSize.value += size ;
+            variable.setOffset(-localDataSize.value);
             variableList.add(variable);
         }
     }
@@ -236,6 +242,6 @@ public class Function extends BaseFunction implements DataTypeOwner, StatementLi
     private DataType returnType;
     private StatementList body;
     private List<Variable> variableList;
-    private int localDataSize;
+    private LocalDataSize localDataSize;
     private Map<Module, DeferredOffset> addresses;
 }

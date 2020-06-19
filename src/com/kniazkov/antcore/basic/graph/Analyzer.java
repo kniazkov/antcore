@@ -137,6 +137,10 @@ public class Analyzer {
                 obj.checkType();
             }
             @Override
+            public void visit(For obj) throws SyntaxError {
+                obj.checkTypes();
+            }
+            @Override
             public void visit(Function obj) throws SyntaxError {
                 obj.checkReturnType();
             }

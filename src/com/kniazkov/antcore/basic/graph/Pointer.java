@@ -73,6 +73,11 @@ public class Pointer extends DataType implements DataTypeOwner {
     }
 
     @Override
+    public boolean isNumeric() {
+        return false;
+    }
+
+    @Override
     void setOwner(DataTypeOwner owner) {
         this.owner = owner;
     }

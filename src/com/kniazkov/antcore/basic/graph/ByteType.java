@@ -16,99 +16,75 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
 /**
- * The constant modifier for data type
+ * The BYTE data type
  */
-public class ConstantModifier extends DataType implements DataTypeOwner {
-    public ConstantModifier(DataType type) {
-        this.type = type;
-        type.setOwner(this);
-    }
-
-    @Override
-    public void accept(NodeVisitor visitor) throws SyntaxError {
-        visitor.visit(this);
-    }
-
+public class ByteType extends BuiltInType {
     @Override
     protected Node[] getChildren() {
-        return new Node[]{ type };
+        return null;
     }
 
     @Override
     public String getName() {
-        return "CONST " + type.getName();
+        return "BYTE";
     }
 
     @Override
     public int getSize() throws SyntaxError {
-        return type.getSize();
+        return 1;
     }
 
     @Override
     public byte getSelector() {
-        return type.getSelector();
-    }
-
-    @Override
-    public boolean isBuiltIn() {
-        return true;
-    }
-
-    @Override
-    public boolean isAbstract() {
-        return type.isAbstract();
+        return TypeSelector.BYTE;
     }
 
     @Override
     public boolean isConstant() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isNumeric() {
-        return type.isNumeric();
-    }
-
-    @Override
-    void setOwner(DataTypeOwner owner) {
-        this.owner = owner;
+        return true;
     }
 
     @Override
     public boolean isBinaryAnalog(DataType otherType) throws SyntaxError {
-        if (otherType instanceof ConstantModifier) {
-            return type.isBinaryAnalog(((ConstantModifier) otherType).type);
-        }
-        return type.isBinaryAnalog(otherType);
+        return otherType == this;
     }
 
     @Override
     public boolean isInheritedFrom(DataType otherType) {
-        return type.isInheritedFrom(otherType);
+        return false;
     }
 
     @Override
     public Expression staticCast(Expression expression, DataType otherType) throws SyntaxError {
-        return type.staticCast(expression, otherType);
+        if (otherType == this)
+            return expression;
+        return null;
     }
 
     @Override
     public Expression dynamicCast(Expression expression, DataType otherType) throws SyntaxError {
-        return type.dynamicCast(expression, otherType);
+        if (otherType == this)
+            return expression;
+        return null;
     }
 
-    @Override
-    public Node getOwner() {
-        return (Node)owner;
+    private ByteType() {
     }
 
-    public DataType getNonConstantType() {
-        return type;
-    }
+    private static ByteType instance;
 
-    private DataTypeOwner owner;
-    private DataType type;
+    public static DataType getInstance() {
+        if (instance == null)
+            instance = new ByteType();
+        return instance;
+    }
 }

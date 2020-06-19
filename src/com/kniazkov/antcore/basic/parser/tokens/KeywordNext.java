@@ -14,27 +14,28 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.basic.bytecodebuilder;
 
-import com.kniazkov.antcore.basic.bytecode.Instruction;
-import com.kniazkov.antcore.basic.bytecode.OpCode;
-import com.kniazkov.antcore.basic.common.Size;
+package com.kniazkov.antcore.basic.parser.tokens;
+
+import com.kniazkov.antcore.basic.parser.Token;
 
 /**
- * Leave function, i.e. restore stack and then old local pointer
+    The "NEXT" keyword
  */
-public class Leave extends RawInstruction {
-    public Leave(Size size) {
-        this.size = size;
-    }
-
+public class KeywordNext extends Keyword {
     @Override
-    public Instruction generate() {
-        Instruction i = new Instruction();
-        i.opcode = OpCode.LEAVE;
-        i.x0 = size.get();
-        return i;
+    public String toString() {
+        return "NEXT";
     }
 
-    protected Size size;
+    private KeywordNext() {
+    }
+
+    private static KeywordNext instance;
+
+    public static Token getInstance() {
+        if (instance == null)
+            instance = new KeywordNext();
+        return instance;
+    }
 }
