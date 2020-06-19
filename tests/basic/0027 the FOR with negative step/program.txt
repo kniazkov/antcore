@@ -1,0 +1,10 @@
+IMPORT stdlib
+
+MODULE SERVER
+	FUNCTION MAIN
+		VAR i AS INTEGER
+		FOR i = 10 TO 0 STEP 0 - 1
+			println("" + i)
+		NEXT i
+	END FUNCTION
+END MODULE
