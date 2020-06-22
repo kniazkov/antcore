@@ -26,7 +26,7 @@ import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 public class Sign extends RawInstruction {
     public Sign(byte selector) {
         this.selector = selector;
-        assert (selector == TypeSelector.BYTE || selector == TypeSelector.INTEGER);
+        assert (selector >= TypeSelector.BYTE && selector <= TypeSelector.REAL );
     }
 
     @Override

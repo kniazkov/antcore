@@ -315,8 +315,12 @@ public class VirtualMachine {
             stub,
             stub,   // 1 -> POINTER
             stub,   // 2 -> BOOLEAN
-            stub,   // 3 -> BYTE
-            stub,   // 4 -> SHORT
+            () -> { // 3 -> BYTE
+                pushByte((byte) (popByte() + popByte()));
+            },
+            () -> { // 4 -> SHORT
+                pushShort((short) (popShort() + popShort()));
+            },
             () -> { // 5 -> INTEGER
                 pushInteger(popInteger() + popInteger());
             },
@@ -342,8 +346,16 @@ public class VirtualMachine {
             stub,
             stub,   // 1 -> POINTER
             stub,   // 2 -> BOOLEAN
-            stub,   // 3 -> BYTE
-            stub,   // 4 -> SHORT
+            () -> { // 3 -> BYTE
+                byte left = popByte();
+                byte right = popByte();
+                pushByte((byte) (left - right));
+            },
+            () -> { // 4 -> SHORT
+                short left = popShort();
+                short right = popShort();
+                pushShort((short) (left - right));
+            },
             () -> { // 5 -> INTEGER
                 int left = popInteger();
                 int right = popInteger();
@@ -444,14 +456,20 @@ public class VirtualMachine {
             stub,
             stub,   // 1 -> POINTER
             stub,   // 2 -> BOOLEAN
-            () -> { // 3 -> SIGN
+            () -> { // 3 -> BYTE
                 byte value = popByte();
                 if (value == 0)
                     pushByte((byte) 0);
                 else
                     pushByte((byte) (value > 0 ? 1 : -1));
             },
-            stub,   // 4 -> SHORT
+            () -> { // 4 -> SHORT
+                short value = popShort();
+                if (value == 0)
+                    pushByte((byte) 0);
+                else
+                    pushByte((byte) (value > 0 ? 1 : -1));
+            },
             () -> { // 5 -> INTEGER
                 int value = popInteger();
                 if (value == 0)

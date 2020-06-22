@@ -26,7 +26,7 @@ import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 public class Add extends RawInstruction {
     public Add(byte selector, int leftSize, int rightSize, int totalSize) {
         this.selector = selector;
-        assert (selector == TypeSelector.INTEGER || selector == TypeSelector.STRING);
+        assert (selector >= TypeSelector.BYTE && selector <= TypeSelector.STRING );
         this.leftSize = leftSize;
         this.rightSize = rightSize;
         this.totalSize = totalSize;

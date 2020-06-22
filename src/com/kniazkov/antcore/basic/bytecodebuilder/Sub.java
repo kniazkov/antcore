@@ -26,7 +26,7 @@ import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 public class Sub extends RawInstruction {
     public Sub(byte selector, int leftSize, int rightSize, int totalSize) {
         this.selector = selector;
-        assert (selector == TypeSelector.INTEGER);
+        assert (selector >= TypeSelector.BYTE && selector <= TypeSelector.REAL );
         this.leftSize = leftSize;
         this.rightSize = rightSize;
         this.totalSize = totalSize;
