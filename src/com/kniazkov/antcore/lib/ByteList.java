@@ -80,6 +80,17 @@ public abstract class ByteList {
                 ((get(index + 2) & 0xFF) << 16) | ((get(index + 3) & 0xFF) << 24);
     }
 
+    /**
+     * @param index the index
+     * @return long (8 bytes) by index
+     */
+    public long getLong(int index) throws IndexOutOfBoundsException {
+        return ((long)get(index) & 0xFF) | ((long)(get(index + 1) & 0xFF) << 8) |
+                ((long)(get(index + 2) & 0xFF) << 16) | ((long)(get(index + 3) & 0xFF) << 24) |
+                ((long)(get(index + 4) & 0xFF) << 32) | ((long)(get(index + 5) & 0xFF) << 40) |
+                ((long)(get(index + 6) & 0xFF) << 48) | ((long)(get(index + 6) & 0xFF) << 56);
+    }
+
     private static class ArrayWrapper extends ByteList {
         public ArrayWrapper(byte[] array) {
             this.array = array;

@@ -90,6 +90,25 @@ public class ByteBuffer extends ByteList {
         data[index]   = (byte)(value >> 24);
     }
 
+    @Override
+    public long getLong(int index) throws IndexOutOfBoundsException {
+        return ((long)data[index] & 0xFF) | ((long)(data[index + 1] & 0xFF) << 8) |
+                ((long)(data[index + 2] & 0xFF) << 16) | ((long)(data[index + 3] & 0xFF) << 24) |
+                ((long)(data[index + 4] & 0xFF) << 32) | ((long)(data[index + 5] & 0xFF) << 40) |
+                ((long)(data[index + 6] & 0xFF) << 48) | ((long)(data[index + 7] & 0xFF) << 56) ;
+    }
+
+    public void setLong(int index, long value) throws IndexOutOfBoundsException {
+        data[index++] = (byte)(value);
+        data[index++] = (byte)(value >> 8);
+        data[index++] = (byte)(value >> 16);
+        data[index++] = (byte)(value >> 24);
+        data[index++] = (byte)(value >> 32);
+        data[index++] = (byte)(value >> 40);
+        data[index++] = (byte)(value >> 48);
+        data[index]   = (byte)(value >> 56);
+    }
+
     public void setByteList(int index, ByteList list) {
         list.copy(0, data, index, list.size());
     }

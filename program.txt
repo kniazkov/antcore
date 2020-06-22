@@ -2,9 +2,8 @@ IMPORT stdlib
 
 MODULE SERVER
 	FUNCTION MAIN
-		VAR ch AS SHORT
-		FOR ch = 33 TO 126
-			print(chr(ch))
-		NEXT ch
+		VAR r AS REAL
+		r = 1
+		println("" + r)
 	END FUNCTION
 END MODULE

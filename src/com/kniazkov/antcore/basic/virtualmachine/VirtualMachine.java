@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.virtualmachine;
 
 import com.kniazkov.antcore.lib.ByteBuffer;
 import com.kniazkov.antcore.lib.ByteList;
+import com.kniazkov.antcore.lib.FixedPoint;
 
 import java.util.Map;
 
@@ -29,6 +30,9 @@ public class VirtualMachine {
         memory = new ByteBuffer(memorySize);
         memory.setByteList(0, code);
         this.functions = functions;
+
+        real0 = new FixedPoint();
+        real1 = new FixedPoint();
     }
 
     /**
@@ -60,6 +64,9 @@ public class VirtualMachine {
     int IP;             // instruction pointer
     int SP;             // stack pointer
     int LP;             // local pointer
+
+    FixedPoint real0;
+    FixedPoint real1;
 
     final byte readOpcode() {
         return memory.get(IP);
@@ -135,6 +142,12 @@ public class VirtualMachine {
         int value = memory.getInt(SP);
         SP = SP + 4;
         return value;
+    }
+
+    final void popReal(FixedPoint dst) {
+        long value = memory.getLong(SP);
+        SP = SP + 8;
+        dst.setFixedAsLong(value);
     }
 
     interface Unit {
@@ -247,7 +260,12 @@ public class VirtualMachine {
                 castAnyToString(String.valueOf(memory.getInt(SP)), 4);
             },
             stub,   // 6 -> LONG
-            stub,   // 7 -> REAL
+            () -> { // 7 -> REAL
+                assert(read_x0() == 8);
+                long value = memory.getLong(SP);
+                real0.setFixedAsLong(value);
+                castAnyToString(real0.toString(), 8);
+            },
             () -> { // 8 -> STRING
                 int currSize = read_x0();
                 int newSize = read_x1();

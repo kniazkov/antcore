@@ -55,29 +55,22 @@ public class Addition extends BinaryOperation {
                 return;
             }
 
-            if (rightType instanceof BooleanType) {
-                Casting cast = new Casting(true, right, new StringType(booleanToStrLength));
-                cast.setOwner(this);
-                right = cast;
-                int length = leftTypeString.getStringLength() + booleanToStrLength;
-                setType(new StringType(length));
-                return;
-            }
+            int rightSize = 0;
 
-            if (rightType instanceof ShortType) {
-                Casting cast = new Casting(true, right, new StringType(shortToStrLength));
-                cast.setOwner(this);
-                right = cast;
-                int length = leftTypeString.getStringLength() + shortToStrLength;
-                setType(new StringType(length));
-                return;
-            }
+            if (rightType instanceof BooleanType)
+                rightSize = booleanToStrLength;
+            else if (rightType instanceof  ShortType)
+                rightSize = shortToStrLength;
+            else if (rightType instanceof IntegerType)
+                rightSize = integerToStrLength;
+            else if (rightType instanceof RealType)
+                rightSize = realToStrLength;
 
-            if (rightType instanceof IntegerType) {
-                Casting cast = new Casting(true, right, new StringType(integerToStrLength));
+            if (rightSize != 0) {
+                Casting cast = new Casting(true, right, new StringType(rightSize));
                 cast.setOwner(this);
                 right = cast;
-                int length = leftTypeString.getStringLength() + integerToStrLength;
+                int length = leftTypeString.getStringLength() + rightSize;
                 setType(new StringType(length));
                 return;
             }
@@ -131,4 +124,5 @@ public class Addition extends BinaryOperation {
     protected final static int booleanToStrLength = 5; // FALSE
     protected final static int shortToStrLength = 6; // -32768
     protected final static int integerToStrLength = 11; // -2147483648
+    protected final static int realToStrLength = 21; // -922337203685477.9999
 }
