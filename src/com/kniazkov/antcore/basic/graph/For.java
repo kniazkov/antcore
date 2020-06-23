@@ -49,6 +49,14 @@ public class For extends Statement implements  ExpressionOwner, StatementListOwn
         visitor.visit(this);
     }
 
+    public Expression getCounter() {
+        return variable;
+    }
+
+    public Expression getStart() {
+        return start;
+    }
+
     @Override
     public void compile(CompilationUnit unit) throws SyntaxError {
         LeftExpression assignableExpression = variable.toLeftExpression();

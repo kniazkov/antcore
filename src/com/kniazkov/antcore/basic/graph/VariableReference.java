@@ -86,6 +86,17 @@ public class VariableReference extends Expression implements ExpressionOwner {
                     return;
                 }
             }
+            if (owner instanceof For) {
+                For forStatement = (For) owner;
+                if (forStatement.getCounter() == this) {
+                    StatementList forOwner = (StatementList) forStatement.getOwner();
+                    Function function = forOwner.getFunction();
+                    Variable newVariable = function.createVariable(name, forStatement.getStart().getType().getPureType());
+                    forOwner.addVariable(newVariable);
+                    expression = newVariable;
+                    return;
+                }
+            }
             throw new CannotResolveSymbol(getFragment(), name);
         }
     }
