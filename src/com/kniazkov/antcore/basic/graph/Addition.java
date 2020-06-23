@@ -46,6 +46,11 @@ public class Addition extends BinaryOperation {
             return;
         }
 
+        if (leftType instanceof RealType && rightType instanceof RealType) {
+            setType(leftType);
+            return;
+        }
+
         if (leftType instanceof StringType) {
             StringType leftTypeString = (StringType) leftType;
             if (rightType instanceof StringType) {
@@ -109,6 +114,11 @@ public class Addition extends BinaryOperation {
         left.genLoad(unit);
         if (leftType instanceof IntegerType && rightType instanceof IntegerType) {
             unit.addInstruction(new Add(TypeSelector.INTEGER,4, 4, 4));
+            return;
+        }
+
+        if (leftType instanceof RealType && rightType instanceof RealType) {
+            unit.addInstruction(new Add(TypeSelector.REAL,8, 8, 8));
             return;
         }
 

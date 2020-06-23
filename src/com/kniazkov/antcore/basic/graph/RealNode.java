@@ -36,7 +36,7 @@ public class RealNode extends Expression {
 
     @Override
     public DataType getType() {
-        return IntegerType.getInstance();
+        return RealType.getInstance();
     }
 
     @Override

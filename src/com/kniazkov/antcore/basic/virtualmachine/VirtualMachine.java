@@ -144,6 +144,12 @@ public class VirtualMachine {
         return value;
     }
 
+    final void pushReal(FixedPoint value) {
+        long longValue = value.getFixedAsLong();
+        SP = SP - 8;
+        memory.setLong(SP, longValue);
+    }
+
     final void popReal(FixedPoint dst) {
         long value = memory.getLong(SP);
         SP = SP + 8;
@@ -343,7 +349,12 @@ public class VirtualMachine {
                 pushInteger(popInteger() + popInteger());
             },
             stub,   // 6 -> LONG
-            stub,   // 7 -> REAL
+            () -> { // 7 -> REAL
+                popReal(real0);
+                popReal(real1);
+                FixedPoint.add(real0, real0, real1);
+                pushReal(real0);
+            },
             () -> { // 8 -> STRING
                 StringData str1 = StringData.read(memory, SP);
                 SP = SP + read_x0();
