@@ -2,8 +2,12 @@ IMPORT stdlib
 
 MODULE SERVER
 	FUNCTION MAIN
-		FOR a = 0.0 TO 10 STEP 0.1
+		FOR a = 0.0 TO 10 STEP getStep()
 			println("" + a)
 		NEXT
+	END FUNCTION
+	
+	FUNCTION getStep AS REAL
+		RETURN 0.1
 	END FUNCTION
 END MODULE

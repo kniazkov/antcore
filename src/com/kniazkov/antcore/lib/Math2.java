@@ -45,4 +45,44 @@ public class Math2 {
     public static long powerOf10(int n) {
         return powersOf10[n];
     }
+
+    /**
+     * Calculates sign of numeric object
+     * @param obj the object
+     * @return 0 for zeros, -1 for negative numbers, 1 for positive numbers, null for not numeric objects
+     */
+    public static Byte sign(Object obj) {
+        if (obj instanceof Byte) {
+            byte value = (Byte) obj;
+            if (value == 0)
+                return 0;
+            else
+                return (byte) (value > 0 ? 1 : -1);
+        }
+        if (obj instanceof Short) {
+            short value = (Short) obj;
+            if (value == 0)
+                return 0;
+            else
+                return (byte) (value > 0 ? 1 : -1);
+        }
+        if (obj instanceof Integer) {
+            int value = (Integer) obj;
+            if (value == 0)
+                return 0;
+            else
+                return (byte) (value > 0 ? 1 : -1);
+        }
+        if (obj instanceof Long) {
+            long value = (Long) obj;
+            if (value == 0)
+                return 0;
+            else
+                return (byte) (value > 0 ? 1 : -1);
+        }
+        if (obj instanceof FixedPoint) {
+            return ((FixedPoint) obj).sign();
+        }
+        return null;
+    }
 }
