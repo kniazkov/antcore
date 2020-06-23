@@ -391,7 +391,12 @@ public class VirtualMachine {
                 pushInteger(left - right);
             },
             stub,   // 6 -> LONG
-            stub,   // 7 -> REAL
+            () -> { // 7 -> REAL
+                popReal(real0);
+                popReal(real1);
+                FixedPoint.sub(real0, real0, real1);
+                pushReal(real0);
+            },
             stub,   // 8 -> STRING
             stub,   // 9 -> ARRAY
             stub    // 10 -> STRUCT
@@ -507,7 +512,10 @@ public class VirtualMachine {
                     pushByte((byte) (value > 0 ? 1 : -1));
             },
             stub,   // 6 -> LONG
-            stub,   // 7 -> REAL
+            () -> { // 7 -> REAL
+                popReal(real0);
+                pushByte(real0.sign());
+            },
             stub,   // 8 -> STRING
             stub,   // 9 -> ARRAY
             stub    // 10 -> STRUCT

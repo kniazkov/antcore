@@ -103,6 +103,12 @@ public final class FixedPoint {
         return toString(precision, false);
     }
 
+    public byte sign() {
+        if (X == 0)
+            return 0;
+        return (byte) (X > 0 ? 1 : -1);
+    }
+
     public static void add(FixedPoint dst, FixedPoint op1, FixedPoint op2) {
         dst.X = op1.X + op2.X;
     }

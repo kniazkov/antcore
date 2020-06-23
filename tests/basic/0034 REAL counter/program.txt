@@ -2,9 +2,9 @@ IMPORT stdlib
 
 MODULE SERVER
 	FUNCTION MAIN
-		a = 0.0
-		FOR a = 0 TO 10 STEP 0.1
-			println("" + a)
-		NEXT
+		r = 0.0
+		FOR r = 0 TO 10 STEP 0.1
+			println("" + r)
+		NEXT r
 	END FUNCTION
 END MODULE
