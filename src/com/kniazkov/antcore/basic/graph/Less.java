@@ -22,16 +22,16 @@ import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
 /**
- * The node represents comparison operation, i.e. operation '='
+ * The node represents 'less' operation, i.e. operation '<'
  */
-public class Equals extends BinaryOperation {
-    public Equals(Expression left, Expression right) {
+public class Less extends BinaryOperation {
+    public Less(Expression left, Expression right) {
         super(left, right);
     }
 
     @Override
     protected String getOperator() {
-        return "=";
+        return "<";
     }
 
     @Override
@@ -41,15 +41,7 @@ public class Equals extends BinaryOperation {
 
     @Override
     public Object calculate() {
-        Object leftValue = left.calculate();
-        if (leftValue == null)
-            return null;
-
-        Object rightValue = right.calculate();
-        if (rightValue == null)
-            return null;
-
-        return leftValue.equals(rightValue);
+       return false;
     }
 
     @Override
@@ -60,7 +52,7 @@ public class Equals extends BinaryOperation {
         right.genLoad(unit);
         left.genLoad(unit);
 
-        unit.addInstruction(new Compare(leftType.getSelector(), ComparatorSelector.EQUAL,
+        unit.addInstruction(new Compare(leftType.getSelector(), ComparatorSelector.LESS,
                 leftType.getSize(), rightType.getSize()));
     }
 }

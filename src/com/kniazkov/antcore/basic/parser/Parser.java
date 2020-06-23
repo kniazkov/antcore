@@ -308,6 +308,8 @@ public class Parser {
                     return OperatorMinus.getInstance();
                 case "=":
                     return OperatorAssignEquals.getInstance();
+                case "<":
+                    return OperatorLess.getInstance();
             }
             throw new UnknownOperator(fragment, operator);
         }
@@ -1006,8 +1008,9 @@ public class Parser {
             throw new ExpectedAnExpression(line);
 
         sequence = parseIdentifiers(line, sequence);
-        sequence = parseBinaryOperators(line, sequence, new Class<?>[]{OperatorPlus.class, OperatorMinus.class});
-        sequence = parseBinaryOperators(line, sequence, new Class<?>[]{OperatorAssignEquals.class});
+        sequence = parseBinaryOperators(line, sequence, opPlusMinus);
+        sequence = parseBinaryOperators(line, sequence, opLessGreater);
+        sequence = parseBinaryOperators(line, sequence, opEquals);
 
         if (sequence.size() != 1)
             throw new UnrecognizedSequence(line);
@@ -1016,6 +1019,11 @@ public class Parser {
             throw new ExpectedAnExpression(line);
         return (TokenExpression) result;
     }
+
+    private static Class<?>[] opPlusMinus = new Class<?>[]{OperatorPlus.class, OperatorMinus.class};
+    private static Class<?>[] opLessGreater = new Class<?>[]{OperatorLess.class};
+    private static Class<?>[] opEquals = new Class<?>[]{OperatorAssignEquals.class};
+
 
     /**
      * Parse variables, accessing fields, accessing array elements, calling functions and methods
