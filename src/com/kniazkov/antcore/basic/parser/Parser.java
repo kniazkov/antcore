@@ -226,6 +226,14 @@ public class Parser {
                     return KeywordStep.getInstance();
                 case "NEXT":
                     return KeywordNext.getInstance();
+                case "DO":
+                    return KeywordDo.getInstance();
+                case "WHILE":
+                    return KeywordWhile.getInstance();
+                case "UNTIL":
+                    return KeywordUntil.getInstance();
+                case "LOOP":
+                    return KeywordLoop.getInstance();
             }
             return new Identifier(name);
         }
@@ -1166,7 +1174,8 @@ public class Parser {
     enum StatementTerminator {
         NOTHING (""),
         END_IF ("END IF"),
-        NEXT ("NEXT");
+        NEXT ("NEXT"),
+        LOOP ("LOOP");
 
         StatementTerminator(String value) {
             this.value = value;
@@ -1219,6 +1228,10 @@ public class Parser {
                 RawStatement statement = parseForStatement(line, iterator);
                 result.add(statement);
             }
+            else if (firstToken instanceof KeywordDo) {
+                RawStatement statement = parseDoLoop(line, iterator);
+                result.add(statement);
+            }
             else if (firstToken instanceof KeywordElse) {
                 if (terminator == StatementTerminator.END_IF)
                     return line;
@@ -1231,6 +1244,11 @@ public class Parser {
             }
             else if (firstToken instanceof KeywordNext) {
                 if (terminator == StatementTerminator.NEXT)
+                    return line;
+                throw new UnexpectedSequence(line);
+            }
+            else if (firstToken instanceof KeywordLoop) {
+                if (terminator == StatementTerminator.LOOP)
                     return line;
                 throw new UnexpectedSequence(line);
             }
@@ -1443,5 +1461,56 @@ public class Parser {
         }
 
         return new RawFor(declaration.getFragment(), variable, start, end, step, statements);
+    }
+
+    /**
+     * Parse a "DO..LOOP" statement
+     * @param declaration the line that contains statement declaration
+     * @param iterator the iterator by lines
+     * @return a parsed statement
+     */
+    private RawStatement parseDoLoop(Line declaration, Iterator<Line> iterator) throws SyntaxError {
+        boolean postCondition = false;
+        boolean negativeCondition = false;
+        TokenExpression condition = null;
+
+        RollbackIterator<Token> tokens = new RollbackIterator<>(declaration.getTokens().iterator());
+        Token token = tokens.next();
+        assert(token instanceof KeywordDo);
+
+        if (!tokens.hasNext()) {
+            postCondition = true;
+        }
+        else {
+            Token whileUntilKeyword = tokens.next();
+            if (whileUntilKeyword instanceof  KeywordUntil)
+                negativeCondition = true;
+            else if (!(whileUntilKeyword instanceof KeywordWhile))
+                throw new ExpectedWhileUntilKeyword(declaration);
+            condition = parseExpression(declaration, tokens, false);
+        }
+
+        List<RawStatement> statements = new ArrayList<>();
+        Line terminator = parseStatementList(declaration, iterator, statements, StatementTerminator.LOOP);
+        assert(terminator != null);
+        tokens = new RollbackIterator<>(terminator.getTokens().iterator());
+        token = tokens.next();
+        assert(token instanceof KeywordLoop);
+        if (!tokens.hasNext()) {
+            if (postCondition)
+                throw new LoopWithoutCondition(declaration);
+        }
+        else {
+            if (condition != null)
+                throw new LoopAlreadyHasCondition(terminator);
+            Token whileUntilKeyword = tokens.next();
+            if (whileUntilKeyword instanceof  KeywordUntil)
+                negativeCondition = true;
+            else if (!(whileUntilKeyword instanceof KeywordWhile))
+                throw new ExpectedWhileUntilKeyword(terminator);
+            condition = parseExpression(terminator, tokens, false);
+        }
+
+        return new RawDoLoop(declaration.getFragment(), condition, statements, postCondition, negativeCondition);
     }
 }

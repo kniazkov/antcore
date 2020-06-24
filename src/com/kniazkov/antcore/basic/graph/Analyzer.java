@@ -74,6 +74,7 @@ public class Analyzer {
             public void visit(FunctionCall obj) throws SyntaxError {
                 obj.bindName();
             }
+
             @Override
             public void visit(VariableReference obj) throws SyntaxError {
                 obj.bindName();
@@ -116,46 +117,62 @@ public class Analyzer {
             public void visit(ArgumentList obj) throws SyntaxError {
                 obj.checkTypes();
             }
+
             @Override
             public void visit(Assignment obj) throws SyntaxError {
                 obj.checkType();
             }
+
             @Override
             public void visit(Constant obj) throws SyntaxError {
                 obj.checkType();
             }
+
             @Override
             public void visit(BinaryOperation obj) throws SyntaxError {
                 obj.defineType();
             }
+
             @Override
             public void visit(DataSet obj) throws SyntaxError {
                 obj.checkTypes();
             }
+
+            @Override
+            public void visit(DoLoop obj) throws SyntaxError {
+                obj.checkType();
+            }
+
             @Override
             public void visit(ElseIf obj) throws SyntaxError {
                 obj.checkType();
             }
+
             @Override
             public void visit(For obj) throws SyntaxError {
                 obj.checkTypes();
             }
+
             @Override
             public void visit(Function obj) throws SyntaxError {
                 obj.checkReturnType();
             }
+
             @Override
             public void visit(FunctionCall obj) throws SyntaxError {
                 obj.checkArguments();
             }
+
             @Override
             public void visit(If obj) throws SyntaxError {
                 obj.checkType();
             }
+
             @Override
             public void visit(NativeFunction obj) throws SyntaxError {
                 obj.checkTypes();
             }
+
             @Override
             public void visit(Variable obj) throws SyntaxError {
                 obj.checkType();
@@ -177,14 +194,17 @@ public class Analyzer {
             public void visit(ArgumentList obj) throws SyntaxError {
                 obj.calculateSizeAndOffsets();
             }
+
             @Override
             public void visit(DataSet obj) throws SyntaxError {
                 obj.calculateOffsets();
             }
+
             @Override
             public void visit(Function obj) throws SyntaxError {
                 obj.collectVariablesAndCalculateOffsets();
             }
+
             @Override
             public void visit(Module obj) throws SyntaxError {
                 obj.calculateOffsets();
@@ -193,5 +213,4 @@ public class Analyzer {
 
         visitAll(root, new Calculator());
     }
-
 }

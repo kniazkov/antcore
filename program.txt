@@ -2,9 +2,10 @@ IMPORT stdlib
 
 MODULE SERVER
 	FUNCTION MAIN
-		a = 2
-		b = 3
-		x = a < b
-		print("" + x)
+		i = 0
+		DO WHILE i < 10
+			println("" + i)
+			i = i + 1
+		LOOP
 	END FUNCTION
 END MODULE
