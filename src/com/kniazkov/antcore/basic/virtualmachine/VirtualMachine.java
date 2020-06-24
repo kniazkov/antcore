@@ -265,7 +265,10 @@ public class VirtualMachine {
                 assert(read_x0() == 4);
                 castAnyToString(String.valueOf(memory.getInt(SP)), 4);
             },
-            stub,   // 6 -> LONG
+            () -> { // 6 -> LONG
+                assert(read_x0() == 8);
+                castAnyToString(String.valueOf(memory.getLong(SP)), 8);
+            },
             () -> { // 7 -> REAL
                 assert(read_x0() == 8);
                 long value = memory.getLong(SP);

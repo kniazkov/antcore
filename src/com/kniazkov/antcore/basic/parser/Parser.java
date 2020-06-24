@@ -249,9 +249,12 @@ public class Parser {
                     c = src.next();
                 } while (isDigit(c));
                 number = buff.toString();
-                int intValue = Integer.parseInt(number);
-                if (c != '.')
-                    return new TokenExpression(new IntegerNode(intValue));
+                long intValue = Long.parseLong(number);
+                if (c != '.') {
+                    if (intValue < Integer.MIN_VALUE || intValue > Integer.MAX_VALUE)
+                        return new TokenExpression(new LongNode(intValue));
+                    return new TokenExpression(new IntegerNode((int)intValue));
+                }
                 tokStr.append(c);
                 c = src.next();
                 if (isDigit(c)) {

@@ -70,8 +70,10 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
         }
 
         types.put("BOOLEAN", BooleanType.getInstance());
+        types.put("BYTE", ByteType.getInstance());
         types.put("SHORT", ShortType.getInstance());
         types.put("INTEGER", IntegerType.getInstance());
+        types.put("LONG", LongType.getInstance());
         types.put("REAL", RealType.getInstance());
 
         this.types = Collections.unmodifiableMap(types);

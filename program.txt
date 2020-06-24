@@ -2,10 +2,8 @@ IMPORT stdlib
 
 MODULE SERVER
 	FUNCTION MAIN
-		i = 0
-		DO UNTIL i = 10
-			println("" + i)
-			i = i + 1
-		LOOP
+		VAR l AS LONG
+		l = 13000000000
+		print("" + l)
 	END FUNCTION
 END MODULE

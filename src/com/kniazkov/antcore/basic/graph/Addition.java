@@ -68,6 +68,8 @@ public class Addition extends BinaryOperation {
                 rightSize = shortToStrLength;
             else if (rightType instanceof IntegerType)
                 rightSize = integerToStrLength;
+            else if (rightType instanceof LongType)
+                rightSize = longToStrLength;
             else if (rightType instanceof RealType)
                 rightSize = realToStrLength;
 
@@ -134,5 +136,6 @@ public class Addition extends BinaryOperation {
     protected final static int booleanToStrLength = 5; // FALSE
     protected final static int shortToStrLength = 6; // -32768
     protected final static int integerToStrLength = 11; // -2147483648
+    protected final static int longToStrLength = 20; // -9223372036854775808
     protected final static int realToStrLength = 21; // -922337203685477.9999
 }
