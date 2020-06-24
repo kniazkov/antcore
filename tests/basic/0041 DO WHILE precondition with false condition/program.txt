@@ -2,10 +2,9 @@ IMPORT stdlib
 
 MODULE SERVER
 	FUNCTION MAIN
-		i = 0
-		DO UNTIL i = 10
-			println("" + i)
-			i = i + 1
+		DO WHILE FALSE
+			println("loop body")
 		LOOP
+		println("done")
 	END FUNCTION
 END MODULE

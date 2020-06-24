@@ -3,7 +3,7 @@ IMPORT stdlib
 MODULE SERVER
 	FUNCTION MAIN
 		i = 0
-		DO UNTIL i = 10
+		DO WHILE i < 10
 			println("" + i)
 			i = i + 1
 		LOOP

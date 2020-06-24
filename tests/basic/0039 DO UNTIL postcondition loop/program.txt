@@ -3,9 +3,9 @@ IMPORT stdlib
 MODULE SERVER
 	FUNCTION MAIN
 		i = 0
-		DO UNTIL i = 10
+		DO
 			println("" + i)
 			i = i + 1
-		LOOP
+		LOOP UNTIL i = 10
 	END FUNCTION
 END MODULE
