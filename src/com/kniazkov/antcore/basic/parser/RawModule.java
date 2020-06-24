@@ -20,6 +20,7 @@ import com.kniazkov.antcore.basic.common.DataPrefix;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.graph.*;
+import com.kniazkov.antcore.basic.graph.Module;
 import com.kniazkov.antcore.basic.parser.exceptions.DuplicateDataSet;
 import com.kniazkov.antcore.basic.parser.exceptions.FunctionAlreadyExists;
 import com.kniazkov.antcore.basic.parser.exceptions.UnexpectedDataSet;

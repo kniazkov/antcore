@@ -144,6 +144,17 @@ public class VirtualMachine {
         return value;
     }
 
+    final void pushLong(long value) {
+        SP = SP - 8;
+        memory.setLong(SP, value);
+    }
+
+    final long popLong() {
+        long value = memory.getLong(SP);
+        SP = SP + 8;
+        return value;
+    }
+    
     final void pushReal(FixedPoint value) {
         long longValue = value.getFixedAsLong();
         SP = SP - 8;
@@ -351,7 +362,9 @@ public class VirtualMachine {
             () -> { // 5 -> INTEGER
                 pushInteger(popInteger() + popInteger());
             },
-            stub,   // 6 -> LONG
+            () -> { // 6 -> LONG
+                pushLong(popLong() + popLong());
+            },
             () -> { // 7 -> REAL
                 popReal(real0);
                 popReal(real1);
@@ -393,7 +406,11 @@ public class VirtualMachine {
                 int right = popInteger();
                 pushInteger(left - right);
             },
-            stub,   // 6 -> LONG
+            () -> { // 6 -> LONG
+                long left = popLong();
+                long right = popLong();
+                pushLong(left - right);
+            },
             () -> { // 7 -> REAL
                 popReal(real0);
                 popReal(real1);
@@ -514,7 +531,13 @@ public class VirtualMachine {
                 else
                     pushByte((byte) (value > 0 ? 1 : -1));
             },
-            stub,   // 6 -> LONG
+            () -> { // 6 -> LONG
+                long value = popLong();
+                if (value == 0)
+                    pushByte((byte) 0);
+                else
+                    pushByte((byte) (value > 0 ? 1 : -1));
+            },
             () -> { // 7 -> REAL
                 popReal(real0);
                 pushByte(real0.sign());
