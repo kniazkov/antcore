@@ -2,9 +2,9 @@ IMPORT stdlib
 
 MODULE SERVER
 	FUNCTION MAIN
-		VAR l AS LONG
-		FOR l = 13000000000 TO 13000000099
-			println("" + l)
-		NEXT
+		a = 2
+		b = 5
+		x = a * b
+		println("" + x)
 	END FUNCTION
 END MODULE

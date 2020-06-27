@@ -32,9 +32,10 @@ public final class OpCode {
     public static final byte LEAVE = 9;
     public static final byte ADD = 10;
     public static final byte SUB = 11;
-    public static final byte CMP = 12;
-    public static final byte SIGN = 13;
-    public static final byte IF = 14;
-    public static final byte JUMP = 15;
+    public static final byte MUL = 12;
+    public static final byte CMP = 13;
+    public static final byte SIGN = 14;
+    public static final byte IF = 15;
+    public static final byte JUMP = 16;
     public static final byte END = 127;
 }

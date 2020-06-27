@@ -17,23 +17,22 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecode.TypeSelector;
-import com.kniazkov.antcore.basic.bytecodebuilder.Add;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
-import com.kniazkov.antcore.basic.bytecodebuilder.Sub;
+import com.kniazkov.antcore.basic.bytecodebuilder.Mul;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.exceptions.OperatorNotApplicable;
 
 /**
- * The node represents subtraction, i.e. operation '-'
+ * The node represents multiplication, i.e. operation '*'
  */
-public class Subtraction extends BinaryOperation {
-    public Subtraction(Expression left, Expression right) {
+public class Multiplication extends BinaryOperation {
+    public Multiplication(Expression left, Expression right) {
         super(left, right);
     }
 
     @Override
     protected String getOperator() {
-        return "-";
+        return "*";
     }
 
     @Override
@@ -61,7 +60,7 @@ public class Subtraction extends BinaryOperation {
 
         if (leftValue instanceof Integer) {
             if (rightValue instanceof Integer) {
-                return (Integer)leftValue - (Integer)rightValue;
+                return (Integer)leftValue * (Integer)rightValue;
             }
         }
         return null;
@@ -75,7 +74,7 @@ public class Subtraction extends BinaryOperation {
         right.genLoad(unit);
         left.genLoad(unit);
         if (leftType instanceof IntegerType && rightType instanceof IntegerType) {
-            unit.addInstruction(new Sub(TypeSelector.INTEGER,4, 4, 4));
+            unit.addInstruction(new Mul(TypeSelector.INTEGER,4, 4, 4));
             return;
         }
 

@@ -318,6 +318,8 @@ public class Parser {
                     return OperatorPlus.getInstance();
                 case "-":
                     return OperatorMinus.getInstance();
+                case "*":
+                    return OperatorMul.getInstance();
                 case "=":
                     return OperatorAssignEquals.getInstance();
                 case "<":
@@ -1020,6 +1022,7 @@ public class Parser {
             throw new ExpectedAnExpression(line);
 
         sequence = parseIdentifiers(line, sequence);
+        sequence = parseBinaryOperators(line, sequence, opMulDivMod);
         sequence = parseBinaryOperators(line, sequence, opPlusMinus);
         sequence = parseBinaryOperators(line, sequence, opLessGreater);
         sequence = parseBinaryOperators(line, sequence, opEquals);
@@ -1032,6 +1035,7 @@ public class Parser {
         return (TokenExpression) result;
     }
 
+    private static Class<?>[] opMulDivMod = new Class<?>[]{OperatorMul.class};
     private static Class<?>[] opPlusMinus = new Class<?>[]{OperatorPlus.class, OperatorMinus.class};
     private static Class<?>[] opLessGreater = new Class<?>[]{OperatorLess.class};
     private static Class<?>[] opEquals = new Class<?>[]{OperatorAssignEquals.class};

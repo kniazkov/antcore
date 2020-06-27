@@ -422,6 +422,41 @@ public class VirtualMachine {
             stub    // 10 -> STRUCT
     };
 
+    final Unit[] mul = {
+            stub,
+            stub,   // 1 -> POINTER
+            stub,   // 2 -> BOOLEAN
+            () -> { // 3 -> BYTE
+                byte left = popByte();
+                byte right = popByte();
+                pushShort((short) (left * right));
+            },
+            () -> { // 4 -> SHORT
+                short left = popShort();
+                short right = popShort();
+                pushInteger((int) (left * right));
+            },
+            () -> { // 5 -> INTEGER
+                int left = popInteger();
+                int right = popInteger();
+                pushInteger(left * right);
+            },
+            () -> { // 6 -> LONG
+                long left = popLong();
+                long right = popLong();
+                pushLong(left * right);
+            },
+            () -> { // 7 -> REAL
+                popReal(real0);
+                popReal(real1);
+                FixedPoint.sub(real0, real0, real1);
+                pushReal(real0);
+            },
+            stub,   // 8 -> STRING
+            stub,   // 9 -> ARRAY
+            stub    // 10 -> STRUCT
+    };
+    
     final Unit[] compareByte = {
             () -> { // 0 -> EQUAL
                 byte left = popByte();
@@ -606,15 +641,19 @@ public class VirtualMachine {
                 sub[read_p0()].exec();
                 IP = IP + 16;
             },
-            () -> { // 12 -> CMP
+            () -> { // 12 -> MUL
+                mul[read_p0()].exec();
+                IP = IP + 16;
+            },
+            () -> { // 13 -> CMP
                 compare[read_p0()].exec();
                 IP = IP + 16;
             },
-            () -> { // 13 -> SIGN
+            () -> { // 14 -> SIGN
                 sign[read_p0()].exec();
                 IP = IP + 16;
             },
-            () -> { // 14 -> IF
+            () -> { // 15 -> IF
                 boolean value = popBoolean();
                 boolean condition = read_p0() > 0;
                 if (value == condition)
@@ -622,10 +661,9 @@ public class VirtualMachine {
                 else
                     IP = IP + 16;
             },
-            () -> { // 15 -> JUMP
+            () -> { // 16 -> JUMP
                 IP = read_x0();
             },
-            stub,
             stub,
             stub,
             stub,
