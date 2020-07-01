@@ -235,6 +235,8 @@ public class Parser {
                     return KeywordUntil.getInstance();
                 case "LOOP":
                     return KeywordLoop.getInstance();
+                case "MOD":
+                    return OperatorMod.getInstance();
             }
             return new Identifier(name);
         }
@@ -1037,7 +1039,7 @@ public class Parser {
         return (TokenExpression) result;
     }
 
-    private static Class<?>[] opMulDivMod = new Class<?>[]{OperatorMul.class, OperatorDiv.class};
+    private static Class<?>[] opMulDivMod = new Class<?>[]{OperatorMul.class, OperatorDiv.class, OperatorMod.class};
     private static Class<?>[] opPlusMinus = new Class<?>[]{OperatorPlus.class, OperatorMinus.class};
     private static Class<?>[] opLessGreater = new Class<?>[]{OperatorLess.class};
     private static Class<?>[] opEquals = new Class<?>[]{OperatorAssignEquals.class};

@@ -175,17 +175,20 @@ public class Disassembler {
             (a, i, buff) -> { // 13 -> DIV
                 buff.add(a, "DIV", TypeSelector.toString(i.p0), null, null, i.x0, i.x1, i.x2);
             },
-            (a, i, buff) -> { // 14 -> CMP
+            (a, i, buff) -> { // 14 -> MOD
+                buff.add(a, "MOD", TypeSelector.toString(i.p0), null, null, i.x0, i.x1, i.x2);
+            },
+            (a, i, buff) -> { // 15 -> CMP
                 buff.add(a, "CMP", TypeSelector.toString(i.p0), ComparatorSelector.toString(i.p1), null,
                         i.x0, i.x1);
             },
-            (a, i, buff) -> { // 15 -> SIGN
+            (a, i, buff) -> { // 16 -> SIGN
                 buff.add(a, "SIGN", TypeSelector.toString(i.p0));
             },
-            (a, i, buff) -> { // 16 -> IF
+            (a, i, buff) -> { // 17 -> IF
                 buff.add(a, "IF", i.p0 > 0 ? "TRUE" : "FALSE", null, null, i.x0);
             },
-            (a, i, buff) -> { // 17 -> JUMP
+            (a, i, buff) -> { // 18 -> JUMP
                 buff.add(a, "JUMP", null, null, null, i.x0);
             },
             stub,

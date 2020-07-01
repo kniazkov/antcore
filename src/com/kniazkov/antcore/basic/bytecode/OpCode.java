@@ -34,9 +34,10 @@ public final class OpCode {
     public static final byte SUB = 11;
     public static final byte MUL = 12;
     public static final byte DIV = 13;
-    public static final byte CMP = 14;
-    public static final byte SIGN = 15;
-    public static final byte IF = 16;
-    public static final byte JUMP = 17;
+    public static final byte MOD = 14;
+    public static final byte CMP = 15;
+    public static final byte SIGN = 16;
+    public static final byte IF = 17;
+    public static final byte JUMP = 18;
     public static final byte END = 127;
 }

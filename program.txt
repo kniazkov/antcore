@@ -4,14 +4,17 @@ MODULE SERVER
 	FUNCTION MAIN
 		VAR a AS INTEGER
 		VAR b AS INTEGER
+		VAR c AS INTEGER
 		
 		a = 12
 		b = 3
+		c = 10
 
 		println("" + (a + b))
 		println("" + (a - b))
 		println("" + (a * b))
 		println("" + (a / b))
+		println("" + (a MOD c))
 		println("" + (a < b))
 		println("" + (a = a))
 		println("" + (a = b))
