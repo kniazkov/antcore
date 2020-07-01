@@ -2,7 +2,19 @@ IMPORT stdlib
 
 MODULE SERVER
 	FUNCTION MAIN
-		x = 1 + 3 * 4
-		println("" + x)
+		VAR a AS INTEGER
+		VAR b AS INTEGER
+		
+		a = 12
+		b = 3
+
+		println("" + (a + b))
+		println("" + (a - b))
+		println("" + (a * b))
+		println("" + (a / b))
+		println("" + (a < b))
+		println("" + (a = a))
+		println("" + (a = b))
+		
 	END FUNCTION
 END MODULE

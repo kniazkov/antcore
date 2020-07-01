@@ -320,6 +320,8 @@ public class Parser {
                     return OperatorMinus.getInstance();
                 case "*":
                     return OperatorMul.getInstance();
+                case "/":
+                    return OperatorDiv.getInstance();
                 case "=":
                     return OperatorAssignEquals.getInstance();
                 case "<":
@@ -1035,7 +1037,7 @@ public class Parser {
         return (TokenExpression) result;
     }
 
-    private static Class<?>[] opMulDivMod = new Class<?>[]{OperatorMul.class};
+    private static Class<?>[] opMulDivMod = new Class<?>[]{OperatorMul.class, OperatorDiv.class};
     private static Class<?>[] opPlusMinus = new Class<?>[]{OperatorPlus.class, OperatorMinus.class};
     private static Class<?>[] opLessGreater = new Class<?>[]{OperatorLess.class};
     private static Class<?>[] opEquals = new Class<?>[]{OperatorAssignEquals.class};
