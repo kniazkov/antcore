@@ -10,14 +10,24 @@ MODULE SERVER
 		b = 3
 		c = 10
 
-		println("" + (a + b))
-		println("" + (a - b))
-		println("" + (a * b))
-		println("" + (a / b))
-		println("" + (a MOD c))
-		println("" + (a < b))
-		println("" + (a = a))
-		println("" + (a = b))
+		println("a = " + a)
+		println("b = " + b)
+		println("c = " + c)
+		println("a + b : " + (a + b))
+		println("a - b : " + (a - b))
+		println("a * b : " + (a * b))
+		println("a / b : " + (a / b))
+		println("a MOD c : " + (a MOD c))
+		println("a < b : " + (a < b))
+		println("a <= a : " + (a <= a))
+		println("a <= b : " + (a <= b))
+		println("a > b : " + (a > b))
+		println("a >= a : " + (a >= a))
+		println("a >= b : " + (a >= b))
+		println("a <> a : " + (a <> a))
+		println("a <> b : " + (a <> b))
+		println("a = a : " + (a = a))
+		println("a = b : " + (a = b))
 		
 	END FUNCTION
 END MODULE

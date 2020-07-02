@@ -326,8 +326,16 @@ public class Parser {
                     return OperatorDiv.getInstance();
                 case "=":
                     return OperatorAssignEquals.getInstance();
+                case "<>":
+                    return OperatorDiff.getInstance();
                 case "<":
                     return OperatorLess.getInstance();
+                case "<=":
+                    return OperatorLessEqual.getInstance();
+                case ">":
+                    return OperatorGreater.getInstance();
+                case ">=":
+                    return OperatorGreaterEqual.getInstance();
             }
             throw new UnknownOperator(fragment, operator);
         }
@@ -1041,8 +1049,9 @@ public class Parser {
 
     private static Class<?>[] opMulDivMod = new Class<?>[]{OperatorMul.class, OperatorDiv.class, OperatorMod.class};
     private static Class<?>[] opPlusMinus = new Class<?>[]{OperatorPlus.class, OperatorMinus.class};
-    private static Class<?>[] opLessGreater = new Class<?>[]{OperatorLess.class};
-    private static Class<?>[] opEquals = new Class<?>[]{OperatorAssignEquals.class};
+    private static Class<?>[] opLessGreater = new Class<?>[]{OperatorLess.class, OperatorLessEqual.class,
+        OperatorGreater.class, OperatorGreaterEqual.class};
+    private static Class<?>[] opEquals = new Class<?>[]{OperatorAssignEquals.class, OperatorDiff.class};
 
 
     /**
