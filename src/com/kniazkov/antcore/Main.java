@@ -26,12 +26,26 @@ import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.parser.Parser;
 import com.kniazkov.antcore.basic.virtualmachine.*;
 import com.kniazkov.antcore.lib.FileIO;
+import com.kniazkov.webserver.*;
 
 import java.util.Map;
 import java.util.TreeMap;
 
 public class Main {
     public static void main(String[] args) {
+        Server.start(new Options(), new Handler() {
+            @Override
+            public Response handle(Map<String, FormData> request) {
+                return null;
+            }
+
+            @Override
+            public Response handle(String address) {
+                return null;
+            }
+        });
+
+        /*
         String source = FileIO.readFileToString("program.txt");
         if (source != null) {
             try {
@@ -57,5 +71,6 @@ public class Main {
                 syntaxError.printStackTrace();
             }
         }
+        */
     }
 }
