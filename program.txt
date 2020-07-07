@@ -1,33 +1,7 @@
 IMPORT stdlib
 
-MODULE SERVER
+MODULE INDEX WEB
 	FUNCTION MAIN
-		VAR a AS INTEGER
-		VAR b AS INTEGER
-		VAR c AS INTEGER
-		
-		a = 12
-		b = 3
-		c = 10
-
-		println("a = " + a)
-		println("b = " + b)
-		println("c = " + c)
-		println("a + b : " + (a + b))
-		println("a - b : " + (a - b))
-		println("a * b : " + (a * b))
-		println("a / b : " + (a / b))
-		println("a MOD c : " + (a MOD c))
-		println("a < b : " + (a < b))
-		println("a <= a : " + (a <= a))
-		println("a <= b : " + (a <= b))
-		println("a > b : " + (a > b))
-		println("a >= a : " + (a >= a))
-		println("a >= b : " + (a >= b))
-		println("a <> a : " + (a <> a))
-		println("a <> b : " + (a <> b))
-		println("a = a : " + (a = a))
-		println("a = b : " + (a = b))
-		
+		print("ok.")
 	END FUNCTION
 END MODULE
