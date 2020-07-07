@@ -14,29 +14,22 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.runtime;
+package com.kniazkov.antcore.runtime.web;
 
-import com.kniazkov.antcore.basic.bytecode.CompiledModule;
+import com.kniazkov.json.JsonElement;
+import com.kniazkov.webserver.Response;
+import com.kniazkov.webserver.ResponseText;
 
 /**
- * The 'WEB' executor (i.e. web interface)
+ * 'Hello' respondent for testing purposes
  */
-public class Web extends Executor {
-    @Override
-    protected boolean tick() {
-        System.out.println("tick " + getTicks());
-        return true;
+public class Hello extends Respondent {
+    public Hello(Web executor) {
+        super(executor);
     }
 
     @Override
-    public String getName() {
-        return "WEB";
+    public Response respond(JsonElement data) {
+        return new ResponseText("hi.");
     }
-
-    @Override
-    public void setModuleList(CompiledModule[] modules) {
-        this.modules = modules;
-    }
-
-    private CompiledModule[] modules;
 }

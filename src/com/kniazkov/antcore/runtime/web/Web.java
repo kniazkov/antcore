@@ -14,36 +14,39 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.runtime;
+package com.kniazkov.antcore.runtime.web;
 
 import com.kniazkov.antcore.basic.bytecode.CompiledModule;
-import com.kniazkov.antcore.lib.Periodic;
+import com.kniazkov.antcore.runtime.Executor;
+import com.kniazkov.webserver.*;
+
+import java.util.Map;
 
 /**
- * The class that contains data of executing modules
+ * The 'WEB' executor (i.e. web interface)
  */
-public abstract class Executor extends Periodic {
-    /**
-     * @return name of executor
-     */
-    public abstract String getName();
-
-    /**
-     * Sets module list for execution
-     * @param modules a list
-     */
-    public abstract void setModuleList(CompiledModule[] modules);
-
-    /**
-     * Initializer
-     */
-    protected abstract void init();
-
-    /**
-     * Runs the executor
-     */
-    public void run() {
-        init();
-        start(100);
+public class Web extends Executor {
+    @Override
+    protected boolean tick() {
+        System.out.println("tick " + getTicks());
+        return true;
     }
+
+    @Override
+    public String getName() {
+        return "WEB";
+    }
+
+    @Override
+    public void setModuleList(CompiledModule[] modules) {
+        this.modules = modules;
+    }
+
+    @Override
+    protected void init() {
+        webServer = Server.start(new Options(), new Handler(this));
+    }
+
+    private CompiledModule[] modules;
+    Server webServer;
 }

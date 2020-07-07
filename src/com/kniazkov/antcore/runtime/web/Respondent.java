@@ -14,36 +14,25 @@
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package com.kniazkov.antcore.runtime;
+package com.kniazkov.antcore.runtime.web;
 
-import com.kniazkov.antcore.basic.bytecode.CompiledModule;
-import com.kniazkov.antcore.lib.Periodic;
+import com.kniazkov.json.JsonElement;
+import com.kniazkov.webserver.Response;
 
 /**
- * The class that contains data of executing modules
+ * A handler for one HTTP request
  */
-public abstract class Executor extends Periodic {
-    /**
-     * @return name of executor
-     */
-    public abstract String getName();
-
-    /**
-     * Sets module list for execution
-     * @param modules a list
-     */
-    public abstract void setModuleList(CompiledModule[] modules);
-
-    /**
-     * Initializer
-     */
-    protected abstract void init();
-
-    /**
-     * Runs the executor
-     */
-    public void run() {
-        init();
-        start(100);
+public abstract class Respondent {
+    public Respondent(Web executor) {
+        this.executor = executor;
     }
+
+    /**
+     * To respond for a request
+     * @param data request data
+     * @return a response
+     */
+    public abstract Response respond(JsonElement data);
+
+    protected Web executor;
 }

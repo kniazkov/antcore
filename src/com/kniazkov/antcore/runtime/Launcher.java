@@ -17,6 +17,7 @@
 package com.kniazkov.antcore.runtime;
 
 import com.kniazkov.antcore.basic.bytecode.CompiledProgram;
+import com.kniazkov.antcore.runtime.web.Web;
 
 /**
  * Creates executors and starts bytecode execution
@@ -36,7 +37,7 @@ public class Launcher {
                 return;
             }
             executor.setModuleList(program.getModulesByExecutor(executorName));
-            executor.start(100);
+            executor.run();
         }
     }
 
