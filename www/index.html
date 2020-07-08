@@ -21,17 +21,18 @@
 	<body>
 		<p>It <b>works</b>!</p>
 		<script>
-			var uid = null;
+			var connection = null;
 			var initConnection = function() {
 				sendRequestWithData("create instance", { page : "INDEX" }, function(response) {
 					var data = JSON.parse(response);
-					uid = data.uid;
+					connection = { uid : data.uid, transaction : 0 };
 					var interval = setInterval(function() {
-						sendRequestWithData("update", { uid : uid }, function(response) {
+						connection.transaction++;
+						sendRequestWithData("update", connection, function(response) {
 							data = JSON.parse(response);
-							if (data === false) {
+							if (data === null) {
 								clearInterval(interval);
-								uid = null;
+								connection = null;
 								initConnection();
 							}
 						});

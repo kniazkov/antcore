@@ -19,6 +19,7 @@ package com.kniazkov.antcore.runtime.web;
 import com.kniazkov.antcore.basic.bytecode.CompiledModule;
 import com.kniazkov.json.JsonBoolean;
 import com.kniazkov.json.JsonElement;
+import com.kniazkov.json.JsonNull;
 import com.kniazkov.json.JsonObject;
 import com.kniazkov.webserver.Response;
 import com.kniazkov.webserver.ResponseJson;
@@ -41,10 +42,18 @@ public class Update extends Respondent {
         if (uidElem == null || !uidElem.isString())
             return null;
 
+        JsonElement transactionElem = obj.get("transaction");
+        if (transactionElem == null || !transactionElem.isInteger())
+            return null;
+
         String uid = uidElem.stringValue();
+        int transaction = transactionElem.intValue();
         Ant ant = executor.ants.get(uid);
         if (ant == null)
+            return new ResponseJson(new JsonNull(null));
+        if (ant.transaction >= transaction)
             return new ResponseJson(new JsonBoolean(null, false));
+        ant.transaction = transaction;
         ant.timestamp = executor.getTicks();
         return new ResponseJson(new JsonObject(null));
     }

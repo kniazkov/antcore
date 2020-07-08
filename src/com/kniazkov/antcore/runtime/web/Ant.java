@@ -42,6 +42,7 @@ public class Ant {
     }
 
     long timestamp;
+    int transaction;
     private Web executor;
     private VirtualMachine vm;
     private String uid;
