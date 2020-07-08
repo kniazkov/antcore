@@ -23,7 +23,7 @@ import com.kniazkov.webserver.Response;
  * A handler for one HTTP request
  */
 public abstract class Respondent {
-    public Respondent(Web executor) {
+    public Respondent(WebExecutor executor) {
         this.executor = executor;
     }
 
@@ -34,5 +34,5 @@ public abstract class Respondent {
      */
     public abstract Response respond(JsonElement data);
 
-    protected Web executor;
+    protected WebExecutor executor;
 }

@@ -28,6 +28,7 @@ import com.kniazkov.antcore.lib.FileIO;
 
 import java.io.File;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Test system for antcore basic
@@ -37,7 +38,7 @@ public class TestBasic {
         int passed = 0;
         int failed = 0;
 
-        Map<String, NativeFunction> stdlib = StandardLibrary.getFunctions();
+        Map<String, NativeFunction> stdlib = new TreeMap<>(StandardLibrary.getFunctions());
         class Print implements NativeFunction {
             private StringBuilder output;
 
@@ -78,7 +79,7 @@ public class TestBasic {
                             fakeOutput.reset();
                             VirtualMachine virtualMachine = new VirtualMachine(modules[0].getBytecode(),
                                     65536,
-                                    StandardLibrary.getFunctions());
+                                    stdlib);
                             virtualMachine.run();
                             ErrorCode errorCode = virtualMachine.getErrorCode();
                             if (errorCode != ErrorCode.OK) {

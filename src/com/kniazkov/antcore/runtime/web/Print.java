@@ -13,23 +13,27 @@
  *
  * You should have received a copy of the GNU General Public License along with Antcore.
  * If not, see <http://www.gnu.org/licenses/>.
- */
-package com.kniazkov.antcore.runtime.web;
+ */package com.kniazkov.antcore.runtime.web;
 
-import com.kniazkov.json.JsonElement;
-import com.kniazkov.webserver.Response;
-import com.kniazkov.webserver.ResponseText;
+import com.kniazkov.json.JsonObject;
 
 /**
- * 'Hello' respondent for testing purposes
+ * The 'print' instruction
  */
-public class Hello extends Respondent {
-    public Hello(WebExecutor executor) {
-        super(executor);
+public class Print extends Instruction {
+    public Print(String message) {
+        this.message = message;
     }
 
     @Override
-    public Response respond(JsonElement data) {
-        return new ResponseText("hi.");
+    public String getType() {
+        return "print";
     }
+
+    @Override
+    protected void fillJsonObject(JsonObject obj) {
+        obj.createString("message", message);
+    }
+
+    private String message;
 }

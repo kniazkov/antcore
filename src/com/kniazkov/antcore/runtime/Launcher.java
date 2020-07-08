@@ -17,7 +17,7 @@
 package com.kniazkov.antcore.runtime;
 
 import com.kniazkov.antcore.basic.bytecode.CompiledProgram;
-import com.kniazkov.antcore.runtime.web.Web;
+import com.kniazkov.antcore.runtime.web.WebExecutor;
 
 /**
  * Creates executors and starts bytecode execution
@@ -44,7 +44,7 @@ public class Launcher {
     private Executor createExecutor(String name) {
         switch (name) {
             case "WEB":
-                return new Web();
+                return new WebExecutor();
         }
         return null;
     }

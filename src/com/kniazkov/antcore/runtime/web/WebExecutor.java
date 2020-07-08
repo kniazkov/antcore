@@ -28,8 +28,8 @@ import java.util.TreeMap;
 /**
  * The 'WEB' executor (i.e. web interface)
  */
-public class Web extends Executor {
-    public Web() {
+public class WebExecutor extends Executor {
+    public WebExecutor() {
         ants = new TreeMap<>();
     }
 

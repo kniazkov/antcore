@@ -16,24 +16,24 @@
  */
 package com.kniazkov.antcore.runtime.web;
 
-import com.kniazkov.antcore.basic.bytecode.CompiledModule;
-import com.kniazkov.json.JsonBoolean;
-import com.kniazkov.json.JsonElement;
-import com.kniazkov.json.JsonNull;
-import com.kniazkov.json.JsonObject;
+import com.kniazkov.json.*;
 import com.kniazkov.webserver.Response;
 import com.kniazkov.webserver.ResponseJson;
+
+import java.util.*;
 
 /**
  * The 'update' handler
  */
 public class Update extends Respondent {
-    public Update(Web executor) {
+    public Update(WebExecutor executor) {
         super(executor);
     }
 
     @Override
     public Response respond(JsonElement data) {
+        int k, count;
+
         JsonObject obj = data.toJsonObject();
         if (obj == null)
             return null;
@@ -55,6 +55,48 @@ public class Update extends Respondent {
             return new ResponseJson(new JsonBoolean(null, false));
         ant.transaction = transaction;
         ant.timestamp = executor.getTicks();
-        return new ResponseJson(new JsonObject(null));
+
+        JsonObject result = new JsonObject(null);
+        synchronized (ant) {
+            JsonElement processedElem = obj.get("processed");
+            if (processedElem != null) {
+                JsonArray processedArray = processedElem.toJsonArray();
+                if (processedArray != null) {
+                    count = processedArray.size();
+                    if (count > 0) {
+                        Set<String> processedSet = new TreeSet<>();
+                        for (k = 0; k < count; k++) {
+                            String processedId = processedArray.getAt(k).stringValue();
+                            processedSet.add(processedId);
+                        }
+                        List<Instruction> tmp = new LinkedList<>();
+                        for (Instruction instruction : ant.instructions) {
+                            if (!processedSet.contains(instruction.getUId())) {
+                                tmp.add(instruction);
+                            }
+                        }
+                        ant.instructions = tmp;
+                    }
+                }
+            }
+
+            result.createNumber("transaction", transaction);
+            count = ant.instructions.size();
+            if (count > maxInstructionsCount) count = maxInstructionsCount;
+            if (count > 0) {
+                JsonArray jsonInstructions = result.createArray("instructions");
+                k = 0;
+                Iterator<Instruction> iterator = ant.instructions.iterator();
+                while (k < count && iterator.hasNext()) {
+                    k++;
+                    Instruction instruction = iterator.next();
+                    JsonObject jsonInstruction = jsonInstructions.createObject();
+                    instruction.toJsonObject(jsonInstruction);
+                }
+            }
+        }
+        return new ResponseJson(result);
     }
+
+    private static final int maxInstructionsCount = 1024;
 }

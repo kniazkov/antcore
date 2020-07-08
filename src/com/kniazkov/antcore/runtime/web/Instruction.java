@@ -16,38 +16,43 @@
  */
 package com.kniazkov.antcore.runtime.web;
 
-import com.kniazkov.antcore.basic.virtualmachine.StandardLibrary;
-import com.kniazkov.antcore.basic.virtualmachine.VirtualMachine;
-import com.kniazkov.antcore.lib.ByteList;
+import com.kniazkov.json.JsonObject;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 
 /**
- * An ant, i.e. minimal execution unit that contains own memory space
+ * Instruction to be sent to the web page.
+ * Execution of the instruction causes the displayed data to change.
  */
-public class Ant {
-    public Ant(long timestamp, WebExecutor executor, ByteList code) {
-        this.timestamp = timestamp;
-        this.executor = executor;
-        vm = new VirtualMachine(code, 65536, WebLibrary.create(this));
+public abstract class Instruction {
+    public Instruction() {
         uid = UUID.randomUUID().toString();
-        instructions = new LinkedList<>();
-    }
-
-    public void tick() {
-        vm.run();
     }
 
     public String getUId() {
         return uid;
     }
 
-    long timestamp;
-    int transaction;
-    private WebExecutor executor;
-    private VirtualMachine vm;
+    /**
+     * @return type of instruction
+     */
+    public abstract String getType();
+
+    /**
+     * Fills a JSON object with additional parameters
+     * @param obj destination object
+     */
+    protected abstract void fillJsonObject(JsonObject obj);
+
+    /**
+     * Converts an instruction to JSON object
+     * @param obj destination object
+     */
+    public void toJsonObject(JsonObject obj) {
+        obj.createString("uid", getUId());
+        obj.createString("type", getType());
+        fillJsonObject(obj);
+    }
+
     private String uid;
-    List<Instruction> instructions;
 }

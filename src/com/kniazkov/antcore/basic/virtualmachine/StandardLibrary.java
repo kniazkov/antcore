@@ -16,6 +16,7 @@
  */
 package com.kniazkov.antcore.basic.virtualmachine;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -39,6 +40,8 @@ public class StandardLibrary {
                 memory.setInt(SP + 4 + 2 + 4, 1); // capacity
                 memory.setChar(SP + 4 + 2 + 8, (char)code); // symbol
             });
+
+            functions = Collections.unmodifiableMap(functions);
         }
         return functions;
     }

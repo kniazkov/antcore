@@ -26,7 +26,7 @@ import com.kniazkov.webserver.ResponseJson;
  * The 'create instance' handler
  */
 public class CreateInstance extends Respondent {
-    public CreateInstance(Web executor) {
+    public CreateInstance(WebExecutor executor) {
         super(executor);
     }
 

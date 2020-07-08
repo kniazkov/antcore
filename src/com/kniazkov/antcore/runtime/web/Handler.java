@@ -30,7 +30,7 @@ import java.util.TreeMap;
  * Common handler for HTTP requests
  */
 public class Handler implements com.kniazkov.webserver.Handler {
-    public Handler(Web executor) {
+    public Handler(WebExecutor executor) {
         respondents = new TreeMap<>();
         respondents.put("hello", new Hello(executor));
         respondents.put("create instance", new CreateInstance(executor));

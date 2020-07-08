@@ -21,11 +21,17 @@
 	<body>
 		<p>It <b>works</b>!</p>
 		<script>
+			var processor = {
+				print : function(instruction) {
+					console.log(instruction.message);
+				}
+			};
+
 			var connection = null;
 			var initConnection = function() {
 				sendRequestWithData("create instance", { page : "INDEX" }, function(response) {
 					var data = JSON.parse(response);
-					connection = { uid : data.uid, transaction : 0 };
+					connection = { uid : data.uid, transaction : 0, processed : [] };
 					var interval = setInterval(function() {
 						connection.transaction++;
 						sendRequestWithData("update", connection, function(response) {
@@ -34,6 +40,17 @@
 								clearInterval(interval);
 								connection = null;
 								initConnection();
+							}
+							if (data.instructions) {
+								connection.processed = [];
+								for (var k = 0; k < data.instructions.length; k++) {
+									var instruction = data.instructions[k];
+									var executor = processor[instruction.type];
+									if (executor) {
+										executor(instruction);
+										connection.processed.push(instruction.uid);
+									}
+								}
 							}
 						});
 					}, 200);
