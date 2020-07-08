@@ -20,6 +20,8 @@ import com.kniazkov.antcore.basic.bytecode.CompiledModule;
 import com.kniazkov.antcore.runtime.Executor;
 import com.kniazkov.webserver.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -33,9 +35,26 @@ public class Web extends Executor {
 
     @Override
     protected boolean tick() {
+        long currentTime = getTicks();
+        List<String> died = null;
         for (Map.Entry<String, Ant> entry : ants.entrySet()) {
             Ant ant = entry.getValue();
-            ant.tick();
+            if (currentTime - ant.timestamp > antsLifetime) {
+                String uid = ant.getUId();
+                if (died == null)
+                    died = new ArrayList<>();
+                died.add(uid);
+            }
+            else {
+                ant.tick();
+            }
+        }
+
+        if (died != null) {
+            for (String uid : died) {
+                ants.remove(uid);
+                System.out.println("The ant '" + uid + "' died, population: " + ants.size());
+            }
         }
         return true;
     }
@@ -61,6 +80,8 @@ public class Web extends Executor {
     CompiledModule getModuleByName(String name) {
         return modules.get(name);
     }
+
+    private static final long antsLifetime = 10;
 
     private Map<String, CompiledModule> modules;
     Server webServer;

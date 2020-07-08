@@ -17,16 +17,17 @@
 package com.kniazkov.antcore.runtime.web;
 
 import com.kniazkov.antcore.basic.bytecode.CompiledModule;
+import com.kniazkov.json.JsonBoolean;
 import com.kniazkov.json.JsonElement;
 import com.kniazkov.json.JsonObject;
 import com.kniazkov.webserver.Response;
 import com.kniazkov.webserver.ResponseJson;
 
 /**
- * The 'create instance' handler
+ * The 'update' handler
  */
-public class CreateInstance extends Respondent {
-    public CreateInstance(Web executor) {
+public class Update extends Respondent {
+    public Update(Web executor) {
         super(executor);
     }
 
@@ -36,18 +37,15 @@ public class CreateInstance extends Respondent {
         if (obj == null)
             return null;
 
-        JsonElement pageElem = obj.get("page");
-        if (pageElem == null || !pageElem.isString())
+        JsonElement uidElem = obj.get("uid");
+        if (uidElem == null || !uidElem.isString())
             return null;
 
-        String page = pageElem.stringValue();
-        CompiledModule module = executor.getModuleByName(page);
-        Ant ant = new Ant(executor.getTicks(), executor, module.getBytecode());
-        String uid = ant.getUId();
-        executor.ants.put(uid, ant);
-        System.out.println("The ant '" + uid + "' was born, population: " + executor.ants.size());
-        JsonObject result = new JsonObject(null);
-        result.createString("uid", uid);
-        return new ResponseJson(result);
+        String uid = uidElem.stringValue();
+        Ant ant = executor.ants.get(uid);
+        if (ant == null)
+            return new ResponseJson(new JsonBoolean(null, false));
+        ant.timestamp = executor.getTicks();
+        return new ResponseJson(new JsonObject(null));
     }
 }

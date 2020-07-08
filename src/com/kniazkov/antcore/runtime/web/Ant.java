@@ -26,8 +26,9 @@ import java.util.UUID;
  * An ant, i.e. minimal execution unit that contains own memory space
  */
 public class Ant {
-    public Ant(Web web, ByteList code) {
-        this.web = web;
+    public Ant(long timestamp, Web executor, ByteList code) {
+        this.timestamp = timestamp;
+        this.executor = executor;
         vm = new VirtualMachine(code, 65536, StandardLibrary.getFunctions());
         uid = UUID.randomUUID().toString();
     }
@@ -40,7 +41,8 @@ public class Ant {
         return uid;
     }
 
-    private Web web;
+    long timestamp;
+    private Web executor;
     private VirtualMachine vm;
     private String uid;
 }

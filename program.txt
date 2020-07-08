@@ -6,6 +6,6 @@ MODULE INDEX WEB
     END DATA
 	FUNCTION MAIN
 	    counter = counter + 1
-		println("value: " + counter)
+		'println("value: " + counter)
 	END FUNCTION
 END MODULE
