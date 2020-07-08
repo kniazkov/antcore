@@ -82,15 +82,15 @@ public abstract class JsonElement {
 		return false;
 	}
 	
-	public JsonContainer toJsContainer() {
+	public JsonContainer toJsonContainer() {
 		return null;
 	}
 	
-	public JsonObject toJsObject() {
+	public JsonObject toJsonObject() {
 		return null;
 	}
-	
-	public JsonArray toJsArray() {
+
+	public JsonArray toJsonArray() {
 		return null;
 	}
 	
@@ -101,7 +101,7 @@ public abstract class JsonElement {
 		}
 	}
 	
-	protected static void buildJsString(StringBuilder bld, String value) {
+	protected static void buildJsonString(StringBuilder bld, String value) {
 		bld.append('"');
 		for (int i = 0, len = value.length(); i < len; i++) {
 			char c = value.charAt(i);

@@ -33,6 +33,7 @@ public class Handler implements com.kniazkov.webserver.Handler {
     public Handler(Web executor) {
         respondents = new TreeMap<>();
         respondents.put("hello", new Hello(executor));
+        respondents.put("create instance", new CreateInstance(executor));
     }
 
     @Override

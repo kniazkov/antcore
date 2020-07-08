@@ -27,6 +27,7 @@ public final class JsonObject extends JsonContainer
 		elements = new TreeMap<>();
 	}
 
+	@Override
 	protected void buildString(StringBuilder bld) {
 		bld.append('{');
 		boolean flag = false;
@@ -45,6 +46,7 @@ public final class JsonObject extends JsonContainer
 		bld.append('}');
 	}
 
+	@Override
 	protected void buildString(StringBuilder bld, int indent) {
 		if (elements.isEmpty()) {
 			bld.append("{ }");
@@ -59,8 +61,8 @@ public final class JsonObject extends JsonContainer
 			buildIndent(bld, indent + 1);
 			String name = entry.getKey();
 			JsonElement elem = entry.getValue();
-			buildJsString(bld, name);
-			JsonContainer jc = elem.toJsContainer();
+			buildJsonString(bld, name);
+			JsonContainer jc = elem.toJsonContainer();
 			if (jc != null && !jc.isEmpty()) {
 				bld.append(" :\n");
 				buildIndent(bld, indent + 1);
@@ -75,8 +77,9 @@ public final class JsonObject extends JsonContainer
 		buildIndent(bld, indent);
 		bld.append('}');
 	}
-	
-	public JsonObject toJsObject() {
+
+	@Override
+	public JsonObject toJsonObject() {
 		return this;
 	}
 	
@@ -91,7 +94,8 @@ public final class JsonObject extends JsonContainer
 	public JsonElement get(String key) {
 		return elements.get(key);
 	}
-	
+
+	@Override
 	public boolean isEmpty() {
 		return elements.isEmpty();
 	}

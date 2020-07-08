@@ -21,14 +21,22 @@ import com.kniazkov.antcore.runtime.Executor;
 import com.kniazkov.webserver.*;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * The 'WEB' executor (i.e. web interface)
  */
 public class Web extends Executor {
+    public Web() {
+        ants = new TreeMap<>();
+    }
+
     @Override
     protected boolean tick() {
-        System.out.println("tick " + getTicks());
+        for (Map.Entry<String, Ant> entry : ants.entrySet()) {
+            Ant ant = entry.getValue();
+            ant.tick();
+        }
         return true;
     }
 
@@ -39,7 +47,10 @@ public class Web extends Executor {
 
     @Override
     public void setModuleList(CompiledModule[] modules) {
-        this.modules = modules;
+        this.modules = new TreeMap<>();
+        for (CompiledModule module : modules) {
+            this.modules.put(module.getName(), module);
+        }
     }
 
     @Override
@@ -47,6 +58,11 @@ public class Web extends Executor {
         webServer = Server.start(new Options(), new Handler(this));
     }
 
-    private CompiledModule[] modules;
+    CompiledModule getModuleByName(String name) {
+        return modules.get(name);
+    }
+
+    private Map<String, CompiledModule> modules;
     Server webServer;
+    Map<String, Ant> ants;
 }

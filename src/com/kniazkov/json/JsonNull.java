@@ -22,10 +22,12 @@ public final class JsonNull extends JsonElement {
 		super(parent);
 	}
 
+	@Override
 	protected void buildString(StringBuilder bld) {
 		bld.append("null");
 	}
 
+	@Override
 	protected void buildString(StringBuilder bld, int indent) {
 		bld.append("null");
 	}

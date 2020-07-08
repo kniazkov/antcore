@@ -23,12 +23,14 @@ public final class JsonString extends JsonElement
 		this.value = value;
 	}
 
+	@Override
 	protected void buildString(StringBuilder bld) {
-		buildJsString(bld, value);
+		buildJsonString(bld, value);
 	}
 
+	@Override
 	protected void buildString(StringBuilder bld, int indent) {
-		buildJsString(bld, value);
+		buildJsonString(bld, value);
 	}
 	
 	public String stringValue() {

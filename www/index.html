@@ -20,5 +20,11 @@
 	</head>
 	<body>
 		<p>It <b>works</b>!</p>
+		<script>
+			var uid = null;
+			sendRequestWithData("create instance", { page : "INDEX" }, function(data) {
+				console.log(data);
+			});
+		</script>
 	</body>
 </html>

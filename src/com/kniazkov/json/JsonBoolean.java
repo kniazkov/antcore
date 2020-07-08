@@ -23,18 +23,22 @@ public final class JsonBoolean extends JsonElement {
 		this.value = value;
 	}
 
+	@Override
 	protected void buildString(StringBuilder bld) {
 		bld.append(value);
 	}
 
+	@Override
 	protected void buildString(StringBuilder bld, int indent) {
 		bld.append(value);
 	}
-	
+
+	@Override
 	public boolean booleanValue() {
 		return value;
 	}
-	
+
+	@Override
 	public boolean isBoolean() {
 		return true;
 	}

@@ -1,7 +1,11 @@
 IMPORT stdlib
 
 MODULE INDEX WEB
+    DATA
+        counter AS INTEGER
+    END DATA
 	FUNCTION MAIN
-		print("ok.")
+	    counter = counter + 1
+		println("value: " + counter)
 	END FUNCTION
 END MODULE

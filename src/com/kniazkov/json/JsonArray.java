@@ -27,6 +27,7 @@ public final class JsonArray extends JsonContainer {
 		elements = new ArrayList<JsonElement>();
 	}
 
+	@Override
 	protected void buildString(StringBuilder bld) {
 		bld.append('[');
 		boolean flag = false;
@@ -42,6 +43,7 @@ public final class JsonArray extends JsonContainer {
 		bld.append(']');
 	}
 
+	@Override
 	protected void buildString(StringBuilder bld, int indent) {
 		if (elements.isEmpty())
 		{
@@ -63,19 +65,22 @@ public final class JsonArray extends JsonContainer {
 		buildIndent(bld, indent);
 		bld.append(']');
 	}
-	
-	public JsonArray toJsArray() {
+
+	@Override
+	public JsonArray toJsonArray() {
 		return this;
 	}
-	
+
+	@Override
 	public int size() {
 		return elements.size();
 	}
-	
+
 	public JsonElement getAt(int index) {
 		return elements.get(index);
 	}
-	
+
+	@Override
 	public boolean isEmpty() {
 		return elements.isEmpty();
 	}

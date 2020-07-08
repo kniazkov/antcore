@@ -22,6 +22,7 @@ public final class JsonNumber extends JsonElement {
 		this.value = value;
 	}
 
+	@Override
 	protected void buildString(StringBuilder bld) {
 		String tmp;
 		if (value == (long)value)
@@ -31,6 +32,7 @@ public final class JsonNumber extends JsonElement {
 		bld.append(tmp);
 	}
 
+	@Override
 	protected void buildString(StringBuilder bld, int indent) {
 		buildString(bld);
 	}

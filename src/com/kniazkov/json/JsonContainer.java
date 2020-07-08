@@ -22,7 +22,8 @@ public abstract class JsonContainer extends JsonElement {
 		super(parent);
 	}
 
-	public JsonContainer toJsContainer() {
+	@Override
+	public JsonContainer toJsonContainer() {
 		return this;
 	}
 	
