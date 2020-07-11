@@ -36,6 +36,9 @@ public class WebLibrary {
             Widget widget = ant.createWidget(type.toString());
             if (widget != null) {
                 memory.setInt(SP + 4 + 4, widget.getId());
+                synchronized (ant) {
+                    ant.instructions.add(new CreateWidget(widget.getId(), widget.getType()));
+                }
             }
             else {
                 memory.setInt(SP + 4 + 4, -1);

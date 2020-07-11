@@ -19,22 +19,25 @@ package com.kniazkov.antcore.runtime.web;
 import com.kniazkov.json.JsonObject;
 
 /**
- * The 'print' instruction
+ * The 'create widget' instruction
  */
-public class Print extends Instruction {
-    public Print(String message) {
-        this.message = message;
+public class CreateWidget extends Instruction {
+    public CreateWidget(int id, String klass) {
+        this.id = id;
+        this.klass = klass;
     }
 
     @Override
     public String getType() {
-        return "print";
+        return "create widget";
     }
 
     @Override
     protected void fillJsonObject(JsonObject obj) {
-        obj.createString("message", message);
+        obj.createNumber("id", id);
+        obj.createString("class", klass);
     }
 
-    private String message;
+    private int id;
+    private String klass;
 }

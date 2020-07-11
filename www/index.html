@@ -27,17 +27,33 @@
 		   It was developed by Philips in Hasselt, Belgium, and introduced in September 1963.
 		</p>
 		<script>
+			var connection = null;
+			var widgets = {};
+
 			var processor = {
-				print : function(instruction) {
+				"print" : function(instruction) {
 					console.log(instruction.message);
+				},
+
+				"create widget" : function(instruction) {
+					var widget = null;
+					switch(instruction.class) {
+						case "label":
+							widget = document.createElement("span");
+							break;
+					}
+					widgets[instruction.id] = widget;
 				}
 			};
 
-			var connection = null;
 			var initConnection = function() {
 				sendRequestWithData("create instance", { page : "INDEX" }, function(response) {
 					var data = JSON.parse(response);
-					connection = { uid : data.uid, transaction : 0, processed : [] };
+					connection = {
+						uid : data.uid,
+						transaction : 0,
+						processed : []
+					};
 					var interval = setInterval(function() {
 						connection.transaction++;
 						sendRequestWithData("update", connection, function(response) {
@@ -52,10 +68,11 @@
 								for (var k = 0; k < data.instructions.length; k++) {
 									var instruction = data.instructions[k];
 									var executor = processor[instruction.type];
-									if (executor) {
+									if (executor)
 										executor(instruction);
-										connection.processed.push(instruction.uid);
-									}
+									else
+										console.log("Unknown instruction: " + instruction.type);
+									connection.processed.push(instruction.uid);
 								}
 							}
 						});
