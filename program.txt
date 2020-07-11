@@ -1,11 +1,17 @@
 IMPORT stdlib
+IMPORT web
 
 MODULE INDEX WEB
     DATA
-        counter AS INTEGER
+        state AS INTEGER
     END DATA
 	FUNCTION MAIN
-	    counter = counter + 1
-		print("value: " + (counter * counter))
+	    IF state = 0 THEN
+	        id = createWidget("label")
+	        print("id: " + id)
+	        id = createWidget("xxx")
+	        print("id: " + id)
+	        state = 1
+	    END IF
 	END FUNCTION
 END MODULE

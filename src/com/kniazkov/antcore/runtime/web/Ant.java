@@ -16,13 +16,10 @@
  */
 package com.kniazkov.antcore.runtime.web;
 
-import com.kniazkov.antcore.basic.virtualmachine.StandardLibrary;
 import com.kniazkov.antcore.basic.virtualmachine.VirtualMachine;
 import com.kniazkov.antcore.lib.ByteList;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * An ant, i.e. minimal execution unit that contains own memory space
@@ -34,6 +31,8 @@ public class Ant {
         vm = new VirtualMachine(code, 65536, WebLibrary.create(this));
         uid = UUID.randomUUID().toString();
         instructions = new LinkedList<>();
+        widgets = new TreeMap<>();
+        widgetId = 0;
     }
 
     public void tick() {
@@ -44,10 +43,26 @@ public class Ant {
         return uid;
     }
 
+    Widget createWidget(String type) {
+        int id = ++widgetId;
+        Widget widget = null;
+        switch (type) {
+            case "label":
+                widget = new Label(id);
+                break;
+            default:
+                return null;
+        }
+        widgets.put(id, widget);
+        return widget;
+    }
+
     long timestamp;
     int transaction;
     private WebExecutor executor;
     private VirtualMachine vm;
     private String uid;
     List<Instruction> instructions;
+    Map<Integer, Widget> widgets;
+    private int widgetId;
 }

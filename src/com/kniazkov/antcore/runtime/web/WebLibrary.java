@@ -30,6 +30,18 @@ public class WebLibrary {
             }
         });
 
+        functions.put("createWidget", (memory, SP) -> {
+            int address = memory.getInt(SP + 4);
+            StringData type = StringData.read(memory, address);
+            Widget widget = ant.createWidget(type.toString());
+            if (widget != null) {
+                memory.setInt(SP + 4 + 4, widget.getId());
+            }
+            else {
+                memory.setInt(SP + 4 + 4, -1);
+            }
+        });
+
         return functions;
     }
 }
