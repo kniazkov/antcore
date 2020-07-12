@@ -35,14 +35,30 @@ public class WebLibrary {
             StringData type = StringData.read(memory, address);
             Widget widget = ant.createWidget(type.toString());
             if (widget != null) {
-                memory.setInt(SP + 4 + 4, widget.getId());
                 synchronized (ant) {
                     ant.instructions.add(new CreateWidget(widget.getId(), widget.getType()));
                 }
+                memory.setInt(SP + 4 + 4, widget.getId());
             }
             else {
                 memory.setInt(SP + 4 + 4, -1);
             }
+        });
+
+        functions.put("appendWidget", (memory, SP) -> {
+            int containerId = memory.getInt(SP + 4);
+            int widgetId = memory.getInt(SP + 8);
+            boolean result = false;
+            Widget container = ant.widgets.get(containerId);
+            Widget widget = ant.widgets.get(widgetId);
+            if (container instanceof Container && widget != null) {
+                ((Container) container).appendWidget(widget);
+                synchronized (ant) {
+                    ant.instructions.add(new AppendWidget(containerId, widgetId));
+                }
+                result = true;
+            }
+            memory.set(SP + 12, (byte) (result ? 1 : 0));
         });
 
         return functions;

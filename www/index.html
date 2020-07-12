@@ -22,13 +22,9 @@
 		<link href="fonts/fonts.css" rel="stylesheet">
 	</head>
 	<body>
-		<p>The Compact Cassette, also commonly called the cassette tape, audio cassette, or simply tape or cassette,
-		   is an analog magnetic tape recording format for audio recording and playback.
-		   It was developed by Philips in Hasselt, Belgium, and introduced in September 1963.
-		</p>
 		<script>
 			var connection = null;
-			var widgets = {};
+			var widgets = null;
 
 			var processor = {
 				"print" : function(instruction) {
@@ -42,11 +38,24 @@
 							widget = document.createElement("span");
 							break;
 					}
-					widgets[instruction.id] = widget;
+					if (widget) {
+						widgets[instruction.id] = widget;
+					}
+				},
+
+				"append widget" : function(instruction) {
+					var container = widgets[instruction.container];
+					var widget = widgets[instruction.widget];
+					if (container && widget) {
+						container.appendChild(widget);
+					}
 				}
 			};
 
 			var initConnection = function() {
+				connection = null;
+				widgets = {};
+				widgets[0] = document.body;
 				sendRequestWithData("create instance", { page : "INDEX" }, function(response) {
 					var data = JSON.parse(response);
 					connection = {
@@ -60,7 +69,6 @@
 							data = JSON.parse(response);
 							if (data === null) {
 								clearInterval(interval);
-								connection = null;
 								initConnection();
 							}
 							if (data.instructions) {

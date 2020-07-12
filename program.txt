@@ -9,8 +9,8 @@ MODULE INDEX WEB
 	    IF state = 0 THEN
 	        id = createWidget("label")
 	        print("id: " + id)
-	        id = createWidget("xxx")
-	        print("id: " + id)
+	        result = appendWidget(0, id)
+	        print("result: " + result)
 	        state = 1
 	    END IF
 	END FUNCTION

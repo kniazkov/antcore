@@ -30,9 +30,12 @@ public class Ant {
         this.executor = executor;
         vm = new VirtualMachine(code, 65536, WebLibrary.create(this));
         uid = UUID.randomUUID().toString();
+
         instructions = new LinkedList<>();
+
         widgets = new TreeMap<>();
         widgetId = 0;
+        widgets.put(0, new Body());
     }
 
     public void tick() {
