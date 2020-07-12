@@ -51,12 +51,31 @@ public class WebLibrary {
             boolean result = false;
             Widget container = ant.widgets.get(containerId);
             Widget widget = ant.widgets.get(widgetId);
-            if (container instanceof Container && widget != null) {
-                ((Container) container).appendWidget(widget);
-                synchronized (ant) {
-                    ant.instructions.add(new AppendWidget(containerId, widgetId));
+            if (container != null && widget != null) {
+                result = container.appendChild(widget);
+                if (result) {
+                    synchronized (ant) {
+                        ant.instructions.add(new AppendWidget(containerId, widgetId));
+                    }
                 }
-                result = true;
+            }
+            memory.set(SP + 12, (byte) (result ? 1 : 0));
+        });
+
+        functions.put("setWidgetData", (memory, SP) -> {
+            int widgetId = memory.getInt(SP + 4);
+            int address = memory.getInt(SP + 8);
+            StringData data = StringData.read(memory, address);
+            String dataStr = data.toString();
+            Widget widget = ant.widgets.get(widgetId);
+            boolean result = false;
+            if (widget != null) {
+                result = widget.setData(dataStr);
+                if (result) {
+                    synchronized (ant) {
+                        ant.instructions.add(new SetWidgetData(widgetId, dataStr));
+                    }
+                }
             }
             memory.set(SP + 12, (byte) (result ? 1 : 0));
         });

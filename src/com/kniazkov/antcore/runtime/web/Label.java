@@ -28,4 +28,12 @@ public class Label extends Widget {
     public String getType() {
         return "label";
     }
+
+    @Override
+    boolean setData(String data) {
+        caption = data;
+        return true;
+    }
+
+    String caption;
 }

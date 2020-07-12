@@ -49,6 +49,13 @@
 					if (container && widget) {
 						container.appendChild(widget);
 					}
+				},
+
+				"set widget data" : function(instruction) {
+					var widget = widgets[instruction.widget];
+					if (widget) {
+						widget.innerHTML = escapeHtml(instruction.data);
+					}
 				}
 			};
 
@@ -84,7 +91,7 @@
 								}
 							}
 						});
-					}, 200);
+					}, 100);
 				});
 			};
 			initConnection();

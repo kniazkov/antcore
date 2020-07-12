@@ -4,6 +4,8 @@ IMPORT web
 MODULE INDEX WEB
     DATA
         state AS INTEGER
+        id AS INTEGER
+        counter AS INTEGER
     END DATA
 	FUNCTION MAIN
 	    IF state = 0 THEN
@@ -12,6 +14,9 @@ MODULE INDEX WEB
 	        result = appendWidget(0, id)
 	        print("result: " + result)
 	        state = 1
+	    ELSE IF state = 1 THEN
+	        counter = counter + 1
+	        setWidgetData(id, "" + counter)
 	    END IF
 	END FUNCTION
 END MODULE

@@ -28,6 +28,14 @@ public abstract class Widget {
         return id;
     }
 
+    boolean appendChild(Widget child) {
+        return false;
+    }
+
+    boolean setData(String data) {
+        return false;
+    }
+
     private int id;
 
     public abstract String getType();

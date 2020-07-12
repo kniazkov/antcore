@@ -16,22 +16,28 @@
  */
 package com.kniazkov.antcore.runtime.web;
 
-import java.util.LinkedList;
+import com.kniazkov.json.JsonObject;
 
 /**
- * The container, i.e. widget that contains other widgets
+ * The 'set widget data' instruction
  */
-public abstract class Container extends Widget {
-    public Container(int id) {
-        super(id);
-        widgets = new LinkedList<>();
+public class SetWidgetData extends Instruction {
+    public SetWidgetData(int widget, String data) {
+        this.widget = widget;
+        this.data = data;
     }
 
     @Override
-    boolean appendChild(Widget child) {
-        widgets.addLast(child);
-        return true;
+    public String getType() {
+        return "set widget data";
     }
 
-    private LinkedList<Widget> widgets;
+    @Override
+    protected void fillJsonObject(JsonObject obj) {
+        obj.createNumber("widget", widget);
+        obj.createString("data", data);
+    }
+
+    private int widget;
+    private String data;
 }
