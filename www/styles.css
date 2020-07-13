@@ -32,3 +32,15 @@ body
     color: white;
     background-color: #333336;
 }
+
+input
+{
+    font-family: 'Open Sans Condensed', sans-serif;
+    font-size: 24pt;
+	color: white;
+    border-color : white;
+    border-style: solid;
+    border-width: thin;
+    padding : 5px;
+    background-color: #222226;
+}

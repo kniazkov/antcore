@@ -26,19 +26,37 @@
 			var connection = null;
 			var widgets = null;
 
+			var library = {
+				"label" : function() {
+					var widget = document.createElement("span");
+					widget.setData = function(data) {
+						widget.innerHTML = escapeHtml(data);
+					};
+					return widget;
+				},
+
+				"break" : function() {
+					return document.createElement("br");
+				},
+
+				"input" : function() {
+					var widget = document.createElement("input");
+					widget.setData = function(data) {
+						widget.value = escapeHtml(data);
+					};
+					return widget;
+				}
+			};
+
 			var processor = {
 				"print" : function(instruction) {
 					console.log(instruction.message);
 				},
 
 				"create widget" : function(instruction) {
-					var widget = null;
-					switch(instruction.class) {
-						case "label":
-							widget = document.createElement("span");
-							break;
-					}
-					if (widget) {
+					var creator = library[instruction.class];
+					if (creator) {
+						var widget = creator();
 						widgets[instruction.id] = widget;
 					}
 				},
@@ -54,13 +72,14 @@
 				"set widget data" : function(instruction) {
 					var widget = widgets[instruction.widget];
 					if (widget) {
-						widget.innerHTML = escapeHtml(instruction.data);
+						widget.setData(instruction.data);
 					}
 				}
 			};
 
 			var initConnection = function() {
 				connection = null;
+				document.body.innerHTML = "";
 				widgets = {};
 				widgets[0] = document.body;
 				sendRequestWithData("create instance", { page : "INDEX" }, function(response) {

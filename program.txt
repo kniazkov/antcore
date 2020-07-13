@@ -4,19 +4,25 @@ IMPORT web
 MODULE INDEX WEB
     DATA
         state AS INTEGER
-        id AS INTEGER
-        counter AS INTEGER
+        label AS INTEGER
+        input AS INTEGER
     END DATA
 	FUNCTION MAIN
 	    IF state = 0 THEN
-	        id = createWidget("label")
-	        print("id: " + id)
-	        result = appendWidget(0, id)
-	        print("result: " + result)
 	        state = 1
+
+	        label = createWidget("label")
+	        appendWidget(0, label)
+	        setWidgetData(label, "Enter text here:")
+
+	        appendWidget(0, createWidget("break"))
+
+	        input = createWidget("input")
+	        appendWidget(0, input)
+            setWidgetData(input, "Example")
+
 	    ELSE IF state = 1 THEN
-	        counter = counter + 1
-	        setWidgetData(id, "" + counter)
+            ' do nothing
 	    END IF
 	END FUNCTION
 END MODULE

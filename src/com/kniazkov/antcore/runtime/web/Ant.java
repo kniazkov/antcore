@@ -53,6 +53,12 @@ public class Ant {
             case "label":
                 widget = new Label(id);
                 break;
+            case "break":
+                widget = new Break(id);
+                break;
+            case "input":
+                widget = new Input(id);
+                break;
             default:
                 return null;
         }
