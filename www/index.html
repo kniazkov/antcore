@@ -44,6 +44,14 @@
 					widget.setData = function(data) {
 						widget.value = escapeHtml(data);
 					};
+					addEvent(widget, "input", function(){
+						var event = {
+							id : widget.uid,
+							type : "input",
+							value : widget.value
+						};
+						connection.events.push(event);
+					});
 					return widget;
 				}
 			};
@@ -57,6 +65,7 @@
 					var creator = library[instruction.class];
 					if (creator) {
 						var widget = creator();
+						widget.uid = instruction.id;
 						widgets[instruction.id] = widget;
 					}
 				},
@@ -87,7 +96,8 @@
 					connection = {
 						uid : data.uid,
 						transaction : 0,
-						processed : []
+						processed : [],
+						events : []
 					};
 					var interval = setInterval(function() {
 						connection.transaction++;
@@ -109,6 +119,7 @@
 									connection.processed.push(instruction.uid);
 								}
 							}
+							connection.events = []; // TODO
 						});
 					}, 100);
 				});

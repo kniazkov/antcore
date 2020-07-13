@@ -80,6 +80,23 @@ public class Update extends Respondent {
                 }
             }
 
+            JsonElement eventsElem = obj.get("events");
+            if (eventsElem != null) {
+                JsonArray eventsArray = eventsElem.toJsonArray();
+                if (eventsArray != null) {
+                    count = eventsArray.size();
+                    for (k = 0; k < count; k++) {
+                        JsonObject event = eventsArray.getAt(k).toJsonObject();
+                        assert (event != null);
+                        int widgetId = event.get("id").intValue();
+                        Widget widget = ant.widgets.get(widgetId);
+                        if (widget != null) {
+                            widget.handleEvent(event.get("type").stringValue(), event);
+                        }
+                    }
+                }
+            }
+
             result.createNumber("transaction", transaction);
             count = ant.instructions.size();
             if (count > maxInstructionsCount) count = maxInstructionsCount;

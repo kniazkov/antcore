@@ -16,6 +16,8 @@
  */
 package com.kniazkov.antcore.runtime.web;
 
+import com.kniazkov.json.JsonObject;
+
 /**
  * A widget,  i.e. an element of the GUI
  */
@@ -33,6 +35,14 @@ public abstract class Widget {
     }
 
     boolean setData(String data) {
+        return false;
+    }
+
+    String getData() {
+        return null;
+    }
+
+    boolean handleEvent(String type, JsonObject event) {
         return false;
     }
 

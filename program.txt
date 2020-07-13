@@ -6,8 +6,12 @@ MODULE INDEX WEB
         state AS INTEGER
         label AS INTEGER
         input AS INTEGER
+        result AS INTEGER
+        value AS STRING OF 255
     END DATA
 	FUNCTION MAIN
+        value = ""
+
 	    IF state = 0 THEN
 	        state = 1
 
@@ -21,8 +25,14 @@ MODULE INDEX WEB
 	        appendWidget(0, input)
             setWidgetData(input, "Example")
 
+            appendWidget(0, createWidget("break"))
+
+	        result = createWidget("label")
+	        appendWidget(0, result)
+
 	    ELSE IF state = 1 THEN
-            ' do nothing
+	        getWidgetData(input, value)
+	        setWidgetData(result, "Entered data: " + value)
 	    END IF
 	END FUNCTION
 END MODULE

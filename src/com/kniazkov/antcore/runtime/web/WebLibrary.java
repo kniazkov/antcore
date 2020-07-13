@@ -80,6 +80,28 @@ public class WebLibrary {
             memory.set(SP + 12, (byte) (result ? 1 : 0));
         });
 
+        functions.put("getWidgetData", (memory, SP) -> {
+            int widgetId = memory.getInt(SP + 4);
+            Widget widget = ant.widgets.get(widgetId);
+            boolean result = false;
+            if (widget != null) {
+                String data = widget.getData();
+                if (data != null) {
+                    int length = data.length();
+                    int address = memory.getInt(SP + 8);
+                    int capacity = memory.getInt(address + 4);
+                    if (length > capacity) length = capacity;
+                    memory.setInt(address, length);
+                    for (int k = 0; k < length; k++) {
+                        char ch = data.charAt(k);
+                        memory.setChar(address + 8 + k * 2, ch);
+                    }
+                    result = true;
+                }
+            }
+            memory.set(SP + 12, (byte) (result ? 1 : 0));
+        });
+
         return functions;
     }
 }

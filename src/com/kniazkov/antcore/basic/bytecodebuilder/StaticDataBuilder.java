@@ -55,7 +55,7 @@ public class StaticDataBuilder {
     /**
      * Build binary data
      * @param buff the destination buffer
-     * @param offset offset relative to the beginning of the buffer
+     * @param segmentOffset offset relative to the beginning of the buffer
      */
     public void build(ByteBuffer buff, int segmentOffset) {
         for (String string : stringsList) {

@@ -16,6 +16,9 @@
  */
 package com.kniazkov.antcore.runtime.web;
 
+import com.kniazkov.json.JsonObject;
+import com.kniazkov.json.JsonString;
+
 /**
  * The input field
  */
@@ -33,6 +36,22 @@ public class Input extends Widget {
     boolean setData(String data) {
         value = data;
         return true;
+    }
+
+    @Override
+    String getData() {
+        return value;
+    }
+
+    @Override
+    boolean handleEvent(String type, JsonObject event) {
+        if (type.equals("input")) {
+            if (event.containsKey("value")) {
+                value = event.get("value").stringValue();
+                return true;
+            }
+        }
+        return false;
     }
 
     String value;
