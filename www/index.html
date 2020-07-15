@@ -46,7 +46,8 @@
 					};
 					addEvent(widget, "input", function(){
 						var event = {
-							id : widget.uid,
+							uid : generateUid(),
+							widget : widget.uid,
 							type : "input",
 							value : widget.value
 						};
@@ -102,14 +103,16 @@
 					var interval = setInterval(function() {
 						connection.transaction++;
 						sendRequestWithData("update", connection, function(response) {
+							var k;
 							data = JSON.parse(response);
 							if (data === null) {
 								clearInterval(interval);
 								initConnection();
+								return;
 							}
 							if (data.instructions) {
 								connection.processed = [];
-								for (var k = 0; k < data.instructions.length; k++) {
+								for (k = 0; k < data.instructions.length; k++) {
 									var instruction = data.instructions[k];
 									var executor = processor[instruction.type];
 									if (executor)
@@ -119,7 +122,15 @@
 									connection.processed.push(instruction.uid);
 								}
 							}
-							connection.events = []; // TODO
+							if (data.handled) {
+								var tmp = [];
+								for (k = 0; k < connection.events.length; k++) {
+									var event = connection.events[k];
+									if (data.handled.indexOf(event.uid) < 0)
+										tmp.push(event);
+								}
+								connection.events = tmp;
+							}
 						});
 					}, 100);
 				});

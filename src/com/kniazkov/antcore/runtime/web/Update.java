@@ -85,13 +85,18 @@ public class Update extends Respondent {
                 JsonArray eventsArray = eventsElem.toJsonArray();
                 if (eventsArray != null) {
                     count = eventsArray.size();
-                    for (k = 0; k < count; k++) {
-                        JsonObject event = eventsArray.getAt(k).toJsonObject();
-                        assert (event != null);
-                        int widgetId = event.get("id").intValue();
-                        Widget widget = ant.widgets.get(widgetId);
-                        if (widget != null) {
-                            widget.handleEvent(event.get("type").stringValue(), event);
+                    if (count > 0) {
+                        JsonArray handled = result.createArray("handled");
+                        for (k = 0; k < count; k++) {
+                            JsonObject event = eventsArray.getAt(k).toJsonObject();
+                            assert (event != null);
+                            String eventId = event.get("uid").stringValue();
+                            handled.createString(eventId);
+                            int widgetId = event.get("widget").intValue();
+                            Widget widget = ant.widgets.get(widgetId);
+                            if (widget != null) {
+                                widget.handleEvent(event.get("type").stringValue(), event);
+                            }
                         }
                     }
                 }

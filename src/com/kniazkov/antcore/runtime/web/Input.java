@@ -44,14 +44,12 @@ public class Input extends Widget {
     }
 
     @Override
-    boolean handleEvent(String type, JsonObject event) {
+    void handleEvent(String type, JsonObject event) {
         if (type.equals("input")) {
             if (event.containsKey("value")) {
                 value = event.get("value").stringValue();
-                return true;
             }
         }
-        return false;
     }
 
     String value;

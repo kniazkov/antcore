@@ -8,6 +8,7 @@ MODULE INDEX WEB
         input AS INTEGER
         result AS INTEGER
         value AS STRING OF 255
+		oldValue AS STRING OF 255
     END DATA
 	FUNCTION MAIN
         value = ""
@@ -32,7 +33,10 @@ MODULE INDEX WEB
 
 	    ELSE IF state = 1 THEN
 	        getWidgetData(input, value)
-	        setWidgetData(result, "Entered data: " + value)
+			'IF value <> oldValue THEN
+				setWidgetData(result, "Entered data: " + value)
+			'END IF
+			oldValue = value
 	    END IF
 	END FUNCTION
 END MODULE

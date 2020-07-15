@@ -42,8 +42,7 @@ public abstract class Widget {
         return null;
     }
 
-    boolean handleEvent(String type, JsonObject event) {
-        return false;
+    void handleEvent(String type, JsonObject event) {
     }
 
     private int id;
