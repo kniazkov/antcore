@@ -588,6 +588,35 @@ public class VirtualMachine {
             }
     };
 
+    int compareTwoStringsFromStack() {
+        StringData str1 = StringData.read(memory, SP);
+        SP = SP + read_x0();
+        StringData str2 = StringData.read(memory, SP);
+        SP = SP + read_x1();
+        return str1.toString().compareTo(str2.toString());
+    }
+
+    final Unit[] compareString = {
+            () -> { // 0 -> EQUAL
+                pushBoolean(compareTwoStringsFromStack() == 0);
+            },
+            () -> { // 1 -> DIFF
+                pushBoolean(compareTwoStringsFromStack() != 0);
+            },
+            () -> { // 2 -> LESS
+                pushBoolean(compareTwoStringsFromStack() < 0);
+            },
+            () -> { // 3 -> LESS_EQUAL
+                pushBoolean(compareTwoStringsFromStack() <= 0);
+            },
+            () -> { // 4 -> GREATER
+                pushBoolean(compareTwoStringsFromStack() > 0);
+            },
+            () -> { // 4 -> GREATER_EQUAL
+                pushBoolean(compareTwoStringsFromStack() >= 0);
+            }
+    };
+
     final Unit[] compare = {
             stub,
             stub,   // 1 -> POINTER
@@ -601,7 +630,9 @@ public class VirtualMachine {
             },
             stub,   // 6 -> LONG
             stub,   // 7 -> REAL
-            stub,   // 8 -> STRING
+            () -> { // 8 -> STRING
+                compareString[read_p1()].exec();
+            },
             stub,   // 9 -> ARRAY
             stub    // 10 -> STRUCT
     };

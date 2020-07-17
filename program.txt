@@ -33,9 +33,13 @@ MODULE INDEX WEB
 
 	    ELSE IF state = 1 THEN
 	        getWidgetData(input, value)
-			'IF value <> oldValue THEN
-				setWidgetData(result, "Entered data: " + value)
-			'END IF
+			IF value <> oldValue THEN
+			    IF value = "" THEN
+    				setWidgetData(result, "Just enter something! Do it!")
+			    ELSE
+    				setWidgetData(result, "Entered data: " + value)
+    			END IF
+			END IF
 			oldValue = value
 	    END IF
 	END FUNCTION
