@@ -74,6 +74,11 @@ public class WebExecutor extends Executor {
         webServer = Server.start(new Options(), new Handler(this));
     }
 
+    @Override
+    protected int getFrequency() {
+        return 10;
+    }
+
     CompiledModule getModuleByName(String name) {
         return modules.get(name);
     }

@@ -17,6 +17,7 @@
 package com.kniazkov.antcore.runtime;
 
 import com.kniazkov.antcore.basic.bytecode.CompiledProgram;
+import com.kniazkov.antcore.runtime.server.ServerExecutor;
 import com.kniazkov.antcore.runtime.web.WebExecutor;
 
 /**
@@ -45,6 +46,8 @@ public class Launcher {
         switch (name) {
             case "WEB":
                 return new WebExecutor();
+            case "SERVER":
+                return new ServerExecutor();
         }
         return null;
     }

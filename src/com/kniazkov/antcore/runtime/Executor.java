@@ -40,10 +40,15 @@ public abstract class Executor extends Periodic {
     protected abstract void init();
 
     /**
+     * @return how many time per second the 'tick' method called
+     */
+    protected abstract int getFrequency();
+
+    /**
      * Runs the executor
      */
     public void run() {
         init();
-        start(100);
+        start(1000 / getFrequency());
     }
 }

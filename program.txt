@@ -12,6 +12,7 @@ MODULE INDEX WEB
         value AS STRING OF 255
 		oldValue AS STRING OF 255
     END DATA
+
 	FUNCTION MAIN
         value = ""
 
@@ -53,4 +54,16 @@ MODULE INDEX WEB
             setWidgetData(header, "" + ticks)
 	    END IF
 	END FUNCTION
+END MODULE
+
+MODULE SERVER
+    DATA
+        ticks AS INTEGER
+    END DATA
+    FUNCTION MAIN
+        IF ticks MOD 100 = 0 THEN
+            println("" + ticks)
+        END IF
+        ticks = ticks + 1
+    END FUNCTION
 END MODULE
