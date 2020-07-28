@@ -17,6 +17,7 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.common.*;
+import com.kniazkov.antcore.basic.exceptions.FieldCanNotBeAPointer;
 import com.kniazkov.antcore.basic.exceptions.FieldCanNotBeAbstract;
 import com.kniazkov.antcore.basic.exceptions.FieldCanNotBeConstant;
 import com.kniazkov.antcore.basic.exceptions.RecursiveNesting;
@@ -144,6 +145,8 @@ public class DataSet extends Node implements ExpressionOwner {
                 throw new FieldCanNotBeConstant(field.getFragment());
             if (type.isAbstract())
                 throw new FieldCanNotBeAbstract(field.getFragment());
+            if ((prefix == DataPrefix.INPUT || prefix == DataPrefix.OUTPUT) && type.containsPointer())
+                throw new FieldCanNotBeAPointer(field.getFragment());
         }
     }
 

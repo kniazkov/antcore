@@ -54,6 +54,11 @@ public class BooleanType extends BuiltInType {
     }
 
     @Override
+    public boolean containsPointer() {
+        return false;
+    }
+
+    @Override
     public boolean isBinaryAnalog(DataType otherType) throws SyntaxError {
         return otherType == this;
     }

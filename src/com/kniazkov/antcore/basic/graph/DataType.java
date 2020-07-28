@@ -59,6 +59,11 @@ public abstract class DataType extends Node {
     public abstract boolean isNumeric();
 
     /**
+     * @return true if the type is pointer or contains pointer
+     */
+    public abstract boolean containsPointer();
+
+    /**
      * Set owner of the node
      * @param owner owner
      */

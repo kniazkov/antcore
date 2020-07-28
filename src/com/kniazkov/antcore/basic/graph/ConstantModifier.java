@@ -73,6 +73,11 @@ public class ConstantModifier extends DataType implements DataTypeOwner {
     }
 
     @Override
+    public boolean containsPointer() {
+        return type.containsPointer();
+    }
+
+    @Override
     void setOwner(DataTypeOwner owner) {
         this.owner = owner;
     }

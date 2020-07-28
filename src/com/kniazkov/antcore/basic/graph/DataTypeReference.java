@@ -80,6 +80,11 @@ public class DataTypeReference extends DataType {
     }
 
     @Override
+    public boolean containsPointer() {
+        return type.containsPointer();
+    }
+
+    @Override
     public Node getOwner() {
         return (Node)owner;
     }

@@ -56,9 +56,15 @@ MODULE INDEX WEB
 	END FUNCTION
 END MODULE
 
+TYPE someType
+    x AS INTEGER
+    y AS POINTER TO INTEGER
+END TYPE
+
 MODULE SERVER
-    DATA
+    DATA OUTPUT
         ticks AS INTEGER
+        something AS someType
     END DATA
     FUNCTION MAIN
         IF ticks MOD 100 = 0 THEN

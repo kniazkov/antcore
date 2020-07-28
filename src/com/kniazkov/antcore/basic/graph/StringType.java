@@ -99,6 +99,11 @@ public class StringType extends DataType implements ExpressionOwner {
     }
 
     @Override
+    public boolean containsPointer() {
+        return false;
+    }
+
+    @Override
     void setOwner(DataTypeOwner owner) {
         this.owner = owner;
     }

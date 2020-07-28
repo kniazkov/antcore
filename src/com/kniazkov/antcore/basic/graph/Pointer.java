@@ -78,6 +78,11 @@ public class Pointer extends DataType implements DataTypeOwner {
     }
 
     @Override
+    public boolean containsPointer() {
+        return true;
+    }
+
+    @Override
     void setOwner(DataTypeOwner owner) {
         this.owner = owner;
     }

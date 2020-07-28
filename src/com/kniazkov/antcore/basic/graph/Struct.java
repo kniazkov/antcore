@@ -70,6 +70,15 @@ public class Struct extends DataType implements DataSetOwner {
     }
 
     @Override
+    public boolean containsPointer() {
+        for (Field field : dataSet.getFields()) {
+            if (field.getType().containsPointer())
+                return true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean isBuiltIn() {
         return false;
     }
