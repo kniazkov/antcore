@@ -25,6 +25,8 @@
 		<script>
 			var connection = null;
 			var widgets = null;
+			var interval = null;
+			var period = 100;
 
 			var library = {
 				"label" : function() {
@@ -52,6 +54,7 @@
 							value : widget.value
 						};
 						connection.events.push(event);
+						sendTransactionImmediately();
 					});
 					return widget;
 				}
@@ -100,41 +103,59 @@
 						processed : [],
 						events : []
 					};
-					var interval = setInterval(function() {
-						connection.transaction++;
-						sendRequestWithData("update", connection, function(response) {
-							var k;
-							data = JSON.parse(response);
-							if (data === null) {
-								clearInterval(interval);
-								initConnection();
-								return;
-							}
-							if (data.instructions) {
-								connection.processed = [];
-								for (k = 0; k < data.instructions.length; k++) {
-									var instruction = data.instructions[k];
-									var executor = processor[instruction.type];
-									if (executor)
-										executor(instruction);
-									else
-										console.log("Unknown instruction: " + instruction.type);
-									connection.processed.push(instruction.uid);
-								}
-							}
-							if (data.handled) {
-								var tmp = [];
-								for (k = 0; k < connection.events.length; k++) {
-									var event = connection.events[k];
-									if (data.handled.indexOf(event.uid) < 0)
-										tmp.push(event);
-								}
-								connection.events = tmp;
-							}
-						});
-					}, 100);
+					interval = setInterval(function() {
+						sendTransaction();
+					}, period);
 				});
 			};
+
+			var sendTransaction = function() {
+				connection.transaction++;
+				sendRequestWithData("update", connection, function(response) {
+					var k;
+					data = JSON.parse(response);
+					if (data === null) {
+						if (interval !== null) {
+							clearInterval(interval);
+							interval = null;
+						}
+						initConnection();
+						return;
+					}
+					if (data.instructions) {
+						connection.processed = [];
+						for (k = 0; k < data.instructions.length; k++) {
+							var instruction = data.instructions[k];
+							var executor = processor[instruction.type];
+							if (executor)
+								executor(instruction);
+							else
+								console.log("Unknown instruction: " + instruction.type);
+							connection.processed.push(instruction.uid);
+						}
+					}
+					if (data.handled) {
+						var tmp = [];
+						for (k = 0; k < connection.events.length; k++) {
+							var event = connection.events[k];
+							if (data.handled.indexOf(event.uid) < 0)
+								tmp.push(event);
+						}
+						connection.events = tmp;
+					}
+				});
+			};
+
+			var sendTransactionImmediately = function() {
+				if (interval !== null) {
+					clearInterval(interval);
+				}
+				sendTransaction();
+				interval = setInterval(function() {
+					sendTransaction();
+				}, period);
+			};
+
 			initConnection();
 		</script>
 	</body>

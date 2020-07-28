@@ -57,50 +57,50 @@ public class Update extends Respondent {
         ant.timestamp = executor.getTicks();
 
         JsonObject result = new JsonObject(null);
-        synchronized (ant) {
-            JsonElement processedElem = obj.get("processed");
-            if (processedElem != null) {
-                JsonArray processedArray = processedElem.toJsonArray();
-                if (processedArray != null) {
-                    count = processedArray.size();
-                    if (count > 0) {
-                        Set<String> processedSet = new TreeSet<>();
-                        for (k = 0; k < count; k++) {
-                            String processedId = processedArray.getAt(k).stringValue();
-                            processedSet.add(processedId);
+        JsonElement processedElem = obj.get("processed");
+        if (processedElem != null) {
+            JsonArray processedArray = processedElem.toJsonArray();
+            if (processedArray != null) {
+                count = processedArray.size();
+                if (count > 0) {
+                    Set<String> processedSet = new TreeSet<>();
+                    for (k = 0; k < count; k++) {
+                        String processedId = processedArray.getAt(k).stringValue();
+                        processedSet.add(processedId);
+                    }
+                    List<Instruction> tmp = new LinkedList<>();
+                    for (Instruction instruction : ant.instructions) {
+                        if (!processedSet.contains(instruction.getUId())) {
+                            tmp.add(instruction);
                         }
-                        List<Instruction> tmp = new LinkedList<>();
-                        for (Instruction instruction : ant.instructions) {
-                            if (!processedSet.contains(instruction.getUId())) {
-                                tmp.add(instruction);
-                            }
+                    }
+                    ant.instructions = tmp;
+                }
+            }
+        }
+
+        JsonElement eventsElem = obj.get("events");
+        if (eventsElem != null) {
+            JsonArray eventsArray = eventsElem.toJsonArray();
+            if (eventsArray != null) {
+                count = eventsArray.size();
+                if (count > 0) {
+                    JsonArray handled = result.createArray("handled");
+                    for (k = 0; k < count; k++) {
+                        JsonObject event = eventsArray.getAt(k).toJsonObject();
+                        assert (event != null);
+                        String eventId = event.get("uid").stringValue();
+                        handled.createString(eventId);
+                        int widgetId = event.get("widget").intValue();
+                        Widget widget = ant.widgets.get(widgetId);
+                        if (widget != null) {
+                            widget.handleEvent(event.get("type").stringValue(), event);
                         }
-                        ant.instructions = tmp;
                     }
                 }
             }
 
-            JsonElement eventsElem = obj.get("events");
-            if (eventsElem != null) {
-                JsonArray eventsArray = eventsElem.toJsonArray();
-                if (eventsArray != null) {
-                    count = eventsArray.size();
-                    if (count > 0) {
-                        JsonArray handled = result.createArray("handled");
-                        for (k = 0; k < count; k++) {
-                            JsonObject event = eventsArray.getAt(k).toJsonObject();
-                            assert (event != null);
-                            String eventId = event.get("uid").stringValue();
-                            handled.createString(eventId);
-                            int widgetId = event.get("widget").intValue();
-                            Widget widget = ant.widgets.get(widgetId);
-                            if (widget != null) {
-                                widget.handleEvent(event.get("type").stringValue(), event);
-                            }
-                        }
-                    }
-                }
-            }
+            ant.tick();
 
             result.createNumber("transaction", transaction);
             count = ant.instructions.size();

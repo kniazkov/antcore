@@ -45,9 +45,6 @@ public class WebExecutor extends Executor {
                     died = new ArrayList<>();
                 died.add(uid);
             }
-            else {
-                ant.tick();
-            }
         }
 
         if (died != null) {

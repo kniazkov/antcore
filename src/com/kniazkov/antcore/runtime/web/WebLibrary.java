@@ -25,9 +25,7 @@ public class WebLibrary {
         functions.put("print", (memory, SP) -> {
             int address = memory.getInt(SP + 4);
             StringData stringData = StringData.read(memory, address);
-            synchronized (ant) {
-                ant.instructions.add(new Print(stringData.toString()));
-            }
+            ant.instructions.add(new Print(stringData.toString()));
         });
 
         functions.put("createWidget", (memory, SP) -> {
@@ -35,9 +33,7 @@ public class WebLibrary {
             StringData type = StringData.read(memory, address);
             Widget widget = ant.createWidget(type.toString());
             if (widget != null) {
-                synchronized (ant) {
-                    ant.instructions.add(new CreateWidget(widget.getId(), widget.getType()));
-                }
+                ant.instructions.add(new CreateWidget(widget.getId(), widget.getType()));
                 memory.setInt(SP + 4 + 4, widget.getId());
             }
             else {
@@ -54,9 +50,7 @@ public class WebLibrary {
             if (container != null && widget != null) {
                 result = container.appendChild(widget);
                 if (result) {
-                    synchronized (ant) {
-                        ant.instructions.add(new AppendWidget(containerId, widgetId));
-                    }
+                    ant.instructions.add(new AppendWidget(containerId, widgetId));
                 }
             }
             memory.set(SP + 12, (byte) (result ? 1 : 0));
@@ -72,9 +66,7 @@ public class WebLibrary {
             if (widget != null) {
                 result = widget.setData(dataStr);
                 if (result) {
-                    synchronized (ant) {
-                        ant.instructions.add(new SetWidgetData(widgetId, dataStr));
-                    }
+                    ant.instructions.add(new SetWidgetData(widgetId, dataStr));
                 }
             }
             memory.set(SP + 12, (byte) (result ? 1 : 0));

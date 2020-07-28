@@ -4,6 +4,8 @@ IMPORT web
 MODULE INDEX WEB
     DATA
         state AS INTEGER
+        ticks AS INTEGER
+        header AS INTEGER
         label AS INTEGER
         input AS INTEGER
         result AS INTEGER
@@ -15,6 +17,11 @@ MODULE INDEX WEB
 
 	    IF state = 0 THEN
 	        state = 1
+
+            header = createWidget("label")
+	        appendWidget(0, header)
+
+	        appendWidget(0, createWidget("break"))
 
 	        label = createWidget("label")
 	        appendWidget(0, label)
@@ -41,6 +48,9 @@ MODULE INDEX WEB
     			END IF
 			END IF
 			oldValue = value
+
+			ticks = ticks + 1
+            setWidgetData(header, "" + ticks)
 	    END IF
 	END FUNCTION
 END MODULE
