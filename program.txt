@@ -4,13 +4,16 @@ IMPORT web
 MODULE INDEX WEB
     DATA
         state AS INTEGER
-        ticks AS INTEGER
         header AS INTEGER
         label AS INTEGER
         input AS INTEGER
         result AS INTEGER
         value AS STRING OF 255
 		oldValue AS STRING OF 255
+    END DATA
+
+    DATA INPUT
+        ticks AS INTEGER
     END DATA
 
 	FUNCTION MAIN
@@ -45,26 +48,19 @@ MODULE INDEX WEB
 			    IF value = "" THEN
     				setWidgetData(result, "Just enter something! Do it!")
 			    ELSE
-    				setWidgetData(result, "Entered data: " + value)
+    				setWidgetData(result, "Entered data: " + value + value)
     			END IF
 			END IF
 			oldValue = value
 
-			ticks = ticks + 1
             setWidgetData(header, "" + ticks)
 	    END IF
 	END FUNCTION
 END MODULE
 
-TYPE someType
-    x AS INTEGER
-    y AS POINTER TO INTEGER
-END TYPE
-
 MODULE SERVER
     DATA OUTPUT
         ticks AS INTEGER
-        something AS someType
     END DATA
     FUNCTION MAIN
         IF ticks MOD 100 = 0 THEN
@@ -73,3 +69,7 @@ MODULE SERVER
         ticks = ticks + 1
     END FUNCTION
 END MODULE
+
+TRANSMISSION
+    SERVER.ticks TO INDEX.ticks
+END TRANSMISSION

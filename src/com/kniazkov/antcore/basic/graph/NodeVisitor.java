@@ -37,6 +37,9 @@ public abstract class NodeVisitor {
     public void visit(Casting obj) throws SyntaxError {
     }
 
+    public void visit(Channel obj) throws SyntaxError {
+    }
+
     public void visit(CodeBlock obj) throws SyntaxError {
     }
 
@@ -107,6 +110,9 @@ public abstract class NodeVisitor {
     }
 
     public void visit(Struct obj)  throws SyntaxError {
+    }
+
+    public void visit(Transmission obj) throws SyntaxError {
     }
 
     public void visit(Variable obj)  throws SyntaxError {

@@ -76,7 +76,8 @@ public class Parser {
         }
 
         return new Program(parser.globalConstantList != null ? parser.globalConstantList.toNode() : null,
-                codeBlocks, modules, dataTypes);
+                codeBlocks, modules, dataTypes,
+                parser.rawTransmission != null ? parser.rawTransmission.toNode() : null);
     }
 
     /**
@@ -237,6 +238,8 @@ public class Parser {
                     return KeywordLoop.getInstance();
                 case "MOD":
                     return OperatorMod.getInstance();
+                case "TRANSMISSION":
+                    return KeywordTransmission.getInstance();
             }
             return new Identifier(name);
         }
@@ -355,6 +358,11 @@ public class Parser {
             return CloseRoundBracket.getInstance();
         }
 
+        if (c == '.') {
+            src.next();
+            return Dot.getInstance();
+        }
+
         throw new UnknownCharacter(fragment, c);
     }
 
@@ -464,6 +472,7 @@ public class Parser {
     private List<RawCodeBlock> rawCodeBlocks;
     private Map<String, RawDataType> rawDataTypes;
     private List<RawFunction> rawFunctions;
+    private RawTransmission rawTransmission;
 
     private Parser() {
         rawModules = new TreeMap<>();
@@ -507,13 +516,20 @@ public class Parser {
                     globalConstantList = new RawConstantList();
                 RawConstant constant = parseConstant(line);
                 globalConstantList.addConstant(constant);
-            } else if (firstToken instanceof KeywordType) {
+            }
+            else if (firstToken instanceof KeywordType) {
                 parseStructure(line, iterator);
-            } else if (firstToken instanceof KeywordCode) {
+            }
+            else if (firstToken instanceof KeywordCode) {
                 parseCodeBlock(line, iterator);
-            } else if (firstToken instanceof KeywordModule) {
+            }
+            else if (firstToken instanceof KeywordModule) {
                 parseModule(line, iterator);
-            } else
+            }
+            else if (firstToken instanceof KeywordTransmission) {
+                parseTransmission(line, iterator);
+            }
+            else
                 throw new UnexpectedSequence(line);
         }
     }
@@ -812,6 +828,88 @@ public class Parser {
                 if (content.size() > 2)
                     throw new UnrecognizedSequence(line);
                 rawDataTypes.put(structName, struct);
+                return;
+            }
+        }
+        throw new UnexpectedEndOfFile(line);
+    }
+
+    /**
+     * Parse a struct
+     *
+     * @param declaration the line contains transmission declaration
+     * @param iterator    the iterator by lines
+     */
+    private void parseTransmission(Line declaration, Iterator<Line> iterator) throws SyntaxError {
+        Iterator<Token> tokens = declaration.getTokens().iterator();
+        tokens.next();
+
+        if (tokens.hasNext())
+            throw new UnrecognizedSequence(declaration);
+
+        if (rawTransmission == null)
+            rawTransmission = new RawTransmission(declaration.getFragment());
+
+        Line line = declaration;
+        while (iterator.hasNext()) {
+            line = iterator.next();
+            List<Token> content = line.getTokens();
+            if (content.size() >= 7 && content.get(0) instanceof Identifier) {
+                Iterator<Token> lineIterator = content.iterator();
+                Identifier srcModuleName = (Identifier) lineIterator.next();
+
+                if (!lineIterator.hasNext())
+                    throw new ExpectedDot(line);
+                Token token = lineIterator.next();
+                if (!(token instanceof Dot))
+                    throw new ExpectedDot(line);
+
+                if (!lineIterator.hasNext())
+                    throw new ExpectedVariableName(line);
+                token = lineIterator.next();
+                if (!(token instanceof Identifier))
+                    throw new ExpectedVariableName(line);
+                Identifier srcVariableName = (Identifier)token;
+
+                if (!lineIterator.hasNext())
+                    throw new ExpectedToKeyword(line);
+                token = lineIterator.next();
+                if (!(token instanceof KeywordTo))
+                    throw new ExpectedToKeyword(line);
+
+                if (!lineIterator.hasNext())
+                    throw new ExpectedModuleName(line);
+                token = lineIterator.next();
+                if (!(token instanceof Identifier))
+                    throw new ExpectedModuleName(line);
+                Identifier dstModuleName = (Identifier)token;
+
+                if (!lineIterator.hasNext())
+                    throw new ExpectedDot(line);
+                token = lineIterator.next();
+                if (!(token instanceof Dot))
+                    throw new ExpectedDot(line);
+
+                if (!lineIterator.hasNext())
+                    throw new ExpectedVariableName(line);
+                token = lineIterator.next();
+                if (!(token instanceof Identifier))
+                    throw new ExpectedModuleName(line);
+                Identifier dstVariableName = (Identifier)token;
+
+                if (lineIterator.hasNext())
+                    throw new UnexpectedEndOfFile(line);
+
+                RawChannel rawChannel = new RawChannel(line.getFragment(),
+                        srcModuleName.getName(),
+                        srcVariableName.getName(),
+                        dstModuleName.getName(),
+                        dstVariableName.getName());
+                rawTransmission.addChannel(rawChannel);
+            } else if (content.size() >= 2
+                    && content.get(0) instanceof KeywordEnd && content.get(1) instanceof KeywordTransmission) {
+                if (content.size() > 2)
+                    throw new UnrecognizedSequence(line);
                 return;
             }
         }

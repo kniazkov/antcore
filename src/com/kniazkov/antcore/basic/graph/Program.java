@@ -27,7 +27,8 @@ import java.util.*;
  */
 public class Program extends Node implements DataTypeOwner, ConstantListOwner {
     public Program(ConstantList constants, List<CodeBlock> codeBlocks,
-                   Map<String, Module> modules, Map<String, DataType> customTypes) {
+                   Map<String, Module> modules, Map<String, DataType> customTypes,
+                   Transmission transmission) {
         this.constants = constants;
         if (constants != null)
             constants.setOwner(this);
@@ -77,6 +78,10 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
         types.put("REAL", RealType.getInstance());
 
         this.types = Collections.unmodifiableMap(types);
+
+        this.transmission = transmission;
+        if (transmission != null)
+            transmission.setOwner(this);
     }
 
     @Override
@@ -93,6 +98,8 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
             list.add(entry.getValue());
         }
         list.addAll(moduleList);
+        if (transmission != null)
+            list.add(transmission);
         Node[] array = new Node[list.size()];
         list.toArray(array);
         return array;
@@ -144,6 +151,13 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
                 buff.append("\n");
             module.toSourceCode(buff, i, i0);
             flag = true;
+        }
+
+        if (transmission != null) {
+            if (flag)
+                buff.append("\n");
+            transmission.toSourceCode(buff, i, i0);
+            //flag = true;
         }
     }
 
@@ -199,4 +213,5 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
     private List<Module> moduleList;
     private Map<String, Module> moduleMap;
     private Map<String, DataType> types;
+    private Transmission transmission;
 }
