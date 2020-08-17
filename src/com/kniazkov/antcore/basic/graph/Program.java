@@ -161,6 +161,10 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
         }
     }
 
+    Module getModuleByName(String name) {
+        return moduleMap.get(name);
+    }
+
     @Override
     protected DataType findTypeByName(String name) {
         if (types.containsKey(name))

@@ -18,6 +18,10 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.basic.exceptions.UnknownInputField;
+import com.kniazkov.antcore.basic.exceptions.UnknownModule;
+import com.kniazkov.antcore.basic.exceptions.UnknownOutputField;
+import com.kniazkov.antcore.basic.exceptions.UnknownType;
 
 /**
  * Connecting two variables of different modules
@@ -61,10 +65,35 @@ public class Channel extends Node {
                 .append(" TO ").append(dstModuleName).append('.').append(dstVariableName).append('\n');
     }
 
+    /**
+     * Bind names
+     */
+    void bindNames(Program program) throws SyntaxError {
+        srcModule = program.getModuleByName(srcModuleName);
+        if (srcModule == null)
+            throw new UnknownModule(fragment, srcModuleName);
+
+        srcVariable = srcModule.getOutputFieldByName(srcVariableName);
+        if (srcVariable == null)
+            throw new UnknownOutputField(fragment, srcModuleName, srcVariableName);
+
+        dstModule = program.getModuleByName(dstModuleName);
+        if (dstModule == null)
+            throw new UnknownModule(fragment, dstModuleName);
+
+        dstVariable = dstModule.getInputFieldByName(dstVariableName);
+        if (dstVariable == null)
+            throw new UnknownInputField(fragment, dstModuleName, dstVariableName);
+    }
+
     private Fragment fragment;
     private Transmission owner;
     private String srcModuleName;
+    private Module srcModule;
     private String srcVariableName;
+    private Field srcVariable;
     private String dstModuleName;
+    private Module dstModule;
     private String dstVariableName;
+    private Field dstVariable;
 }

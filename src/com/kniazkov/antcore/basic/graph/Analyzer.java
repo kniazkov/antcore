@@ -70,6 +70,10 @@ public class Analyzer {
      */
     protected static void bindNames(Program root) throws SyntaxError {
         class Binder extends NodeVisitor {
+            public void visit(Channel obj) throws SyntaxError {
+                obj.bindNames(root);
+            }
+
             @Override
             public void visit(FunctionCall obj) throws SyntaxError {
                 obj.bindName();

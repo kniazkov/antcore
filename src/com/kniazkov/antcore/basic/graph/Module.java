@@ -146,6 +146,14 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
         buff.append(i).append("END MODULE").append("\n");
     }
 
+    Field getInputFieldByName(String name) {
+        return inputData != null ? inputData.getFieldByName(name) : null;
+    }
+
+    Field getOutputFieldByName(String name) {
+        return outputData != null ? outputData.getFieldByName(name) : null;
+    }
+
     @Override
     protected Expression findVariableByName(String name) {
         Expression ex = null;

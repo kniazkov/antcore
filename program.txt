@@ -64,7 +64,7 @@ MODULE SERVER
     END DATA
     FUNCTION MAIN
         IF ticks MOD 100 = 0 THEN
-            println("" + ticks)
+            println("" + ticks / 100)
         END IF
         ticks = ticks + 1
     END FUNCTION
