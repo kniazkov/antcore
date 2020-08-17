@@ -128,6 +128,11 @@ public class Analyzer {
             }
 
             @Override
+            public void visit(Channel obj) throws SyntaxError {
+                obj.checkTypes();
+            }
+
+            @Override
             public void visit(Constant obj) throws SyntaxError {
                 obj.checkType();
             }

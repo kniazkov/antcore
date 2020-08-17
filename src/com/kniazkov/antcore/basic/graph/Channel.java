@@ -18,10 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
-import com.kniazkov.antcore.basic.exceptions.UnknownInputField;
-import com.kniazkov.antcore.basic.exceptions.UnknownModule;
-import com.kniazkov.antcore.basic.exceptions.UnknownOutputField;
-import com.kniazkov.antcore.basic.exceptions.UnknownType;
+import com.kniazkov.antcore.basic.exceptions.*;
 
 /**
  * Connecting two variables of different modules
@@ -84,6 +81,16 @@ public class Channel extends Node {
         dstVariable = dstModule.getInputFieldByName(dstVariableName);
         if (dstVariable == null)
             throw new UnknownInputField(fragment, dstModuleName, dstVariableName);
+    }
+
+    /*
+     * Check types of the source-destination pair
+     */
+    void checkTypes() throws SyntaxError {
+        DataType srcType = srcVariable.getType().getPureType();
+        DataType dstType = dstVariable.getType().getPureType();
+        if (!srcType.isBinaryAnalog(dstType))
+            throw new NonTransferableTypes(fragment, srcType.getName(), dstType.getName());
     }
 
     private Fragment fragment;
