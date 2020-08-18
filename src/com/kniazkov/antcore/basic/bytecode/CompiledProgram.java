@@ -22,10 +22,17 @@ import java.util.*;
  * The whole compiled program
  */
 public class CompiledProgram {
-    public CompiledProgram(List<CompiledModule> rawList) {
+    public CompiledProgram(List<CompiledModule> binaries, List<Binding> mapping) {
+        this.binaries = Collections.unmodifiableList(binaries);
+        this.mapping = Collections.unmodifiableList(mapping);
+
+        init(binaries, mapping);
+    }
+
+    private void init(List<CompiledModule> binaries, List<Binding> mapping) {
         modules = new TreeMap<>();
         executors = new ArrayList<>();
-        for (CompiledModule module : rawList) {
+        for (CompiledModule module : binaries) {
             String executor  = module.getExecutor();
             List<CompiledModule> sublist = modules.get(executor);
             if (sublist != null) {
@@ -55,6 +62,8 @@ public class CompiledProgram {
         return result;
     }
 
+    private List<CompiledModule> binaries;
+    private List<Binding> mapping;
     private Map<String, List<CompiledModule>> modules;
     private List<String> executors;
 }

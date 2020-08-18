@@ -16,6 +16,7 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecode.Binding;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecode.CompiledModule;
 import com.kniazkov.antcore.basic.bytecode.CompiledProgram;
@@ -203,11 +204,12 @@ public class Program extends Node implements DataTypeOwner, ConstantListOwner {
     }
 
     public CompiledProgram compile() throws SyntaxError {
-        List<CompiledModule> list = new ArrayList<>();
+        List<CompiledModule> binaries = new ArrayList<>();
         for (Module module : moduleList) {
-            list.add(module.compile());
+            binaries.add(module.compile());
         }
-        return new CompiledProgram(list);
+
+        return new CompiledProgram(binaries, transmission != null ? transmission.getMapping() : null);
     }
 
     private ConstantList constants;

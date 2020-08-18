@@ -225,7 +225,7 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
             throw new FunctionMainNotFound(fragment, name);
         if (mainFunction.getArgumentsCount() != 0 || mainFunction.getReturnType() != null)
             throw new IncorrectFunctionMain(fragment);
-        CompilationUnit unit = new CompilationUnit(this, staticData);
+        unit = new CompilationUnit(this, staticData);
         Function function = mainFunction;
         do {
             function.compile(unit);
@@ -233,6 +233,10 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
         } while (function != null);
         unit.addInstruction(new End());
         return new CompiledModule(getNotNullExecutor(), name, unit.getBytecode());
+    }
+
+    public int getDynamicDataOffset() {
+        return unit.getDynamicDataOffset().get();
     }
 
     private Program owner;
@@ -246,4 +250,5 @@ public class Module extends Node implements DataSetOwner, FunctionOwner {
     private List<Function> functionList;
     private Map<String, Function> functionMap;
     private Map<String, BaseFunction> allFunctionMap;
+    private CompilationUnit unit;
 }

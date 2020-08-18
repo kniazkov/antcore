@@ -16,9 +16,11 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecode.Binding;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -68,6 +70,15 @@ public class Transmission extends Node {
             channel.toSourceCode(buff, i1, i0);
         }
         buff.append(i).append("END TRANSMISSION").append('\n');
+    }
+
+    public List<Binding> getMapping() throws SyntaxError {
+        List<Binding> result = new ArrayList<>();
+        for (Channel channel : channels) {
+            result.add(channel.getBinding());
+        }
+        // TODO: optimize the result list
+        return result;
     }
 
     private Fragment fragment;

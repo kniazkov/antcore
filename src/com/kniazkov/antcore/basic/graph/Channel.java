@@ -16,6 +16,8 @@
  */
 package com.kniazkov.antcore.basic.graph;
 
+import com.kniazkov.antcore.basic.bytecode.Binding;
+import com.kniazkov.antcore.basic.bytecode.FullAddress;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.exceptions.*;
@@ -91,6 +93,20 @@ public class Channel extends Node {
         DataType dstType = dstVariable.getType().getPureType();
         if (!srcType.isBinaryAnalog(dstType))
             throw new NonTransferableTypes(fragment, srcType.getName(), dstType.getName());
+    }
+
+    /**
+     * @return a binding of two data regions (absolute addresses)
+     *   that owned by different modules
+     */
+    public Binding getBinding() throws SyntaxError {
+        FullAddress source = new FullAddress(srcModule.getNotNullExecutor(), srcModuleName,
+                srcModule.getDynamicDataOffset() + srcVariable.getAbsoluteOffset().get());
+        FullAddress destination = new FullAddress(dstModule.getNotNullExecutor(), dstModuleName,
+                dstModule.getDynamicDataOffset() + dstVariable.getAbsoluteOffset().get());
+        int size = srcVariable.getType().getSize();
+        assert(size == dstVariable.getType().getSize());
+        return new Binding(source, destination, size);
     }
 
     private Fragment fragment;
