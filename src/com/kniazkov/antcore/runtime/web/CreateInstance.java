@@ -42,7 +42,7 @@ public class CreateInstance extends Respondent {
 
         String page = pageElem.stringValue();
         CompiledModule module = executor.getModuleByName(page);
-        Ant ant = new Ant(executor.getTicks(), executor, module.getBytecode());
+        Ant ant = new Ant(executor.getTicks(), page, executor, module.getBytecode());
         String uid = ant.getUId();
         executor.ants.put(uid, ant);
         System.out.println("The ant '" + uid + "' was born, population: " + executor.ants.size());

@@ -49,6 +49,26 @@ public class VirtualMachine {
         }
     }
 
+    /**
+     * Reads data from the internal memory to an auxiliary buffer
+     * @param address the address of the first byte
+     * @param size size
+     * @param buffer the aux buffer
+     */
+    public void read(int address, int size, byte[] buffer) {
+        memory.copy(address, buffer, 0, size);
+    }
+
+    /**
+     * Writes data to then internal memory from an auxiliary buffer
+     * @param address the address of the first byte
+     * @param size size
+     * @param buffer the aux buffer
+     */
+    public void write(int address, int size, byte[] buffer) {
+        memory.setArray(address, buffer, 0, size);
+    }
+
     public ErrorCode getErrorCode() {
         return error;
     }

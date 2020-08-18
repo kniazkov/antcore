@@ -17,15 +17,23 @@
 package com.kniazkov.antcore.runtime.server;
 
 import com.kniazkov.antcore.basic.bytecode.CompiledModule;
+import com.kniazkov.antcore.basic.bytecode.FullAddress;
 import com.kniazkov.antcore.runtime.Executor;
+import com.kniazkov.antcore.runtime.Runtime;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * The 'SERVER' executor
  */
 public class ServerExecutor extends Executor {
+    public ServerExecutor(Runtime runtime) {
+        super(runtime);
+    }
+
     @Override
     public String getName() {
         return "SERVER";
@@ -33,10 +41,12 @@ public class ServerExecutor extends Executor {
 
     @Override
     public void setModuleList(CompiledModule[] modules) {
-        ants = new ArrayList<>();
+        antList = new ArrayList<>();
+        antMap = new TreeMap<>();
         for (CompiledModule module : modules) {
             Ant ant = new Ant(this, module.getBytecode());
-            ants.add(ant);
+            antList.add(ant);
+            antMap.put(module.getName(), ant);
         }
     }
 
@@ -52,15 +62,40 @@ public class ServerExecutor extends Executor {
 
     @Override
     protected boolean tick() {
-        if (ants == null)
+        if (antList == null)
             return false;
 
-        for (Ant ant : ants) {
+        for (Ant ant : antList) {
             ant.tick();
         }
 
         return true;
     }
 
-    List<Ant> ants;
+    @Override
+    public boolean read(FullAddress address, int size, byte[] buffer) {
+        assert (address.getExecutor().equals("SERVER"));
+        if (antMap != null) {
+            Ant ant = antMap.get(address.getModule());
+            if (ant != null) {
+                ant.read(address.getOffset(), size, buffer);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void write(FullAddress address, int size, byte[] buffer) {
+        assert (address.getExecutor().equals("SERVER"));
+        if (antMap != null) {
+            Ant ant = antMap.get(address.getModule());
+            if (ant != null) {
+                ant.write(address.getOffset(), size, buffer);
+            }
+        }
+    }
+
+    List<Ant> antList;
+    Map<String, Ant> antMap;
 }

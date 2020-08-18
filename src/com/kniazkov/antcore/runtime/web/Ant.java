@@ -25,8 +25,9 @@ import java.util.*;
  * An ant, i.e. minimal execution unit that contains own memory space
  */
 public class Ant {
-    public Ant(long timestamp, WebExecutor executor, ByteList code) {
+    public Ant(long timestamp, String module, WebExecutor executor, ByteList code) {
         this.timestamp = timestamp;
+        this.module = module;
         this.executor = executor;
         vm = new VirtualMachine(code, 65536, WebLibrary.create(this));
         uid = UUID.randomUUID().toString();
@@ -44,6 +45,14 @@ public class Ant {
 
     public String getUId() {
         return uid;
+    }
+
+    public void write(int address, int size, byte[] buffer) {
+        vm.write(address, size, buffer);
+    }
+
+    public String getModuleName() {
+        return module;
     }
 
     Widget createWidget(String type) {
@@ -68,6 +77,7 @@ public class Ant {
 
     long timestamp;
     int transaction;
+    private String module;
     private WebExecutor executor;
     private VirtualMachine vm;
     private String uid;

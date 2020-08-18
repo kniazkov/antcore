@@ -30,19 +30,33 @@ public class CompiledProgram {
     }
 
     private void init(List<CompiledModule> binaries, List<Binding> mapping) {
-        modules = new TreeMap<>();
         executors = new ArrayList<>();
+        modulesByExecutor = new TreeMap<>();
+        bindingsByDestination = new TreeMap<>();
+
         for (CompiledModule module : binaries) {
             String executor  = module.getExecutor();
-            List<CompiledModule> sublist = modules.get(executor);
+            List<CompiledModule> sublist = modulesByExecutor.get(executor);
             if (sublist != null) {
                 sublist.add(module);
             }
             else {
                 sublist = new ArrayList<>();
                 sublist.add(module);
-                modules.put(executor, sublist);
+                modulesByExecutor.put(executor, sublist);
                 executors.add(executor);
+            }
+        }
+
+        for (Binding binding : mapping) {
+            String executor = binding.getDestination().getExecutor();
+            List<Binding> sublist = bindingsByDestination.get(executor);
+            if (sublist != null) {
+                sublist.add(binding);
+            } else {
+                sublist = new ArrayList<>();
+                sublist.add(binding);
+                bindingsByDestination.put(executor, sublist);
             }
         }
     }
@@ -54,7 +68,7 @@ public class CompiledProgram {
     }
 
     public CompiledModule[] getModulesByExecutor(String name) {
-        List<CompiledModule> list = modules.get(name);
+        List<CompiledModule> list = modulesByExecutor.get(name);
         if (list == null)
             return new CompiledModule[0];
         CompiledModule[] result = new CompiledModule[list.size()];
@@ -62,8 +76,19 @@ public class CompiledProgram {
         return result;
     }
 
+    public Binding[] getBindingByDestination(String name) {
+        List<Binding> list = bindingsByDestination.get(name);
+        if (list == null)
+            return new Binding[0];
+        Binding[] result = new Binding[list.size()];
+        list.toArray(result);
+        return result;
+    }
+
     private List<CompiledModule> binaries;
     private List<Binding> mapping;
-    private Map<String, List<CompiledModule>> modules;
+
     private List<String> executors;
+    private Map<String, List<CompiledModule>> modulesByExecutor;
+    private Map<String, List<Binding>> bindingsByDestination;
 }

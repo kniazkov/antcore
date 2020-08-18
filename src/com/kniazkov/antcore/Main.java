@@ -17,20 +17,13 @@
 
 package com.kniazkov.antcore;
 
-import com.kniazkov.antcore.basic.bytecode.CompiledModule;
 import com.kniazkov.antcore.basic.bytecode.CompiledProgram;
-import com.kniazkov.antcore.basic.bytecode.Disassembler;
 import com.kniazkov.antcore.basic.graph.Analyzer;
 import com.kniazkov.antcore.basic.graph.Program;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.parser.Parser;
-import com.kniazkov.antcore.basic.virtualmachine.*;
 import com.kniazkov.antcore.lib.FileIO;
 import com.kniazkov.antcore.runtime.Launcher;
-import com.kniazkov.webserver.*;
-
-import java.util.Map;
-import java.util.TreeMap;
 
 public class Main {
     public static void main(String[] args) {
@@ -41,8 +34,7 @@ public class Main {
                 Analyzer.analyze(program);
                 System.out.println(program.toSourceCode());
                 CompiledProgram compiledProgram = program.compile();
-                Launcher launcher = new Launcher();
-                launcher.launch(compiledProgram);
+                Launcher.launch(compiledProgram);
             } catch (SyntaxError syntaxError) {
                 syntaxError.printStackTrace();
             }

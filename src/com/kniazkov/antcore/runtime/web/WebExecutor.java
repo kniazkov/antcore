@@ -17,7 +17,9 @@
 package com.kniazkov.antcore.runtime.web;
 
 import com.kniazkov.antcore.basic.bytecode.CompiledModule;
+import com.kniazkov.antcore.basic.bytecode.FullAddress;
 import com.kniazkov.antcore.runtime.Executor;
+import com.kniazkov.antcore.runtime.Runtime;
 import com.kniazkov.webserver.*;
 
 import java.util.ArrayList;
@@ -29,12 +31,14 @@ import java.util.TreeMap;
  * The 'WEB' executor (i.e. web interface)
  */
 public class WebExecutor extends Executor {
-    public WebExecutor() {
-        ants = new TreeMap<>();
+    public WebExecutor(Runtime runtime) {
+        super(runtime);
+        this.ants = new TreeMap<>();
     }
 
     @Override
     protected boolean tick() {
+        transmit();
         long currentTime = getTicks();
         List<String> died = null;
         for (Map.Entry<String, Ant> entry : ants.entrySet()) {
@@ -77,6 +81,23 @@ public class WebExecutor extends Executor {
     @Override
     protected int getFrequency() {
         return 10;
+    }
+
+    @Override
+    public boolean read(FullAddress address, int size, byte[] buffer) {
+        // TODO: do something
+        return false;
+    }
+
+    @Override
+    public void write(FullAddress address, int size, byte[] buffer) {
+        assert (address.getExecutor().equals("WEB"));
+        for (Map.Entry<String, Ant> entry : ants.entrySet()) {
+            Ant ant = entry.getValue();
+            if (ant.getModuleName().equals(address.getModule())) {
+                ant.write(address.getOffset(), size, buffer);
+            }
+        }
     }
 
     CompiledModule getModuleByName(String name) {

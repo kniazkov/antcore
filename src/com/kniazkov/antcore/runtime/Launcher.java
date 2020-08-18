@@ -28,26 +28,29 @@ public class Launcher {
      * Launch a compiled program
      * @param program the program
      */
-    public void launch(CompiledProgram program) {
-        String[] executorList = program.getExecutors();
-        for (String executorName : executorList) {
-            Executor executor = createExecutor(executorName);
+    public static void launch(CompiledProgram program) {
+        Runtime runtime = new Runtime();
+        for (String executorName : program.getExecutors()) {
+            Executor executor = createExecutor(executorName, runtime);
             if (executor == null) {
                 //TODO: throw an exception
                 System.err.println("Can't create executor: '" + executorName + '\'');
                 return;
             }
             executor.setModuleList(program.getModulesByExecutor(executorName));
-            executor.run();
+            executor.setMapping(program.getBindingByDestination(executorName));
+            runtime.addExecutor(executor);
         }
+
+        runtime.run();
     }
 
-    private Executor createExecutor(String name) {
+    private static Executor createExecutor(String name, Runtime runtime) {
         switch (name) {
             case "WEB":
-                return new WebExecutor();
+                return new WebExecutor(runtime);
             case "SERVER":
-                return new ServerExecutor();
+                return new ServerExecutor(runtime);
         }
         return null;
     }
