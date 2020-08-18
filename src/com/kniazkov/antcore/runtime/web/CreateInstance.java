@@ -44,8 +44,9 @@ public class CreateInstance extends Respondent {
         CompiledModule module = executor.getModuleByName(page);
         Ant ant = new Ant(executor.getTicks(), page, executor, module.getBytecode());
         String uid = ant.getUId();
-        executor.ants.put(uid, ant);
-        System.out.println("The ant '" + uid + "' was born, population: " + executor.ants.size());
+        executor.antsByUId.put(uid, ant);
+        executor.antsByModule.get(page).add(ant);
+        System.out.println("The ant '" + uid + "' was born, population: " + executor.antsByUId.size());
         JsonObject result = new JsonObject(null);
         result.createString("uid", uid);
         return new ResponseJson(result);

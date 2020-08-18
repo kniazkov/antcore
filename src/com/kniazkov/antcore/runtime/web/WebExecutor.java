@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * The 'WEB' executor (i.e. web interface)
@@ -33,7 +35,8 @@ import java.util.TreeMap;
 public class WebExecutor extends Executor {
     public WebExecutor(Runtime runtime) {
         super(runtime);
-        this.ants = new TreeMap<>();
+        this.antsByUId = new TreeMap<>();
+        this.antsByModule = new TreeMap<>();
     }
 
     @Override
@@ -41,7 +44,7 @@ public class WebExecutor extends Executor {
         transmit();
         long currentTime = getTicks();
         List<String> died = null;
-        for (Map.Entry<String, Ant> entry : ants.entrySet()) {
+        for (Map.Entry<String, Ant> entry : antsByUId.entrySet()) {
             Ant ant = entry.getValue();
             if (currentTime - ant.timestamp > antsLifetime) {
                 String uid = ant.getUId();
@@ -53,8 +56,9 @@ public class WebExecutor extends Executor {
 
         if (died != null) {
             for (String uid : died) {
-                ants.remove(uid);
-                System.out.println("The ant '" + uid + "' died, population: " + ants.size());
+                Ant ant = antsByUId.remove(uid);
+                antsByModule.get(ant.getModuleName()).remove(ant);
+                System.out.println("The ant '" + uid + "' died, population: " + antsByUId.size());
             }
         }
         return true;
@@ -69,7 +73,9 @@ public class WebExecutor extends Executor {
     public void setModuleList(CompiledModule[] modules) {
         this.modules = new TreeMap<>();
         for (CompiledModule module : modules) {
-            this.modules.put(module.getName(), module);
+            String name = module.getName();
+            this.modules.put(name, module);
+            this.antsByModule.put(name, new HashSet<>());
         }
     }
 
@@ -92,8 +98,7 @@ public class WebExecutor extends Executor {
     @Override
     public void write(FullAddress address, int size, byte[] buffer) {
         assert (address.getExecutor().equals("WEB"));
-        for (Map.Entry<String, Ant> entry : ants.entrySet()) {
-            Ant ant = entry.getValue();
+        for (Ant ant : antsByModule.get(address.getModule())) {
             if (ant.getModuleName().equals(address.getModule())) {
                 ant.write(address.getOffset(), size, buffer);
             }
@@ -108,5 +113,6 @@ public class WebExecutor extends Executor {
 
     private Map<String, CompiledModule> modules;
     Server webServer;
-    Map<String, Ant> ants;
+    Map<String, Ant> antsByUId;
+    Map<String, Set<Ant>> antsByModule;
 }

@@ -48,7 +48,7 @@ public class Update extends Respondent {
 
         String uid = uidElem.stringValue();
         int transaction = transactionElem.intValue();
-        Ant ant = executor.ants.get(uid);
+        Ant ant = executor.antsByUId.get(uid);
         if (ant == null)
             return new ResponseJson(new JsonNull(null));
         if (ant.transaction >= transaction)
