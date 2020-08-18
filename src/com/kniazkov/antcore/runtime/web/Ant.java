@@ -47,6 +47,10 @@ public class Ant {
         return uid;
     }
 
+    public void read(int address, int size, byte[] buffer) {
+        vm.read(address, size, buffer);
+    }
+
     public void write(int address, int size, byte[] buffer) {
         vm.write(address, size, buffer);
     }

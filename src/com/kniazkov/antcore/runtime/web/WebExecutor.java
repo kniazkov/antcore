@@ -91,7 +91,13 @@ public class WebExecutor extends Executor {
 
     @Override
     public boolean read(FullAddress address, int size, byte[] buffer) {
-        // TODO: do something
+        assert (address.getExecutor().equals("WEB"));
+        Set<Ant> ants = antsByModule.get(address.getModule());
+        if (ants.size() == 1) {
+            Ant ant = ants.iterator().next();
+            ant.read(address.getOffset(), size, buffer);
+            return true;
+        }
         return false;
     }
 

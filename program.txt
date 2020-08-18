@@ -8,12 +8,15 @@ MODULE INDEX WEB
         label AS INTEGER
         input AS INTEGER
         result AS INTEGER
-        value AS STRING OF 255
 		oldValue AS STRING OF 255
     END DATA
 
     DATA INPUT
         ticks AS INTEGER
+    END DATA
+
+    DATA OUTPUT
+        value AS STRING OF 255
     END DATA
 
 	FUNCTION MAIN
@@ -58,13 +61,41 @@ MODULE INDEX WEB
 	END FUNCTION
 END MODULE
 
+MODULE SECOND WEB
+    DATA
+        state AS INTEGER
+        header AS INTEGER
+        label AS INTEGER
+    END DATA
+
+    DATA INPUT
+        ticks AS INTEGER
+    END DATA
+
+	FUNCTION MAIN
+	    IF state = 0 THEN
+	        state = 1
+
+            header = createWidget("label")
+	        appendWidget(0, header)
+	    ELSE IF state = 1 THEN
+            setWidgetData(header, "" + ticks)
+	    END IF
+	END FUNCTION
+END MODULE
+
 MODULE SERVER
+    DATA INPUT
+        text AS STRING OF 255
+    END DATA
+
     DATA OUTPUT
         ticks AS INTEGER
     END DATA
+
     FUNCTION MAIN
         IF ticks MOD 100 = 0 THEN
-            println("" + ticks / 100)
+            println("" + ticks / 100 + " " + text)
         END IF
         ticks = ticks + 1
     END FUNCTION
@@ -72,4 +103,6 @@ END MODULE
 
 TRANSMISSION
     SERVER.ticks TO INDEX.ticks
+    SERVER.ticks TO SECOND.ticks
+    INDEX.value TO SERVER.text
 END TRANSMISSION

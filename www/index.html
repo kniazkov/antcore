@@ -95,7 +95,7 @@
 				document.body.innerHTML = "";
 				widgets = {};
 				widgets[0] = document.body;
-				sendRequestWithData("create instance", { page : "INDEX" }, function(response) {
+				sendRequestWithData("create instance", { page : getUrlParameters().page || "INDEX" }, function(response) {
 					var data = JSON.parse(response);
 					connection = {
 						uid : data.uid,

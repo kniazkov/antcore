@@ -65,6 +65,8 @@ public class ServerExecutor extends Executor {
         if (antList == null)
             return false;
 
+        transmit();
+
         for (Ant ant : antList) {
             ant.tick();
         }
