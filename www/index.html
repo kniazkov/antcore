@@ -57,7 +57,28 @@
 						sendTransactionImmediately();
 					});
 					return widget;
-				}
+				},
+				
+				"button" : function() {
+					var widget = document.createElement("div");
+					widget.className = "buttonDiv";
+					widget.setData = function(data) {
+						widget.innerHTML = escapeHtml(data);
+					};
+					widget.clickCount = 0;
+					addEvent(widget, "click", function(){
+						widget.clickCount++;
+						var event = {
+							uid : generateUid(),
+							widget : widget.uid,
+							type : "click",
+							count : widget.clickCount
+						};
+						connection.events.push(event);
+						sendTransactionImmediately();
+					});
+					return widget;
+				},
 			};
 
 			var processor = {

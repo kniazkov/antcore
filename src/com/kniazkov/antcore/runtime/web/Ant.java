@@ -87,6 +87,9 @@ public class Ant {
             case "input":
                 widget = new Input(id);
                 break;
+            case "button":
+                widget = new Button(id);
+                break;
             default:
                 return null;
         }

@@ -4,105 +4,67 @@ IMPORT web
 MODULE INDEX WEB
     DATA
         state AS INTEGER
-        header AS INTEGER
         label AS INTEGER
-        input AS INTEGER
-        result AS INTEGER
-		oldValue AS STRING OF 255
+        button AS INTEGER
     END DATA
 
     DATA INPUT
-        ticks AS INTEGER
+        toggle AS BOOLEAN
     END DATA
 
     DATA OUTPUT
-        value AS STRING OF 255
+        count AS INTEGER
     END DATA
 
 	FUNCTION MAIN
-        value = ""
-
 	    IF state = 0 THEN
 	        state = 1
 
-            header = createWidget("label")
-	        appendWidget(0, header)
-
-	        appendWidget(0, createWidget("break"))
-
-	        label = createWidget("label")
+            label = createWidget("label")
 	        appendWidget(0, label)
-	        setWidgetData(label, "Enter text here:")
+	        setWidgetData(label, "On")
 
-	        appendWidget(0, createWidget("break"))
-
-	        input = createWidget("input")
-	        appendWidget(0, input)
-            setWidgetData(input, "Example")
-
-            appendWidget(0, createWidget("break"))
-
-	        result = createWidget("label")
-	        appendWidget(0, result)
-
+            button = createWidget("button")
+            appendWidget(0, button)
+            setWidgetData(button, "Click")
 	    ELSE IF state = 1 THEN
-	        getWidgetData(input, value)
-			IF value <> oldValue THEN
-			    IF value = "" THEN
-    				setWidgetData(result, "Just enter something! Do it!")
-			    ELSE
-    				setWidgetData(result, "Entered data: " + value + value)
-    			END IF
-			END IF
-			oldValue = value
-
-            setWidgetData(header, "" + ticks)
-	    END IF
-	END FUNCTION
-END MODULE
-
-MODULE SECOND WEB
-    DATA
-        state AS INTEGER
-        header AS INTEGER
-        label AS INTEGER
-    END DATA
-
-    DATA INPUT
-        ticks AS INTEGER
-    END DATA
-
-	FUNCTION MAIN
-	    IF state = 0 THEN
-	        state = 1
-
-            header = createWidget("label")
-	        appendWidget(0, header)
-	    ELSE IF state = 1 THEN
-            setWidgetData(header, "" + ticks)
+	        count = getWidgetClickCount(button)
+            IF toggle THEN
+                setWidgetData(label, "On")
+            ELSE
+                setWidgetData(label, "Off")
+            END IF
 	    END IF
 	END FUNCTION
 END MODULE
 
 MODULE SERVER
+    DATA
+        oldCount AS INTEGER
+    END DATA
+
     DATA INPUT
-        text AS STRING OF 255
+        count AS INTEGER
     END DATA
 
     DATA OUTPUT
-        ticks AS INTEGER
+        toggle AS BOOLEAN
     END DATA
 
     FUNCTION MAIN
-        IF ticks MOD 100 = 0 THEN
-            println("" + ticks / 100 + " " + text)
+        IF count <> oldCount THEN
+            oldCount = count
+            IF toggle THEN
+                toggle = FALSE
+            ELSE
+                toggle = TRUE
+            END IF
+            println("toggle changed: " + toggle)
         END IF
-        ticks = ticks + 1
     END FUNCTION
 END MODULE
 
 TRANSMISSION
-    SERVER.ticks TO INDEX.ticks
-    SERVER.ticks TO SECOND.ticks
-    INDEX.value TO SERVER.text
+    INDEX.count TO SERVER.count
+    SERVER.toggle TO INDEX.toggle
 END TRANSMISSION

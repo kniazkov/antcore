@@ -24,9 +24,9 @@ import java.util.*;
 public class CompiledProgram {
     public CompiledProgram(List<CompiledModule> binaries, List<Binding> mapping) {
         this.binaries = Collections.unmodifiableList(binaries);
-        this.mapping = Collections.unmodifiableList(mapping);
+        this.mapping = mapping != null ? Collections.unmodifiableList(mapping) : Collections.emptyList();
 
-        init(binaries, mapping);
+        init(this.binaries, this.mapping);
     }
 
     private void init(List<CompiledModule> binaries, List<Binding> mapping) {

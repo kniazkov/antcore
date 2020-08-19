@@ -94,6 +94,16 @@ public class WebLibrary {
             memory.set(SP + 12, (byte) (result ? 1 : 0));
         });
 
+        functions.put("getWidgetClickCount", (memory, SP) -> {
+            int widgetId = memory.getInt(SP + 4);
+            Widget widget = ant.widgets.get(widgetId);
+            int result = -1;
+            if (widget != null) {
+                result = widget.getClickCount();
+            }
+            memory.setInt(SP + 8, result);
+        });
+
         return functions;
     }
 }

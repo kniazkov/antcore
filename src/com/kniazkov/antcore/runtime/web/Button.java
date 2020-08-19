@@ -19,37 +19,38 @@ package com.kniazkov.antcore.runtime.web;
 import com.kniazkov.json.JsonObject;
 
 /**
- * A widget,  i.e. an element of the GUI
+ * The button
  */
-public abstract class Widget {
-    public Widget(int id) {
-        this.id = id;
+public class Button extends Widget {
+    public Button(int id) {
+        super(id);
     }
 
-    public int getId() {
-        return id;
+    @Override
+    public String getType() {
+        return "button";
     }
 
-    boolean appendChild(Widget child) {
-        return false;
-    }
-
+    @Override
     boolean setData(String data) {
-        return false;
+        caption = data;
+        return true;
     }
 
-    String getData() {
-        return null;
-    }
-
+    @Override
     int getClickCount() {
-        return -1;
+        return counter;
     }
 
+    @Override
     void handleEvent(String type, JsonObject event) {
+        if (type.equals("click")) {
+            if (event.containsKey("count")) {
+                counter = event.get("count").intValue();
+            }
+        }
     }
 
-    private int id;
-
-    public abstract String getType();
+    String caption;
+    int counter;
 }
