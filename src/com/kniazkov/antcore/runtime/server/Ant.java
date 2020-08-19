@@ -16,9 +16,14 @@
  */
 package com.kniazkov.antcore.runtime.server;
 
+import com.kniazkov.antcore.basic.bytecode.Binding;
 import com.kniazkov.antcore.basic.virtualmachine.StandardLibrary;
 import com.kniazkov.antcore.basic.virtualmachine.VirtualMachine;
 import com.kniazkov.antcore.lib.ByteList;
+import com.kniazkov.antcore.runtime.Channel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An ant, i.e. minimal execution unit that contains own memory space
@@ -27,20 +32,39 @@ public class Ant {
     public Ant(ServerExecutor executor, ByteList code) {
         this.executor = executor;
         vm = new VirtualMachine(code, 1048576, StandardLibrary.getFunctions());
+        channels = new ArrayList<>();
     }
 
-    public void tick() {
+    /**
+     * Periodically performed task
+     */
+    void tick() {
+        for (Channel channel : channels) {
+            channel.transmit();
+        }
         vm.run();
     }
 
-    public void read(int address, int size, byte[] buffer) {
+    /**
+     * Read data by absolute address
+     * @param address absolute address
+     * @param size size
+     * @param buffer destination buffer
+     */
+    void read(int address, int size, byte[] buffer) {
         vm.read(address, size, buffer);
     }
 
-    public void write(int address, int size, byte[] buffer) {
-        vm.write(address, size, buffer);
+    /**
+     * Bind a source of data
+     * @param binding the binding structure
+     */
+    void bind(Binding binding) {
+        Channel channel = new Channel(executor.getRuntime(), vm, binding);
+        channels.add(channel);
     }
 
     private ServerExecutor executor;
     private VirtualMachine vm;
+    private List<Channel> channels;
 }

@@ -16,13 +16,12 @@
  */
 package com.kniazkov.antcore.runtime.server;
 
+import com.kniazkov.antcore.basic.bytecode.Binding;
 import com.kniazkov.antcore.basic.bytecode.CompiledModule;
-import com.kniazkov.antcore.basic.bytecode.FullAddress;
+import com.kniazkov.antcore.basic.bytecode.ShortAddress;
 import com.kniazkov.antcore.runtime.Executor;
 import com.kniazkov.antcore.runtime.Runtime;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -41,12 +40,28 @@ public class ServerExecutor extends Executor {
 
     @Override
     public void setModuleList(CompiledModule[] modules) {
-        antList = new ArrayList<>();
+        antList = new Ant[modules.length];
         antMap = new TreeMap<>();
-        for (CompiledModule module : modules) {
+        for (int k = 0; k < modules.length; k++) {
+            CompiledModule module = modules[k];
             Ant ant = new Ant(this, module.getBytecode());
-            antList.add(ant);
+            antList[k] = ant;
             antMap.put(module.getName(), ant);
+        }
+    }
+
+    @Override
+    public void setBindingByModule(Binding[] bindingByModule) {
+        if (bindingByModule.length == 0)
+            return;
+
+        for(Binding binding : bindingByModule) {
+            assert(binding.getDestination().getExecutor().equals("SERVER"));
+            String module = binding.getDestination().getModule();
+            Ant ant = antMap.get(module);
+            if (ant != null) {
+                ant.bind(binding);
+            }
         }
     }
 
@@ -65,8 +80,6 @@ public class ServerExecutor extends Executor {
         if (antList == null)
             return false;
 
-        transmit();
-
         for (Ant ant : antList) {
             ant.tick();
         }
@@ -75,8 +88,7 @@ public class ServerExecutor extends Executor {
     }
 
     @Override
-    public boolean read(FullAddress address, int size, byte[] buffer) {
-        assert (address.getExecutor().equals("SERVER"));
+    public boolean read(ShortAddress address, int size, byte[] buffer) {
         if (antMap != null) {
             Ant ant = antMap.get(address.getModule());
             if (ant != null) {
@@ -87,17 +99,6 @@ public class ServerExecutor extends Executor {
         return false;
     }
 
-    @Override
-    public void write(FullAddress address, int size, byte[] buffer) {
-        assert (address.getExecutor().equals("SERVER"));
-        if (antMap != null) {
-            Ant ant = antMap.get(address.getModule());
-            if (ant != null) {
-                ant.write(address.getOffset(), size, buffer);
-            }
-        }
-    }
-
-    List<Ant> antList;
+    Ant[] antList;
     Map<String, Ant> antMap;
 }

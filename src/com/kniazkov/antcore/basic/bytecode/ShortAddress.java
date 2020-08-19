@@ -17,17 +17,22 @@
 package com.kniazkov.antcore.basic.bytecode;
 
 /**
- * Full address of data of a module
+ * Short address of data of a module
  */
-public class FullAddress extends ShortAddress {
-    public FullAddress(String executor, String module, int offset) {
-        super(module, offset);
-        this.executor = executor;
+public class ShortAddress {
+    public ShortAddress(String module, int offset) {
+        this.module = module;
+        this.offset = offset;
     }
 
-    public String getExecutor() {
-        return executor;
+    public String getModule() {
+        return module;
     }
 
-    private String executor;
+    public int getOffset() {
+        return offset;
+    }
+
+    private String module;
+    private int offset;
 }

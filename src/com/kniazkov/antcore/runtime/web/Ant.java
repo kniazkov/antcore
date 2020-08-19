@@ -16,8 +16,10 @@
  */
 package com.kniazkov.antcore.runtime.web;
 
+import com.kniazkov.antcore.basic.bytecode.Binding;
 import com.kniazkov.antcore.basic.virtualmachine.VirtualMachine;
 import com.kniazkov.antcore.lib.ByteList;
+import com.kniazkov.antcore.runtime.Channel;
 
 import java.util.*;
 
@@ -25,12 +27,17 @@ import java.util.*;
  * An ant, i.e. minimal execution unit that contains own memory space
  */
 public class Ant {
-    public Ant(long timestamp, String module, WebExecutor executor, ByteList code) {
+    public Ant(long timestamp, String module, WebExecutor executor, ByteList code, List<Binding> mapping) {
         this.timestamp = timestamp;
         this.module = module;
-        this.executor = executor;
         vm = new VirtualMachine(code, 65536, WebLibrary.create(this));
         uid = UUID.randomUUID().toString();
+
+        channels = new ArrayList<>();
+        for (Binding binding : mapping) {
+            Channel channel = new Channel(executor.getRuntime(), vm, binding);
+            channels.add(channel);
+        }
 
         instructions = new LinkedList<>();
 
@@ -39,7 +46,13 @@ public class Ant {
         widgets.put(0, new Body());
     }
 
+    /**
+     * Periodically performed task
+     */
     public void tick() {
+        for (Channel channel : channels) {
+            channel.transmit();
+        }
         vm.run();
     }
 
@@ -47,12 +60,14 @@ public class Ant {
         return uid;
     }
 
+    /**
+     * Read data by absolute address
+     * @param address absolute address
+     * @param size size
+     * @param buffer destination buffer
+     */
     public void read(int address, int size, byte[] buffer) {
         vm.read(address, size, buffer);
-    }
-
-    public void write(int address, int size, byte[] buffer) {
-        vm.write(address, size, buffer);
     }
 
     public String getModuleName() {
@@ -82,7 +97,7 @@ public class Ant {
     long timestamp;
     int transaction;
     private String module;
-    private WebExecutor executor;
+    private List<Channel> channels;
     private VirtualMachine vm;
     private String uid;
     List<Instruction> instructions;

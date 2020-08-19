@@ -16,8 +16,9 @@
  */
 package com.kniazkov.antcore.runtime.web;
 
+import com.kniazkov.antcore.basic.bytecode.Binding;
 import com.kniazkov.antcore.basic.bytecode.CompiledModule;
-import com.kniazkov.antcore.basic.bytecode.FullAddress;
+import com.kniazkov.antcore.basic.bytecode.ShortAddress;
 import com.kniazkov.antcore.runtime.Executor;
 import com.kniazkov.antcore.runtime.Runtime;
 import com.kniazkov.webserver.*;
@@ -41,7 +42,6 @@ public class WebExecutor extends Executor {
 
     @Override
     protected boolean tick() {
-        transmit();
         long currentTime = getTicks();
         List<String> died = null;
         for (Map.Entry<String, Ant> entry : antsByUId.entrySet()) {
@@ -74,8 +74,21 @@ public class WebExecutor extends Executor {
         this.modules = new TreeMap<>();
         for (CompiledModule module : modules) {
             String name = module.getName();
-            this.modules.put(name, module);
+            ModuleInfo info = new ModuleInfo();
+            info.module = module;
+            this.modules.put(name, info);
             this.antsByModule.put(name, new HashSet<>());
+        }
+    }
+
+    @Override
+    public void setBindingByModule(Binding[] mapping) {
+        for (Binding binding : mapping) {
+            String module = binding.getDestination().getModule();
+            ModuleInfo info = modules.get(module);
+            if (info != null) {
+                info.mapping.add(binding);
+            }
         }
     }
 
@@ -90,10 +103,9 @@ public class WebExecutor extends Executor {
     }
 
     @Override
-    public boolean read(FullAddress address, int size, byte[] buffer) {
-        assert (address.getExecutor().equals("WEB"));
+    public boolean read(ShortAddress address, int size, byte[] buffer) {
         Set<Ant> ants = antsByModule.get(address.getModule());
-        if (ants.size() == 1) {
+        if (ants.size() == 1) { // If there more than one copy of the page, we can not read data from them
             Ant ant = ants.iterator().next();
             ant.read(address.getOffset(), size, buffer);
             return true;
@@ -101,23 +113,13 @@ public class WebExecutor extends Executor {
         return false;
     }
 
-    @Override
-    public void write(FullAddress address, int size, byte[] buffer) {
-        assert (address.getExecutor().equals("WEB"));
-        for (Ant ant : antsByModule.get(address.getModule())) {
-            if (ant.getModuleName().equals(address.getModule())) {
-                ant.write(address.getOffset(), size, buffer);
-            }
-        }
-    }
-
-    CompiledModule getModuleByName(String name) {
+    ModuleInfo getModuleByName(String name) {
         return modules.get(name);
     }
 
     private static final long antsLifetime = 10;
 
-    private Map<String, CompiledModule> modules;
+    private Map<String, ModuleInfo> modules;
     Server webServer;
     Map<String, Ant> antsByUId;
     Map<String, Set<Ant>> antsByModule;

@@ -41,8 +41,8 @@ public class CreateInstance extends Respondent {
             return null;
 
         String page = pageElem.stringValue();
-        CompiledModule module = executor.getModuleByName(page);
-        Ant ant = new Ant(executor.getTicks(), page, executor, module.getBytecode());
+        ModuleInfo info = executor.getModuleByName(page);
+        Ant ant = new Ant(executor.getTicks(), page, executor, info.module.getBytecode(), info.mapping);
         String uid = ant.getUId();
         executor.antsByUId.put(uid, ant);
         executor.antsByModule.get(page).add(ant);

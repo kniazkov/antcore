@@ -38,7 +38,7 @@ public class Launcher {
                 return;
             }
             executor.setModuleList(program.getModulesByExecutor(executorName));
-            executor.setMapping(program.getBindingByDestination(executorName));
+            executor.setBindingByModule(program.getBindingByDestination(executorName));
             runtime.addExecutor(executor);
         }
 

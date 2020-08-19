@@ -18,7 +18,7 @@ package com.kniazkov.antcore.runtime;
 
 import com.kniazkov.antcore.basic.bytecode.Binding;
 import com.kniazkov.antcore.basic.bytecode.CompiledModule;
-import com.kniazkov.antcore.basic.bytecode.FullAddress;
+import com.kniazkov.antcore.basic.bytecode.ShortAddress;
 import com.kniazkov.antcore.lib.Periodic;
 
 /**
@@ -41,6 +41,21 @@ public abstract class Executor extends Periodic {
     public abstract void setModuleList(CompiledModule[] modules);
 
     /**
+     * Sets binding list
+     * @param bindingByModule a list
+     */
+    public abstract void setBindingByModule(Binding[] bindingByModule);
+
+    /**
+     * Reads data from module to buffer by full absolute address
+     * @param address short absolute address
+     * @param size size of the data
+     * @param buffer destination buffer
+     * @return true if the operation was successful
+     */
+    public abstract boolean read(ShortAddress address, int size, byte[] buffer);
+
+    /**
      * Initializer
      */
     protected abstract void init();
@@ -49,23 +64,6 @@ public abstract class Executor extends Periodic {
      * @return how many time per second the 'tick' method called
      */
     protected abstract int getFrequency();
-
-    /**
-     * Reads data from module to buffer by full absolute address
-     * @param address full absolute address
-     * @param size size of the data
-     * @param buffer destination buffer
-     * @return true if the operation was successful
-     */
-    public abstract boolean read(FullAddress address, int size, byte[] buffer);
-
-    /**
-     * Writes data to module from buffer by full absolute address
-     * @param address full absolute address
-     * @param size size of the data
-     * @param buffer source buffer
-     */
-    public abstract void write(FullAddress address, int size, byte[] buffer);
 
     /**
      * Runs the executor
@@ -79,23 +77,5 @@ public abstract class Executor extends Periodic {
         return runtime;
     }
 
-    public void setMapping(Binding[] mapping) {
-        this.mapping = mapping;
-    }
-
-    protected void transmit() {
-        for (Binding binding : mapping) {
-            int size = binding.getSize();
-            byte[] buffer = new byte[size];
-            Executor source = runtime.getExecutorByName(binding.getSource().getExecutor());
-            if (source != null) {
-                if (source.read(binding.getSource(), size, buffer)) {
-                    write(binding.getDestination(), size, buffer);
-                }
-            }
-        }
-    }
-
     private Runtime runtime;
-    private Binding[] mapping;
 }
