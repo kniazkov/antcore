@@ -542,6 +542,36 @@ public class VirtualMachine {
             stub    // 10 -> STRUCT
     };
 
+    final Unit[] and = {
+            stub,
+            stub,   // 1 -> POINTER
+            stub,   // 2 -> BOOLEAN
+            () -> { // 3 -> BYTE
+                byte left = popByte();
+                byte right = popByte();
+                pushByte((byte) (left & right));
+            },
+            () -> { // 4 -> SHORT
+                short left = popShort();
+                short right = popShort();
+                pushShort((short) (left & right));
+            },
+            () -> { // 5 -> INTEGER
+                int left = popInteger();
+                int right = popInteger();
+                pushInteger(left & right);
+            },
+            () -> { // 6 -> LONG
+                long left = popLong();
+                long right = popLong();
+                pushLong(left & right);
+            },
+            stub,   // 7 -> REAL
+            stub,   // 8 -> STRING
+            stub,   // 9 -> ARRAY
+            stub    // 10 -> STRUCT
+    };
+
     final Unit[] compareByte = {
             () -> { // 0 -> EQUAL
                 byte left = popByte();
@@ -769,15 +799,19 @@ public class VirtualMachine {
                 mod[read_p0()].exec();
                 IP = IP + 16;
             },
-            () -> { // 15 -> CMP
+            () -> { // 15 -> AND
+                and[read_p0()].exec();
+                IP = IP + 16;
+            },
+            () -> { // 16 -> CMP
                 compare[read_p0()].exec();
                 IP = IP + 16;
             },
-            () -> { // 16 -> SIGN
+            () -> { // 17 -> SIGN
                 sign[read_p0()].exec();
                 IP = IP + 16;
             },
-            () -> { // 17 -> IF
+            () -> { // 18 -> IF
                 boolean value = popBoolean();
                 boolean condition = read_p0() > 0;
                 if (value == condition)
@@ -785,10 +819,9 @@ public class VirtualMachine {
                 else
                     IP = IP + 16;
             },
-            () -> { // 18 -> JUMP
+            () -> { // 19 -> JUMP
                 IP = read_x0();
             },
-            stub,
             stub, // 20
             stub,
             stub,

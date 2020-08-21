@@ -2,6 +2,109 @@ IMPORT stdlib
 
 MODULE SERVER
     FUNCTION MAIN
+        VAR a AS INTEGER
+        VAR b AS INTEGER
+        VAR x AS INTEGER
+        VAR z AS BOOLEAN
+
+        a = 2
+        b = 3
+        x = a + b
+        println("" + a + " + " + b + " = " + x)
+
+        a = 7
+        b = 3
+        x = a - b
+        println("" + a + " - " + b + " = " + x)
+
+        '''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+        a = 7
+        b = 3
+        x = a * b
+        println("" + a + " * " + b + " = " + x)
+
+        a = 256
+        b = 32
+        x = a / b
+        println("" + a + " / " + b + " = " + x)
+
+        a = 17
+        b = 10
+        x = a MOD b
+        println("" + a + " MOD " + b + " = " + x)
+
+        '''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+        a = 9
+        b = 3
+        x = a AND b
+        println("" + a + " AND " + b + " = " + x)
+
+        '''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+        a = 2
+        b = 2
+        z = a > b
+        println("" + a + " > " + b + " : " + z)
+
+        a = 3
+        b = 2
+        z = a > b
+        println("" + a + " > " + b + " : " + z)
+
+        a = 2
+        b = 2
+        z = a >= b
+        println("" + a + " >= " + b + " : " + z)
+
+        a = 3
+        b = 2
+        z = a >= b
+        println("" + a + " >= " + b + " : " + z)
+
+        a = 2
+        b = 2
+        z = a < b
+        println("" + a + " < " + b + " : " + z)
+
+        a = 2
+        b = 3
+        z = a < b
+        println("" + a + " < " + b + " : " + z)
+
+        a = 2
+        b = 2
+        z = a <= b
+        println("" + a + " <= " + b + " : " + z)
+
+        a = 2
+        b = 3
+        z = a <= b
+        println("" + a + " <= " + b + " : " + z)
+
+        '''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+        a = 2
+        b = 2
+        z = a = b
+        println("" + a + " = " + b + " : " + z)
+
+        a = 3
+        b = 2
+        z = a = b
+        println("" + a + " = " + b + " : " + z)
+
+        a = 2
+        b = 2
+        z = a <> b
+        println("" + a + " <> " + b + " : " + z)
+
+        a = 3
+        b = 2
+        z = a <> b
+        println("" + a + " <> " + b + " : " + z)
+
         println("ok.")
     END FUNCTION
 END MODULE

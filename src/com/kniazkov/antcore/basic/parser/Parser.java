@@ -240,6 +240,8 @@ public class Parser {
                     return OperatorMod.getInstance();
                 case "TRANSMISSION":
                     return KeywordTransmission.getInstance();
+                case "AND":
+                    return OperatorAnd.getInstance();
             }
             return new Identifier(name);
         }
@@ -1134,6 +1136,7 @@ public class Parser {
         sequence = parseIdentifiers(line, sequence);
         sequence = parseBinaryOperators(line, sequence, opMulDivMod);
         sequence = parseBinaryOperators(line, sequence, opPlusMinus);
+        sequence = parseBinaryOperators(line, sequence, opAndOr);
         sequence = parseBinaryOperators(line, sequence, opLessGreater);
         sequence = parseBinaryOperators(line, sequence, opEquals);
 
@@ -1147,6 +1150,7 @@ public class Parser {
 
     private static Class<?>[] opMulDivMod = new Class<?>[]{OperatorMul.class, OperatorDiv.class, OperatorMod.class};
     private static Class<?>[] opPlusMinus = new Class<?>[]{OperatorPlus.class, OperatorMinus.class};
+    private static Class<?>[] opAndOr = new Class<?>[]{OperatorAnd.class};
     private static Class<?>[] opLessGreater = new Class<?>[]{OperatorLess.class, OperatorLessEqual.class,
         OperatorGreater.class, OperatorGreaterEqual.class};
     private static Class<?>[] opEquals = new Class<?>[]{OperatorAssignEquals.class, OperatorDiff.class};
