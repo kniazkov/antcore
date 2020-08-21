@@ -632,6 +632,66 @@ public class VirtualMachine {
             stub    // 10 -> STRUCT
     };
 
+    final Unit[] shl = {
+            stub,
+            stub,   // 1 -> POINTER
+            stub,   // 2 -> BOOLEAN
+            () -> { // 3 -> BYTE
+                byte left = popByte();
+                byte right = popByte();
+                pushByte((byte) (left << right));
+            },
+            () -> { // 4 -> SHORT
+                short left = popShort();
+                short right = popShort();
+                pushShort((short) (left << right));
+            },
+            () -> { // 5 -> INTEGER
+                int left = popInteger();
+                int right = popInteger();
+                pushInteger(left << right);
+            },
+            () -> { // 6 -> LONG
+                long left = popLong();
+                long right = popLong();
+                pushLong(left << right);
+            },
+            stub,   // 7 -> REAL
+            stub,   // 8 -> STRING
+            stub,   // 9 -> ARRAY
+            stub    // 10 -> STRUCT
+    };
+
+    final Unit[] shr = {
+            stub,
+            stub,   // 1 -> POINTER
+            stub,   // 2 -> BOOLEAN
+            () -> { // 3 -> BYTE
+                byte left = popByte();
+                byte right = popByte();
+                pushByte((byte) (left >>> right));
+            },
+            () -> { // 4 -> SHORT
+                short left = popShort();
+                short right = popShort();
+                pushShort((short) (left >>> right));
+            },
+            () -> { // 5 -> INTEGER
+                int left = popInteger();
+                int right = popInteger();
+                pushInteger(left >>> right);
+            },
+            () -> { // 6 -> LONG
+                long left = popLong();
+                long right = popLong();
+                pushLong(left >>> right);
+            },
+            stub,   // 7 -> REAL
+            stub,   // 8 -> STRING
+            stub,   // 9 -> ARRAY
+            stub    // 10 -> STRUCT
+    };
+
     final Unit[] compareByte = {
             () -> { // 0 -> EQUAL
                 byte left = popByte();
@@ -871,15 +931,23 @@ public class VirtualMachine {
                 xor[read_p0()].exec();
                 IP = IP + 16;
             },
-            () -> { // 18 -> CMP
+            () -> { // 18 -> SHL
+                shl[read_p0()].exec();
+                IP = IP + 16;
+            },
+            () -> { // 19 -> SHR
+                shr[read_p0()].exec();
+                IP = IP + 16;
+            },
+            () -> { // 20 -> CMP
                 compare[read_p0()].exec();
                 IP = IP + 16;
             },
-            () -> { // 19 -> SIGN
+            () -> { // 21 -> SIGN
                 sign[read_p0()].exec();
                 IP = IP + 16;
             },
-            () -> { // 20 -> IF
+            () -> { // 22 -> IF
                 boolean value = popBoolean();
                 boolean condition = read_p0() > 0;
                 if (value == condition)
@@ -887,11 +955,9 @@ public class VirtualMachine {
                 else
                     IP = IP + 16;
             },
-            () -> { // 21 -> JUMP
+            () -> { // 23 -> JUMP
                 IP = read_x0();
             },
-            stub,
-            stub,
             stub,
             stub,
             stub,
