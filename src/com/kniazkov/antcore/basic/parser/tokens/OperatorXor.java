@@ -17,32 +17,32 @@
 package com.kniazkov.antcore.basic.parser.tokens;
 
 import com.kniazkov.antcore.basic.graph.BinaryOperation;
-import com.kniazkov.antcore.basic.graph.Conjunction;
+import com.kniazkov.antcore.basic.graph.ExclusiveOr;
 import com.kniazkov.antcore.basic.graph.Expression;
 import com.kniazkov.antcore.basic.parser.Token;
 
 /**
- * Token represents 'AND' operator
+ * Token represents 'XOR' operator
  */
-public class OperatorAnd extends Operator {
+public class OperatorXor extends Operator {
     @Override
     public String toString() {
-        return "AND";
+        return "XOR";
     }
 
-    private OperatorAnd() {
+    private OperatorXor() {
     }
 
-    private static OperatorAnd instance;
+    private static OperatorXor instance;
 
     public static Token getInstance() {
         if (instance == null)
-            instance = new OperatorAnd();
+            instance = new OperatorXor();
         return instance;
     }
 
     @Override
     public BinaryOperation createBinaryOperation(Expression left, Expression right) {
-        return new Conjunction(left, right);
+        return new ExclusiveOr(left, right);
     }
 }

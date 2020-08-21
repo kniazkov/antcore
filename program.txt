@@ -41,6 +41,16 @@ MODULE SERVER
         x = a AND b
         println("" + a + " AND " + b + " = " + x)
 
+        a = 0b111100
+        b = 0b001111
+        x = a OR b
+        println("" + a + " OR " + b + " = " + x)
+
+        a = 0b111100
+        b = 0b001111
+        x = a XOR b
+        println("" + a + " XOR " + b + " = " + x)
+
         '''''''''''''''''''''''''''''''''''''''''''''''''''''
 
         a = 2

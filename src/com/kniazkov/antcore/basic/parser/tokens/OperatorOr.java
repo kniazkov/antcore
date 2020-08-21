@@ -18,31 +18,32 @@ package com.kniazkov.antcore.basic.parser.tokens;
 
 import com.kniazkov.antcore.basic.graph.BinaryOperation;
 import com.kniazkov.antcore.basic.graph.Conjunction;
+import com.kniazkov.antcore.basic.graph.Disjunction;
 import com.kniazkov.antcore.basic.graph.Expression;
 import com.kniazkov.antcore.basic.parser.Token;
 
 /**
- * Token represents 'AND' operator
+ * Token represents 'OR' operator
  */
-public class OperatorAnd extends Operator {
+public class OperatorOr extends Operator {
     @Override
     public String toString() {
-        return "AND";
+        return "OR";
     }
 
-    private OperatorAnd() {
+    private OperatorOr() {
     }
 
-    private static OperatorAnd instance;
+    private static OperatorOr instance;
 
     public static Token getInstance() {
         if (instance == null)
-            instance = new OperatorAnd();
+            instance = new OperatorOr();
         return instance;
     }
 
     @Override
     public BinaryOperation createBinaryOperation(Expression left, Expression right) {
-        return new Conjunction(left, right);
+        return new Disjunction(left, right);
     }
 }
