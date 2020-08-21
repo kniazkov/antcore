@@ -15,20 +15,24 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.kniazkov.antcore;
+package com.kniazkov.antcore.test;
 
+import com.kniazkov.antcore.basic.bytecode.CompiledModule;
 import com.kniazkov.antcore.basic.bytecode.CompiledProgram;
+import com.kniazkov.antcore.basic.bytecode.Disassembler;
+import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.graph.Analyzer;
 import com.kniazkov.antcore.basic.graph.Program;
-import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.parser.Parser;
+import com.kniazkov.antcore.basic.virtualmachine.ErrorCode;
+import com.kniazkov.antcore.basic.virtualmachine.StandardLibrary;
+import com.kniazkov.antcore.basic.virtualmachine.VirtualMachine;
 import com.kniazkov.antcore.lib.FileIO;
-import com.kniazkov.antcore.runtime.Launcher;
 
 /**
- * Entry point
+ * Simplified launcher for debug purposes
  */
-public class Main {
+public class PieceOfCake {
     public static void main(String[] args) {
         String source = FileIO.readFileToString("program.txt");
         if (source != null) {
@@ -37,7 +41,19 @@ public class Main {
                 Analyzer.analyze(program);
                 System.out.println(program.toSourceCode());
                 CompiledProgram compiledProgram = program.compile();
-                Launcher.launch(compiledProgram);
+                for (String executor : compiledProgram.getExecutors()) {
+                    for (CompiledModule module : compiledProgram.getModulesByExecutor(executor)) {
+                        System.out.println(Disassembler.convert(module.getBytecode()));
+                        VirtualMachine virtualMachine = new VirtualMachine(module.getBytecode(), 65536,
+                                StandardLibrary.getFunctions());
+                        virtualMachine.run();
+                        ErrorCode errorCode = virtualMachine.getErrorCode();
+                        if (errorCode != ErrorCode.OK) {
+                            System.err.println("Virtual machine finished with code " + errorCode +
+                                    ", IP = " + virtualMachine.getInstructionPointer());
+                        }
+                    }
+                }
             } catch (SyntaxError syntaxError) {
                 syntaxError.printStackTrace();
             }

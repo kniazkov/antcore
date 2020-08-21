@@ -1,70 +1,7 @@
 IMPORT stdlib
-IMPORT web
-
-MODULE INDEX WEB
-    DATA
-        state AS INTEGER
-        label AS INTEGER
-        button AS INTEGER
-    END DATA
-
-    DATA INPUT
-        toggle AS BOOLEAN
-    END DATA
-
-    DATA OUTPUT
-        count AS INTEGER
-    END DATA
-
-	FUNCTION MAIN
-	    IF state = 0 THEN
-	        state = 1
-
-            label = createWidget("label")
-	        appendWidget(0, label)
-	        setWidgetData(label, "On")
-
-            button = createWidget("button")
-            appendWidget(0, button)
-            setWidgetData(button, "Click")
-	    ELSE IF state = 1 THEN
-	        count = getWidgetClickCount(button)
-            IF toggle THEN
-                setWidgetData(label, "On")
-            ELSE
-                setWidgetData(label, "Off")
-            END IF
-	    END IF
-	END FUNCTION
-END MODULE
 
 MODULE SERVER
-    DATA
-        oldCount AS INTEGER
-    END DATA
-
-    DATA INPUT
-        count AS INTEGER
-    END DATA
-
-    DATA OUTPUT
-        toggle AS BOOLEAN
-    END DATA
-
     FUNCTION MAIN
-        IF count <> oldCount THEN
-            oldCount = count
-            IF toggle THEN
-                toggle = FALSE
-            ELSE
-                toggle = TRUE
-            END IF
-            println("toggle changed: " + toggle)
-        END IF
+        println("ok.")
     END FUNCTION
 END MODULE
-
-TRANSMISSION
-    INDEX.count TO SERVER.count
-    SERVER.toggle TO INDEX.toggle
-END TRANSMISSION
