@@ -258,6 +258,21 @@ public class Parser {
                 } while (isDigit(c));
                 number = buff.toString();
                 long intValue = Long.parseLong(number);
+                if (c == 'b' && intValue == 0) {
+                    c = src.next();
+                    if (c == '0' || c == '1') {
+                        long value = 0;
+                        do {
+                            value = value * 2 + c - '0';
+                            c = src.next();
+                        } while(c == '0' || c == '1');
+                        if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE)
+                            return new TokenExpression(new LongNode(value));
+                        return new TokenExpression(new IntegerNode((int)value));
+                    }
+                    else
+                        throw new WrongNumberFormat(fragment, "0b" + c);
+                }
                 if (c != '.') {
                     if (intValue < Integer.MIN_VALUE || intValue > Integer.MAX_VALUE)
                         return new TokenExpression(new LongNode(intValue));
