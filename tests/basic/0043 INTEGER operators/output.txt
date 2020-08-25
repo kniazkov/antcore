@@ -1,0 +1,26 @@
+2 + 3 = 5
+7 - 3 = 4
++7 = 7
+-7 = -7
+NOT 0 = -1
+7 * 3 = 21
+256 / 32 = 8
+17 MOD 10 = 7
+60 AND 15 = 12
+60 OR 15 = 63
+60 XOR 15 = 51
+16 SHL 2 = 64
+16 SHR 2 = 4
+2 > 2 : FALSE
+3 > 2 : TRUE
+2 >= 2 : TRUE
+3 >= 2 : TRUE
+2 < 2 : FALSE
+2 < 3 : TRUE
+2 <= 2 : TRUE
+2 <= 3 : TRUE
+2 = 2 : TRUE
+3 = 2 : FALSE
+2 <> 2 : FALSE
+3 <> 2 : TRUE
+ok.
