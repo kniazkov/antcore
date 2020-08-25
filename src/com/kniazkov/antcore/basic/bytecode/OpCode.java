@@ -40,9 +40,11 @@ public final class OpCode {
     public static final byte XOR = 17;
     public static final byte SHL = 18;
     public static final byte SHR = 19;
-    public static final byte CMP = 20;
-    public static final byte SIGN = 21;
-    public static final byte IF = 22;
-    public static final byte JUMP = 23;
+    public static final byte NEG = 20;
+    public static final byte NOT = 21;
+    public static final byte CMP = 22;
+    public static final byte SIGN = 23;
+    public static final byte IF = 24;
+    public static final byte JUMP = 25;
     public static final byte END = 127;
 }

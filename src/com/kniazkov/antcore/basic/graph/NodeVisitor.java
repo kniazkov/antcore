@@ -115,6 +115,9 @@ public abstract class NodeVisitor {
     public void visit(Transmission obj) throws SyntaxError {
     }
 
+    public void visit(UnaryOperation obj)  throws SyntaxError {
+    }
+
     public void visit(Variable obj)  throws SyntaxError {
     }
 

@@ -1157,6 +1157,7 @@ public class Parser {
             throw new ExpectedAnExpression(line);
 
         sequence = parseIdentifiers(line, sequence);
+        sequence = parseUnaryOperators(line,  sequence, opNeg);
         sequence = parseBinaryOperators(line, sequence, opMulDivMod);
         sequence = parseBinaryOperators(line, sequence, opPlusMinus);
         sequence = parseBinaryOperators(line, sequence, opShift);
@@ -1172,6 +1173,7 @@ public class Parser {
         return (TokenExpression) result;
     }
 
+    private static Class<?>[] opNeg = new Class<?>[]{OperatorMinus.class};
     private static Class<?>[] opMulDivMod = new Class<?>[]{OperatorMul.class, OperatorDiv.class, OperatorMod.class};
     private static Class<?>[] opPlusMinus = new Class<?>[]{OperatorPlus.class, OperatorMinus.class};
     private static Class<?>[] opShift = new Class<?>[]{OperatorShl.class, OperatorShr.class};
@@ -1219,6 +1221,44 @@ public class Parser {
     }
 
     /**
+     * Parse unary operators
+     *
+     * @param line          the line of source code
+     * @param rightSequence the sequence of tokens that possibly contains an operator
+     * @param operators     the list of operators
+     * @return a new token sequence in which operators are converted to expressions
+     */
+    private LinkedList<Token> parseUnaryOperators(Line line, LinkedList<Token> rightSequence, Class<?>[] operators) throws SyntaxError {
+        if (rightSequence.size() < 2)
+            return rightSequence;
+        LinkedList<Token> leftSequence = new LinkedList<>();
+        while (!rightSequence.isEmpty()) {
+            Token token = rightSequence.removeFirst();
+            boolean flag = false;
+            for (Class<?> operator : operators) {
+                if (operator.isInstance(token)) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (!flag || (!leftSequence.isEmpty() && !(leftSequence.getFirst() instanceof Operator))) {
+                leftSequence.addLast(token);
+            }
+            else {
+                Operator operator = (Operator) token;
+                Token operand = rightSequence.removeFirst();
+                if (!(operand instanceof TokenExpression))
+                    throw new ExpectedRightExprOper(line, operator.toString());
+
+                UnaryOperation unaryOperation = operator.createUnaryOperation(((TokenExpression) operand).toNode());
+                assert (unaryOperation != null);
+                leftSequence.addLast(new TokenExpression(unaryOperation));
+            }
+        }
+        return leftSequence;
+    }
+
+    /**
      * Parse binary operators
      *
      * @param line          the line of source code
@@ -1248,7 +1288,7 @@ public class Parser {
                     throw new ExpectedLeftExpOper(line, operator.toString());
                 Token rightOperand = rightSequence.removeFirst();
                 if (!(rightOperand instanceof TokenExpression))
-                    throw new ExpectedLeftExpOper(line, operator.toString());
+                    throw new ExpectedRightExprOper(line, operator.toString());
 
                 BinaryOperation binaryOperation = operator.createBinaryOperation(((TokenExpression) leftOperand).toNode(),
                         ((TokenExpression) rightOperand).toNode());

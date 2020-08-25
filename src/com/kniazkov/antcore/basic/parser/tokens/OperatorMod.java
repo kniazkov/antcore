@@ -16,10 +16,7 @@
  */
 package com.kniazkov.antcore.basic.parser.tokens;
 
-import com.kniazkov.antcore.basic.graph.BinaryOperation;
-import com.kniazkov.antcore.basic.graph.Expression;
-import com.kniazkov.antcore.basic.graph.Modulus;
-import com.kniazkov.antcore.basic.graph.Multiplication;
+import com.kniazkov.antcore.basic.graph.*;
 import com.kniazkov.antcore.basic.parser.Token;
 
 /**
@@ -40,6 +37,11 @@ public class OperatorMod extends Operator {
         if (instance == null)
             instance = new OperatorMod();
         return instance;
+    }
+
+    @Override
+    public UnaryOperation createUnaryOperation(Expression right) {
+        return null;
     }
 
     @Override

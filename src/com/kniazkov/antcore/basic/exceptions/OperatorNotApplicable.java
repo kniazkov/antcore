@@ -30,9 +30,17 @@ public class OperatorNotApplicable extends SyntaxError {
         this.operator = operator;
     }
 
+    public OperatorNotApplicable(Fragment fragment, String operator, String rightType) {
+        super(fragment);
+        this.rightType = rightType;
+        this.operator = operator;
+    }
+
     @Override
     protected String getErrorMessage() {
-        return "Operator '" + operator + "' cannot be applied to '" + leftType + "' and '" + rightType + '\'';
+        if (leftType != null)
+            return "Operator '" + operator + "' cannot be applied to '" + leftType + "' and '" + rightType + '\'';
+        return "Operator '" + operator + "' cannot be applied to '" + rightType + '\'';
     }
 
     private String operator;

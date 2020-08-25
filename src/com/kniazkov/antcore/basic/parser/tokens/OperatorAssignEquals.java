@@ -19,6 +19,7 @@ package com.kniazkov.antcore.basic.parser.tokens;
 import com.kniazkov.antcore.basic.graph.BinaryOperation;
 import com.kniazkov.antcore.basic.graph.Equals;
 import com.kniazkov.antcore.basic.graph.Expression;
+import com.kniazkov.antcore.basic.graph.UnaryOperation;
 import com.kniazkov.antcore.basic.parser.Token;
 
 /**
@@ -39,6 +40,11 @@ public class OperatorAssignEquals extends Operator {
         if (instance == null)
             instance = new OperatorAssignEquals();
         return instance;
+    }
+
+    @Override
+    public UnaryOperation createUnaryOperation(Expression right) {
+        return null;
     }
 
     @Override

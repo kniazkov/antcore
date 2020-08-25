@@ -692,6 +692,50 @@ public class VirtualMachine {
             stub    // 10 -> STRUCT
     };
 
+    final Unit[] neg = {
+            stub,
+            stub,   // 1 -> POINTER
+            stub,   // 2 -> BOOLEAN
+            () -> { // 3 -> BYTE
+                pushByte((byte) -popByte());
+            },
+            () -> { // 4 -> SHORT
+                pushShort((short) (-popShort()));
+            },
+            () -> { // 5 -> INTEGER
+                pushInteger(-popInteger());
+            },
+            () -> { // 6 -> LONG
+                pushLong(-popLong());
+            },
+            stub,   // 7 -> REAL
+            stub,   // 8 -> STRING
+            stub,   // 9 -> ARRAY
+            stub    // 10 -> STRUCT
+    };
+
+    final Unit[] not = {
+            stub,
+            stub,   // 1 -> POINTER
+            stub,   // 2 -> BOOLEAN
+            () -> { // 3 -> BYTE
+                pushByte((byte) ~popByte());
+            },
+            () -> { // 4 -> SHORT
+                pushShort((short) (~popShort()));
+            },
+            () -> { // 5 -> INTEGER
+                pushInteger(~popInteger());
+            },
+            () -> { // 6 -> LONG
+                pushLong(~popLong());
+            },
+            stub,   // 7 -> REAL
+            stub,   // 8 -> STRING
+            stub,   // 9 -> ARRAY
+            stub    // 10 -> STRUCT
+    };
+
     final Unit[] compareByte = {
             () -> { // 0 -> EQUAL
                 byte left = popByte();
@@ -939,15 +983,23 @@ public class VirtualMachine {
                 shr[read_p0()].exec();
                 IP = IP + 16;
             },
-            () -> { // 20 -> CMP
+            () -> { // 20 -> NEG
+                neg[read_p0()].exec();
+                IP = IP + 16;
+            },
+            () -> { // 21 -> NOT
+                not[read_p0()].exec();
+                IP = IP + 16;
+            },
+            () -> { // 22 -> CMP
                 compare[read_p0()].exec();
                 IP = IP + 16;
             },
-            () -> { // 21 -> SIGN
+            () -> { // 23 -> SIGN
                 sign[read_p0()].exec();
                 IP = IP + 16;
             },
-            () -> { // 22 -> IF
+            () -> { // 24 -> IF
                 boolean value = popBoolean();
                 boolean condition = read_p0() > 0;
                 if (value == condition)
@@ -955,11 +1007,9 @@ public class VirtualMachine {
                 else
                     IP = IP + 16;
             },
-            () -> { // 23 -> JUMP
+            () -> { // 25 -> JUMP
                 IP = read_x0();
             },
-            stub,
-            stub,
             stub,
             stub,
             stub,

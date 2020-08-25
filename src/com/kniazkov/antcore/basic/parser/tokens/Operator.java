@@ -19,12 +19,20 @@ package com.kniazkov.antcore.basic.parser.tokens;
 
 import com.kniazkov.antcore.basic.graph.BinaryOperation;
 import com.kniazkov.antcore.basic.graph.Expression;
+import com.kniazkov.antcore.basic.graph.UnaryOperation;
 import com.kniazkov.antcore.basic.parser.Token;
 
 /**
  * Token represents operator
  */
 public abstract class Operator extends Token {
+    /**
+     * Create an appropriate unary operation
+     * @param right right operand
+     * @return operation
+     */
+    public abstract UnaryOperation createUnaryOperation(Expression right);
+
     /**
      * Create an appropriate binary operation
      * @param left left operand
