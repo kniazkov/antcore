@@ -20,32 +20,32 @@ import com.kniazkov.antcore.basic.graph.*;
 import com.kniazkov.antcore.basic.parser.Token;
 
 /**
- * Token represents '+' operator
+ * Token represents 'NOT' operator
  */
-public class OperatorPlus extends Operator {
+public class OperatorNot extends Operator {
     @Override
     public String toString() {
-        return "+";
+        return "NOT";
     }
 
-    private OperatorPlus() {
+    private OperatorNot() {
     }
 
-    private static OperatorPlus instance;
+    private static OperatorNot instance;
 
     public static Token getInstance() {
         if (instance == null)
-            instance = new OperatorPlus();
+            instance = new OperatorNot();
         return instance;
     }
 
     @Override
     public UnaryOperation createUnaryOperation(Expression right) {
-        return new UnaryPlus(right);
+        return new Inversion(right);
     }
 
     @Override
     public BinaryOperation createBinaryOperation(Expression left, Expression right) {
-        return new Addition(left, right);
+        return null;
     }
 }

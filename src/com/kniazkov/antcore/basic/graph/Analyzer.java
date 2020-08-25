@@ -183,6 +183,11 @@ public class Analyzer {
             }
 
             @Override
+            public void visit(UnaryOperation obj) throws SyntaxError {
+                obj.checkType();
+            }
+
+            @Override
             public void visit(Variable obj) throws SyntaxError {
                 obj.checkType();
             }

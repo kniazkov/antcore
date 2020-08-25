@@ -18,8 +18,16 @@ MODULE SERVER
         println("" + a + " - " + b + " = " + x)
 
         a = 7
+        x = +a
+        println("+" + a + " = " + x)
+
+        a = 7
         x = -a
         println("-" + a + " = " + x)
+
+        a = 0
+        x = NOT a
+        println("NOT " + a + " = " + x)
 
         '''''''''''''''''''''''''''''''''''''''''''''''''''''
 

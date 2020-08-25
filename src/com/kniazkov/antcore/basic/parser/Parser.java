@@ -250,6 +250,8 @@ public class Parser {
                     return OperatorShl.getInstance();
                 case "SHR":
                     return OperatorShr.getInstance();
+                case "NOT":
+                    return OperatorNot.getInstance();
             }
             return new Identifier(name);
         }
@@ -1157,7 +1159,8 @@ public class Parser {
             throw new ExpectedAnExpression(line);
 
         sequence = parseIdentifiers(line, sequence);
-        sequence = parseUnaryOperators(line,  sequence, opNeg);
+        sequence = parseUnaryOperators(line,  sequence, opPlusMinus);
+        sequence = parseUnaryOperators(line,  sequence, opNot);
         sequence = parseBinaryOperators(line, sequence, opMulDivMod);
         sequence = parseBinaryOperators(line, sequence, opPlusMinus);
         sequence = parseBinaryOperators(line, sequence, opShift);
@@ -1173,7 +1176,7 @@ public class Parser {
         return (TokenExpression) result;
     }
 
-    private static Class<?>[] opNeg = new Class<?>[]{OperatorMinus.class};
+    private static Class<?>[] opNot = new Class<?>[]{OperatorNot.class};
     private static Class<?>[] opMulDivMod = new Class<?>[]{OperatorMul.class, OperatorDiv.class, OperatorMod.class};
     private static Class<?>[] opPlusMinus = new Class<?>[]{OperatorPlus.class, OperatorMinus.class};
     private static Class<?>[] opShift = new Class<?>[]{OperatorShl.class, OperatorShr.class};
