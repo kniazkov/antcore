@@ -40,6 +40,11 @@ public class Modulus extends BinaryOperation {
         DataType leftType = getLeftPureNonConstantType();
         DataType rightType = getRightPureNonConstantType();
 
+        if (leftType instanceof ShortType && rightType instanceof ShortType) {
+            setType(leftType);
+            return;
+        }
+
         if (leftType instanceof IntegerType && rightType instanceof IntegerType) {
             setType(leftType);
             return;
@@ -58,6 +63,12 @@ public class Modulus extends BinaryOperation {
         if (rightValue == null)
             return null;
 
+        if (leftValue instanceof Short) {
+            if (rightValue instanceof Short) {
+                return (short)((Short)leftValue % (Short)rightValue);
+            }
+        }
+
         if (leftValue instanceof Integer) {
             if (rightValue instanceof Integer) {
                 return (Integer)leftValue % (Integer)rightValue;
@@ -73,6 +84,12 @@ public class Modulus extends BinaryOperation {
 
         right.genLoad(unit);
         left.genLoad(unit);
+
+        if (leftType instanceof ShortType && rightType instanceof ShortType) {
+            unit.addInstruction(new Mod(TypeSelector.SHORT,2, 2, 2));
+            return;
+        }
+
         if (leftType instanceof IntegerType && rightType instanceof IntegerType) {
             unit.addInstruction(new Mod(TypeSelector.INTEGER,4, 4, 4));
             return;

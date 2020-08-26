@@ -32,7 +32,7 @@ public class Negation extends UnaryOperation {
     @Override
     void checkType() throws SyntaxError {
         DataType type = expression.getType().getPureType();
-        if (type instanceof IntegerType)
+        if (type instanceof ShortType || type instanceof IntegerType)
             return;
         throw new OperatorNotApplicable(getFragment(), "-", expression.getType().getName());
     }
@@ -47,6 +47,8 @@ public class Negation extends UnaryOperation {
         Object value = expression.calculate();
         if (value == null)
             return null;
+        if (value instanceof Short)
+            return (short)(-(Short)value);
         if (value instanceof Integer)
             return -(Integer)value;
         return null;

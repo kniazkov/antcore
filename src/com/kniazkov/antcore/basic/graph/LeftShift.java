@@ -40,6 +40,11 @@ public class LeftShift extends BinaryOperation {
         DataType leftType = getLeftPureNonConstantType();
         DataType rightType = getRightPureNonConstantType();
 
+        if (leftType instanceof ShortType && rightType instanceof ShortType) {
+            setType(leftType);
+            return;
+        }
+
         if (leftType instanceof IntegerType && rightType instanceof IntegerType) {
             setType(leftType);
             return;
@@ -58,11 +63,18 @@ public class LeftShift extends BinaryOperation {
         if (rightValue == null)
             return null;
 
+        if (leftValue instanceof Short) {
+            if (rightValue instanceof Short) {
+                return (short)(Short)leftValue << (Short)rightValue;
+            }
+        }
+
         if (leftValue instanceof Integer) {
             if (rightValue instanceof Integer) {
                 return (Integer)leftValue << (Integer)rightValue;
             }
         }
+
         return null;
     }
 
@@ -70,14 +82,12 @@ public class LeftShift extends BinaryOperation {
     public void genLoad(CompilationUnit unit) throws SyntaxError {
         DataType leftType = getLeftPureNonConstantType();
         DataType rightType = getRightPureNonConstantType();
+        assert(leftType == rightType);
 
         right.genLoad(unit);
         left.genLoad(unit);
-        if (leftType instanceof IntegerType && rightType instanceof IntegerType) {
-            unit.addInstruction(new Shl(TypeSelector.INTEGER,4, 4, 4));
-            return;
-        }
 
-        assert(false);
+        int size = leftType.getSize();
+        unit.addInstruction(new Shl(leftType.getSelector(), size, size, size));
     }
 }

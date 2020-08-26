@@ -769,6 +769,39 @@ public class VirtualMachine {
             }
     };
 
+    final Unit[] compareShort = {
+            () -> { // 0 -> EQUAL
+                short left = popShort();
+                short right = popShort();
+                pushBoolean(left == right);
+            },
+            () -> { // 1 -> DIFF
+                short left = popShort();
+                short right = popShort();
+                pushBoolean(left != right);
+            },
+            () -> { // 2 -> LESS
+                short left = popShort();
+                short right = popShort();
+                pushBoolean(left < right);
+            },
+            () -> { // 3 -> LESS_EQUAL
+                short left = popShort();
+                short right = popShort();
+                pushBoolean(left <= right);
+            },
+            () -> { // 4 -> GREATER
+                short left = popShort();
+                short right = popShort();
+                pushBoolean(left > right);
+            },
+            () -> { // 4 -> GREATER_EQUAL
+                short left = popShort();
+                short right = popShort();
+                pushBoolean(left >= right);
+            }
+    };
+
     final Unit[] compareInteger = {
             () -> { // 0 -> EQUAL
                 int left = popInteger();
@@ -838,7 +871,9 @@ public class VirtualMachine {
             () -> { // 3 -> BYTE
                 compareByte[read_p1()].exec();
             },
-            stub,   // 4 -> SHORT
+            () -> { // 4 -> SHORT
+                compareShort[read_p1()].exec();
+            },
             () -> { // 5 -> INTEGER
                 compareInteger[read_p1()].exec();
             },
