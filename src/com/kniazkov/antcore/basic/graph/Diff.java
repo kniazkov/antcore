@@ -36,6 +36,7 @@ public class Diff extends BinaryOperation {
 
     @Override
     void defineType() throws SyntaxError {
+        defineNumericType();
         setType(BooleanType.getInstance());
     }
 

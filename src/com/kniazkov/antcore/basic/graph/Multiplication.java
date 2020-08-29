@@ -31,11 +31,6 @@ public class Multiplication extends BinaryOperation {
     }
 
     @Override
-    protected String getOperator() {
-        return "*";
-    }
-
-    @Override
     void defineType() throws SyntaxError {
         DataType leftType = getLeftPureNonConstantType();
         DataType rightType = getRightPureNonConstantType();
@@ -45,12 +40,31 @@ public class Multiplication extends BinaryOperation {
             return;
         }
 
-        if (leftType instanceof IntegerType && rightType instanceof IntegerType) {
+        if (leftType instanceof IntegerType) {
+            if (rightType instanceof ShortType) {
+                setType(leftType);
+                right = new Casting(true, right, leftType);
+                right.setOwner(this);
+                return;
+            }
+            if (rightType instanceof IntegerType) {
+                setType(leftType);
+                return;
+            }
+        }
+
+        if (leftType instanceof RealType && rightType instanceof RealType) {
             setType(leftType);
             return;
         }
 
-        throw new OperatorNotApplicable(getFragment(), getOperator(), leftType.getName(), rightType.getName());
+        throw new OperatorNotApplicable(getFragment(), getOperator(),
+                leftType.getName(), rightType.getName());
+    }
+
+    @Override
+    protected String getOperator() {
+        return "*";
     }
 
     @Override
@@ -70,9 +84,10 @@ public class Multiplication extends BinaryOperation {
         }
 
         if (leftValue instanceof Integer) {
-            if (rightValue instanceof Integer) {
+            if (rightValue instanceof Short)
+                return (Integer)leftValue * (Short)rightValue;
+            if (rightValue instanceof Integer)
                 return (Integer)leftValue * (Integer)rightValue;
-            }
         }
 
         return null;

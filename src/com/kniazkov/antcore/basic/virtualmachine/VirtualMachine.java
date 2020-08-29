@@ -257,7 +257,9 @@ public class VirtualMachine {
             stub,   // 1 -> POINTER
             stub,   // 2 -> BOOLEAN
             stub,   // 3 -> BYTE
-            stub,   // 4 -> SHORT
+            () -> { // 4 -> SHORT
+                pushInteger(popShort());
+            },
             stub,   // 5 -> INTEGER
             stub,   // 6 -> LONG
             stub,   // 7 -> REAL

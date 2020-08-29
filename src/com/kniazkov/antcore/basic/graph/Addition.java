@@ -38,23 +38,11 @@ public class Addition extends BinaryOperation {
 
     @Override
     void defineType() throws SyntaxError {
+        if (defineNumericType())
+            return;
+
         DataType leftType = getLeftPureNonConstantType();
         DataType rightType = getRightPureNonConstantType();
-
-        if (leftType instanceof ShortType && rightType instanceof ShortType) {
-            setType(leftType);
-            return;
-        }
-
-        if (leftType instanceof IntegerType && rightType instanceof IntegerType) {
-            setType(leftType);
-            return;
-        }
-
-        if (leftType instanceof RealType && rightType instanceof RealType) {
-            setType(leftType);
-            return;
-        }
 
         if (leftType instanceof StringType) {
             StringType leftTypeString = (StringType) leftType;
@@ -111,9 +99,10 @@ public class Addition extends BinaryOperation {
         }
 
         if (leftValue instanceof Integer) {
-            if (rightValue instanceof Integer) {
+            if (rightValue instanceof Short)
+                return (Integer)leftValue + (Short)rightValue;
+            if (rightValue instanceof Integer)
                 return (Integer)leftValue + (Integer)rightValue;
-            }
         }
         return null;
     }

@@ -36,6 +36,7 @@ public class Greater extends BinaryOperation {
 
     @Override
     void defineType() throws SyntaxError {
+        defineNumericType();
         setType(BooleanType.getInstance());
     }
 

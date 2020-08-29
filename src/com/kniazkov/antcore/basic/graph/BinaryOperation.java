@@ -17,6 +17,7 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.basic.exceptions.OperatorNotApplicable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -79,8 +80,50 @@ public abstract class BinaryOperation extends Expression implements ExpressionOw
         return type;
     }
 
+    /**
+     * Common definition for numeric types
+     * @return true if type was defined
+     */
+    protected boolean defineNumericType() throws SyntaxError {
+        DataType leftType = getLeftPureNonConstantType();
+        DataType rightType = getRightPureNonConstantType();
+
+        if (leftType instanceof ShortType && rightType instanceof ShortType) {
+            type = leftType;
+            return true;
+        }
+
+        if (leftType instanceof IntegerType) {
+            if (rightType instanceof ShortType) {
+                type = leftType;
+                right = new Casting(true, right, leftType);
+                right.setOwner(this);
+                return true;
+            }
+            if (rightType instanceof IntegerType) {
+                type = leftType;
+                return true;
+            }
+        }
+
+        if (leftType instanceof RealType && rightType instanceof RealType) {
+            type = leftType;
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Type definition (called by the analyzer)
+     */
+    void defineType() throws SyntaxError {
+        if (!defineNumericType())
+            throw new OperatorNotApplicable(getFragment(), getOperator(),
+                    getLeftPureNonConstantType().getName(), getRightPureNonConstantType().getName());
+    }
+
     protected abstract String getOperator();
-    abstract void defineType() throws SyntaxError;
 
     private DataType type;
     protected Expression left;

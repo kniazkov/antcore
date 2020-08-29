@@ -37,24 +37,6 @@ public class Subtraction extends BinaryOperation {
     }
 
     @Override
-    void defineType() throws SyntaxError {
-        DataType leftType = getLeftPureNonConstantType();
-        DataType rightType = getRightPureNonConstantType();
-
-        if (leftType instanceof ShortType && rightType instanceof ShortType) {
-            setType(leftType);
-            return;
-        }
-
-        if (leftType instanceof IntegerType && rightType instanceof IntegerType) {
-            setType(leftType);
-            return;
-        }
-
-        throw new OperatorNotApplicable(getFragment(), getOperator(), leftType.getName(), rightType.getName());
-    }
-
-    @Override
     public Object calculate() {
         Object leftValue = left.calculate();
         if (leftValue == null)
@@ -71,9 +53,10 @@ public class Subtraction extends BinaryOperation {
         }
 
         if (leftValue instanceof Integer) {
-            if (rightValue instanceof Integer) {
+            if (rightValue instanceof Short)
+                return (Integer)leftValue - (Short)rightValue;
+            if (rightValue instanceof Integer)
                 return (Integer)leftValue - (Integer)rightValue;
-            }
         }
         return null;
     }
