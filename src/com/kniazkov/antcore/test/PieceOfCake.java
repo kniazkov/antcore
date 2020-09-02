@@ -55,7 +55,8 @@ public class PieceOfCake {
                     }
                 }
             } catch (SyntaxError syntaxError) {
-                syntaxError.printStackTrace();
+                System.err.println(syntaxError.toString());
+                //syntaxError.printStackTrace();
             }
         }
     }
