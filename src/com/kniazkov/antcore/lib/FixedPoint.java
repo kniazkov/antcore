@@ -44,6 +44,14 @@ public final class FixedPoint {
         return X;
     }
 
+    public boolean isInteger() {
+        return X % factor == 0;
+    }
+
+    public long getInteger() {
+        return X / factor;
+    }
+
     public String toString(int accuracy, boolean printZeros) {
         long val = X;
         boolean neg = false;
