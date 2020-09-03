@@ -23,6 +23,7 @@ import com.kniazkov.antcore.basic.bytecodebuilder.RawInstruction;
 import com.kniazkov.antcore.basic.bytecodebuilder.Store;
 import com.kniazkov.antcore.basic.common.*;
 import com.kniazkov.antcore.basic.exceptions.IncompatibleTypes;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The node represents a variable
@@ -75,8 +76,8 @@ public class Variable extends LeftExpression implements DataTypeOwner, Expressio
     }
 
     @Override
-    public Object calculate() {
-        return null;
+    public Variant calculate() {
+        return Variant.createNull();
     }
 
     @Override

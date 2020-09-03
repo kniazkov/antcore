@@ -20,6 +20,7 @@ import com.kniazkov.antcore.basic.bytecode.ComparatorSelector;
 import com.kniazkov.antcore.basic.bytecodebuilder.Compare;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The node represents 'less' operation, i.e. operation '<'
@@ -41,8 +42,8 @@ public class Less extends BinaryOperation {
     }
 
     @Override
-    public Object calculate() {
-       return false;
+    public Variant calculate() {
+        return left.calculate().less(right.calculate());
     }
 
     @Override

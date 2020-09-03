@@ -20,6 +20,7 @@ import com.kniazkov.antcore.basic.bytecode.ComparatorSelector;
 import com.kniazkov.antcore.basic.bytecodebuilder.Compare;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The node represents comparison operation, i.e. operation '='
@@ -41,16 +42,8 @@ public class Equals extends BinaryOperation {
     }
 
     @Override
-    public Object calculate() {
-        Object leftValue = left.calculate();
-        if (leftValue == null)
-            return null;
-
-        Object rightValue = right.calculate();
-        if (rightValue == null)
-            return null;
-
-        return leftValue.equals(rightValue);
+    public Variant calculate() {
+        return left.calculate().equals(right.calculate());
     }
 
     @Override

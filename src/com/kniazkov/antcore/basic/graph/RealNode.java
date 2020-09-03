@@ -20,6 +20,7 @@ import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushInteger;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushReal;
 import com.kniazkov.antcore.lib.FixedPoint;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The node represents a real number constant
@@ -40,8 +41,8 @@ public class RealNode extends Expression {
     }
 
     @Override
-    public Object calculate() {
-        return value;
+    public Variant calculate() {
+        return Variant.createReal(value);
     }
 
     @Override

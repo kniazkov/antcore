@@ -19,6 +19,7 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.exceptions.StringLengthMustBeConstant;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The STRING data type
@@ -130,10 +131,10 @@ public class StringType extends DataType implements ExpressionOwner {
             int otherLength = otherTypeString.getStringLength();
             if (thisLength >= otherLength)
                 return expression;
-            String data = (String) expression.calculate();
-            if (data == null)
+            Variant data = expression.calculate();
+            if (data.isNull())
                 return null;
-            return new StringNode(data.substring(0, thisLength));
+            return new StringNode(data.stringValue().substring(0, thisLength));
         }
         return null;
     }

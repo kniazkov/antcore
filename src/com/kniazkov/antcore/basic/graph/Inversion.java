@@ -20,6 +20,7 @@ import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.Not;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.exceptions.OperatorNotApplicable;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The node represents inversion, i.e. 'NOT' operator
@@ -43,15 +44,8 @@ public class Inversion extends UnaryOperation {
     }
 
     @Override
-    public Object calculate() {
-        Object value = expression.calculate();
-        if (value == null)
-            return null;
-        if (value instanceof Short)
-            return (short)(~(Short)value);
-        if (value instanceof Integer)
-            return ~(Integer)value;
-        return null;
+    public Variant calculate() {
+        return expression.calculate().not();
     }
 
     @Override

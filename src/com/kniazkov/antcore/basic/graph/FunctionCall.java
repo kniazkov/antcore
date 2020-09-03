@@ -21,6 +21,7 @@ import com.kniazkov.antcore.basic.bytecodebuilder.Pop;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushZeros;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.exceptions.*;
+import com.kniazkov.antcore.lib.Variant;
 
 import java.util.*;
 
@@ -54,8 +55,8 @@ public class FunctionCall extends Expression implements ExpressionOwner {
     }
 
     @Override
-    public Object calculate() {
-        return null;
+    public Variant calculate() {
+        return Variant.createNull();
     }
 
     @Override

@@ -68,9 +68,26 @@ public abstract class Variant {
     public abstract boolean hasStringValue();
     public abstract String stringValue();
 
+    public abstract Variant neg();
+    public abstract Variant not();
     public abstract Variant add(Variant var);
+    public abstract Variant sub(Variant var);
+    public abstract Variant mul(Variant var);
+    public abstract Variant div(Variant var);
+    public abstract Variant mod(Variant var);
+    public abstract Variant leftShift(Variant var);
+    public abstract Variant rightShift(Variant var);
+    public abstract Variant and(Variant var);
+    public abstract Variant or(Variant var);
+    public abstract Variant xor(Variant var);
+    public abstract Variant equals(Variant var);
+    public abstract Variant diff(Variant var);
+    public abstract Variant less(Variant var);
+    public abstract Variant greater(Variant var);
+    public abstract Variant lessEqual(Variant var);
+    public abstract Variant greaterEqual(Variant var);
 
-    public static class Null extends Variant {
+    private static class Null extends Variant {
         private Null() {
         }
 
@@ -198,7 +215,92 @@ public abstract class Variant {
         }
 
         @Override
+        public Variant neg() {
+            return this;
+        }
+
+        @Override
+        public Variant not() {
+            return this;
+        }
+
+        @Override
         public Variant add(Variant var) {
+            return this;
+        }
+
+        @Override
+        public Variant sub(Variant var) {
+            return this;
+        }
+
+        @Override
+        public Variant mul(Variant var) {
+            return this;
+        }
+
+        @Override
+        public Variant div(Variant var) {
+            return this;
+        }
+
+        @Override
+        public Variant mod(Variant var) {
+            return this;
+        }
+
+        @Override
+        public Variant leftShift(Variant var) {
+            return this;
+        }
+
+        @Override
+        public Variant rightShift(Variant var) {
+            return this;
+        }
+
+        @Override
+        public Variant and(Variant var) {
+            return this;
+        }
+
+        @Override
+        public Variant or(Variant var) {
+            return this;
+        }
+
+        @Override
+        public Variant xor(Variant var) {
+            return this;
+        }
+
+        @Override
+        public Variant equals(Variant var) {
+            return new BooleanWrapper(var.isNull());
+        }
+
+        @Override
+        public Variant diff(Variant var) {
+            return new BooleanWrapper(!var.isNull());
+        }
+
+        @Override
+        public Variant less(Variant var) {
+            return this;
+        }
+
+        @Override
+        public Variant greater(Variant var) {
+            return this;
+        }
+
+        @Override
+        public Variant lessEqual(Variant var) {
+            return this;
+        }
+
+        @Override
+        public Variant greaterEqual(Variant var) {
             return this;
         }
     }
@@ -326,14 +428,170 @@ public abstract class Variant {
         }
 
         @Override
+        public Variant neg() {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant not() {
+            return new BooleanWrapper(!value);
+        }
+
+        @Override
         public Variant add(Variant var) {
-            return null;
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant sub(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant mul(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant div(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant mod(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant leftShift(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant rightShift(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant and(Variant var) {
+            if (!var.isBoolean())
+                return Null.getInstance();
+            return new BooleanWrapper(value && var.booleanValue());
+        }
+
+        @Override
+        public Variant or(Variant var) {
+            if (!var.isBoolean())
+                return Null.getInstance();
+            return new BooleanWrapper(value || var.booleanValue());
+        }
+
+        @Override
+        public Variant xor(Variant var) {
+            if (!var.isBoolean())
+                return Null.getInstance();
+            return new BooleanWrapper(value != var.booleanValue());
+        }
+
+        @Override
+        public Variant equals(Variant var) {
+            if (!var.isBoolean())
+                return Null.getInstance();
+            return new BooleanWrapper(value == var.booleanValue());
+        }
+
+        @Override
+        public Variant diff(Variant var) {
+            if (!var.isBoolean())
+                return Null.getInstance();
+            return new BooleanWrapper(value != var.booleanValue());
+        }
+
+        @Override
+        public Variant less(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant greater(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant lessEqual(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant greaterEqual(Variant var) {
+            return Null.getInstance();
         }
 
         private boolean value;
     }
 
-    private static class ByteWrapper extends Variant {
+    private static abstract class BaseIntWrapper extends Variant {
+        @Override
+        public boolean isNumber() {
+            return true;
+        }
+
+        @Override
+        public Variant equals(Variant var) {
+            if (var.isReal())
+                return new BooleanWrapper(longValue() == var.realValue().getFloat());
+            if (var.isNumber())
+                return new BooleanWrapper(longValue() == var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant diff(Variant var) {
+            if (var.isReal())
+                return new BooleanWrapper(longValue() != var.realValue().getFloat());
+            if (var.isNumber())
+                return new BooleanWrapper(longValue() != var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant less(Variant var) {
+            if (var.isReal())
+                return new BooleanWrapper(longValue() < var.realValue().getFloat());
+            if (var.isNumber())
+                return new BooleanWrapper(longValue() < var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant greater(Variant var) {
+            if (var.isReal())
+                return new BooleanWrapper(longValue() > var.realValue().getFloat());
+            if (var.isNumber())
+                return new BooleanWrapper(longValue() > var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant lessEqual(Variant var) {
+            if (var.isReal())
+                return new BooleanWrapper(longValue() <= var.realValue().getFloat());
+            if (var.isNumber())
+                return new BooleanWrapper(longValue() <= var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant greaterEqual(Variant var) {
+            if (var.isReal())
+                return new BooleanWrapper(longValue() >= var.realValue().getFloat());
+            if (var.isNumber())
+                return new BooleanWrapper(longValue() >= var.longValue());
+            return Null.getInstance();
+        }
+    }
+
+    private static class ByteWrapper extends BaseIntWrapper {
         public ByteWrapper(byte value) {
             this.value = value;
         }
@@ -341,11 +599,6 @@ public abstract class Variant {
         @Override
         public boolean isNull() {
             return false;
-        }
-
-        @Override
-        public boolean isNumber() {
-            return true;
         }
 
         @Override
@@ -456,22 +709,167 @@ public abstract class Variant {
         }
 
         @Override
+        public Variant neg() {
+            return new ByteWrapper((byte) -value);
+        }
+
+        @Override
+        public Variant not() {
+            return new ByteWrapper((byte) ~value);
+        }
+
+        @Override
         public Variant add(Variant var) {
-            //if (var.isLong())
-            //    return new LongWrapper(value + var.longValue());
+            if (var.isReal()) {
+                FixedPoint result = new FixedPoint();
+                FixedPoint.add(result, realValue(), var.realValue());
+                return new RealWrapper(result);
+            }
+            if (var.isLong())
+                return new LongWrapper(value + var.longValue());
             if (var.isInt())
                 return new IntWrapper(value + var.intValue());
             if (var.isShort())
                 return new ShortWrapper((short) (value + var.shortValue()));
             if (var.isByte())
                 return new ByteWrapper((byte) (value + var.byteValue()));
-            return null;
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant sub(Variant var) {
+            if (var.isReal()) {
+                FixedPoint result = new FixedPoint();
+                FixedPoint.sub(result, realValue(), var.realValue());
+                return new RealWrapper(result);
+            }
+            if (var.isLong())
+                return new LongWrapper(value - var.longValue());
+            if (var.isInt())
+                return new IntWrapper(value - var.intValue());
+            if (var.isShort())
+                return new ShortWrapper((short) (value - var.shortValue()));
+            if (var.isByte())
+                return new ByteWrapper((byte) (value - var.byteValue()));
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant mul(Variant var) {
+            if (var.isReal()) {
+                FixedPoint result = new FixedPoint();
+                FixedPoint.mul(result, realValue(), var.realValue());
+                return new RealWrapper(result);
+            }
+            if (var.isLong())
+                return new LongWrapper(value * var.longValue());
+            if (var.isInt() || var.isShort())
+                return new IntWrapper(value * var.intValue());
+            if (var.isByte())
+                return new ShortWrapper((short) (value * var.shortValue()));
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant div(Variant var) {
+            if (var.isReal()) {
+                FixedPoint result = new FixedPoint();
+                FixedPoint.div(result, realValue(), var.realValue());
+                return new RealWrapper(result);
+            }
+            if (var.isLong())
+                return new LongWrapper(value / var.longValue());
+            if (var.isInt())
+                return new IntWrapper(value / var.intValue());
+            if (var.isShort())
+                return new ShortWrapper((short) (value / var.shortValue()));
+            if (var.isByte())
+                return new ByteWrapper((byte) (value / var.byteValue()));
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant mod(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value % var.longValue());
+            if (var.isInt())
+                return new IntWrapper(value % var.intValue());
+            if (var.isShort())
+                return new ShortWrapper((short) (value % var.shortValue()));
+            if (var.isByte())
+                return new ByteWrapper((byte) (value % var.byteValue()));
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant leftShift(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value << var.longValue());
+            if (var.isInt())
+                return new IntWrapper(value << var.intValue());
+            if (var.isShort())
+                return new ShortWrapper((short) (value << var.shortValue()));
+            if (var.isByte())
+                return new ByteWrapper((byte) (value << var.byteValue()));
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant rightShift(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value >>> var.longValue());
+            if (var.isInt())
+                return new IntWrapper(value >>> var.intValue());
+            if (var.isShort())
+                return new ShortWrapper((short) (value >>> var.shortValue()));
+            if (var.isByte())
+                return new ByteWrapper((byte) (value >>> var.byteValue()));
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant and(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value & var.longValue());
+            if (var.isInt())
+                return new IntWrapper(value & var.intValue());
+            if (var.isShort())
+                return new ShortWrapper((short) (value & var.shortValue()));
+            if (var.isByte())
+                return new ByteWrapper((byte) (value & var.byteValue()));
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant or(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value | var.longValue());
+            if (var.isInt())
+                return new IntWrapper(value | var.intValue());
+            if (var.isShort())
+                return new ShortWrapper((short) (value | var.shortValue()));
+            if (var.isByte())
+                return new ByteWrapper((byte) (value | var.byteValue()));
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant xor(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value ^ var.longValue());
+            if (var.isInt())
+                return new IntWrapper(value ^ var.intValue());
+            if (var.isShort())
+                return new ShortWrapper((short) (value ^ var.shortValue()));
+            if (var.isByte())
+                return new ByteWrapper((byte) (value ^ var.byteValue()));
+            return Null.getInstance();
         }
 
         private byte value;
     }
 
-    private static class ShortWrapper extends Variant {
+    private static class ShortWrapper extends BaseIntWrapper {
         public ShortWrapper(short value) {
             this.value = value;
         }
@@ -479,11 +877,6 @@ public abstract class Variant {
         @Override
         public boolean isNull() {
             return false;
-        }
-
-        @Override
-        public boolean isNumber() {
-            return true;
         }
 
         @Override
@@ -596,18 +989,147 @@ public abstract class Variant {
         }
 
         @Override
+        public Variant neg() {
+            return new ShortWrapper((short) -value);
+        }
+
+        @Override
+        public Variant not() {
+            return new ShortWrapper((short) ~value);
+        }
+
+        @Override
         public Variant add(Variant var) {
+            if (var.isReal()) {
+                FixedPoint result = new FixedPoint();
+                FixedPoint.add(result, realValue(), var.realValue());
+                return new RealWrapper(result);
+            }
+            if (var.isLong())
+                return new LongWrapper(value + var.longValue());
             if (var.isInt())
                 return new IntWrapper(value + var.intValue());
             if (var.isNumber())
                 return new ShortWrapper((short) (value + var.shortValue()));
-            return null;
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant sub(Variant var) {
+            if (var.isReal()) {
+                FixedPoint result = new FixedPoint();
+                FixedPoint.sub(result, realValue(), var.realValue());
+                return new RealWrapper(result);
+            }
+            if (var.isLong())
+                return new LongWrapper(value - var.longValue());
+            if (var.isInt())
+                return new IntWrapper(value - var.intValue());
+            if (var.isNumber())
+                return new ShortWrapper((short) (value - var.shortValue()));
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant mul(Variant var) {
+            if (var.isReal()) {
+                FixedPoint result = new FixedPoint();
+                FixedPoint.mul(result, realValue(), var.realValue());
+                return new RealWrapper(result);
+            }
+            if (var.isLong())
+                return new LongWrapper(value * var.longValue());
+            if (var.isNumber())
+                return new IntWrapper(value * var.intValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant div(Variant var) {
+            if (var.isReal()) {
+                FixedPoint result = new FixedPoint();
+                FixedPoint.div(result, realValue(), var.realValue());
+                return new RealWrapper(result);
+            }
+            if (var.isLong())
+                return new LongWrapper(value / var.longValue());
+            if (var.isInt())
+                return new IntWrapper(value / var.intValue());
+            if (var.isNumber())
+                return new ShortWrapper((short) (value / var.shortValue()));
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant mod(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value % var.longValue());
+            if (var.isInt())
+                return new IntWrapper(value % var.intValue());
+            if (var.isNumber())
+                return new ShortWrapper((short) (value % var.shortValue()));
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant leftShift(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value << var.longValue());
+            if (var.isInt())
+                return new IntWrapper(value << var.intValue());
+            if (var.isNumber())
+                return new ShortWrapper((short) (value << var.shortValue()));
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant rightShift(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value >>> var.longValue());
+            if (var.isInt())
+                return new IntWrapper(value >>> var.intValue());
+            if (var.isNumber())
+                return new ShortWrapper((short) (value >>> var.shortValue()));
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant and(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value & var.longValue());
+            if (var.isInt())
+                return new IntWrapper(value & var.intValue());
+            if (var.isNumber())
+                return new ShortWrapper((short) (value & var.shortValue()));
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant or(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value | var.longValue());
+            if (var.isInt())
+                return new IntWrapper(value | var.intValue());
+            if (var.isNumber())
+                return new ShortWrapper((short) (value | var.shortValue()));
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant xor(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value ^ var.longValue());
+            if (var.isInt())
+                return new IntWrapper(value ^ var.intValue());
+            if (var.isNumber())
+                return new ShortWrapper((short) (value ^ var.shortValue()));
+            return Null.getInstance();
         }
 
         private short value;
     }
 
-    private static class IntWrapper extends Variant {
+    private static class IntWrapper extends BaseIntWrapper {
         public IntWrapper(int value) {
             this.value = value;
         }
@@ -615,11 +1137,6 @@ public abstract class Variant {
         @Override
         public boolean isNull() {
             return false;
-        }
-
-        @Override
-        public boolean isNumber() {
-            return true;
         }
 
         @Override
@@ -734,16 +1251,129 @@ public abstract class Variant {
         }
 
         @Override
+        public Variant neg() {
+            return new IntWrapper(-value);
+        }
+
+        @Override
+        public Variant not() {
+            return new IntWrapper(~value);
+        }
+
+        @Override
         public Variant add(Variant var) {
+            if (var.isReal()) {
+                FixedPoint result = new FixedPoint();
+                FixedPoint.add(result, realValue(), var.realValue());
+                return new RealWrapper(result);
+            }
+            if (var.isLong())
+                return new LongWrapper(value + var.longValue());
             if (var.isNumber())
                 return new IntWrapper(value + var.intValue());
-            return null;
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant sub(Variant var) {
+            if (var.isReal()) {
+                FixedPoint result = new FixedPoint();
+                FixedPoint.sub(result, realValue(), var.realValue());
+                return new RealWrapper(result);
+            }
+            if (var.isLong())
+                return new LongWrapper(value - var.longValue());
+            if (var.isNumber())
+                return new IntWrapper(value - var.intValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant mul(Variant var) {
+            if (var.isReal()) {
+                FixedPoint result = new FixedPoint();
+                FixedPoint.mul(result, realValue(), var.realValue());
+                return new RealWrapper(result);
+            }
+            if (var.isLong())
+                return new LongWrapper(value * var.longValue());
+            if (var.isNumber())
+                return new IntWrapper(value * var.intValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant div(Variant var) {
+            if (var.isReal()) {
+                FixedPoint result = new FixedPoint();
+                FixedPoint.div(result, realValue(), var.realValue());
+                return new RealWrapper(result);
+            }
+            if (var.isLong())
+                return new LongWrapper(value / var.longValue());
+            if (var.isNumber())
+                return new IntWrapper(value / var.intValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant mod(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value % var.longValue());
+            if (var.isNumber())
+                return new IntWrapper(value % var.intValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant leftShift(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value << var.longValue());
+            if (var.isNumber())
+                return new IntWrapper(value << var.intValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant rightShift(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value >>> var.longValue());
+            if (var.isNumber())
+                return new IntWrapper(value >>> var.intValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant and(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value & var.longValue());
+            if (var.isNumber())
+                return new IntWrapper(value & var.intValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant or(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value | var.longValue());
+            if (var.isNumber())
+                return new IntWrapper(value | var.intValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant xor(Variant var) {
+            if (var.isLong())
+                return new LongWrapper(value ^ var.longValue());
+            if (var.isNumber())
+                return new IntWrapper(value ^ var.intValue());
+            return Null.getInstance();
         }
 
         private int value;
     }
 
-    private static class LongWrapper extends Variant {
+    private static class LongWrapper extends BaseIntWrapper {
         public LongWrapper(long value) {
             this.value = value;
         }
@@ -751,11 +1381,6 @@ public abstract class Variant {
         @Override
         public boolean isNull() {
             return false;
-        }
-
-        @Override
-        public boolean isNumber() {
-            return true;
         }
 
         @Override
@@ -872,10 +1497,103 @@ public abstract class Variant {
         }
 
         @Override
+        public Variant neg() {
+            return new LongWrapper(-value);
+        }
+
+        @Override
+        public Variant not() {
+            return new LongWrapper(~value);
+        }
+
+        @Override
         public Variant add(Variant var) {
+            if (var.isReal()) {
+                FixedPoint result = new FixedPoint();
+                FixedPoint.add(result, realValue(), var.realValue());
+                return new RealWrapper(result);
+            }
             if (var.isNumber())
                 return new LongWrapper(value + var.longValue());
-            return null;
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant sub(Variant var) {
+            if (var.isReal()) {
+                FixedPoint result = new FixedPoint();
+                FixedPoint.sub(result, realValue(), var.realValue());
+                return new RealWrapper(result);
+            }
+            if (var.isNumber())
+                return new LongWrapper(value - var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant mul(Variant var) {
+            if (var.isReal()) {
+                FixedPoint result = new FixedPoint();
+                FixedPoint.mul(result, realValue(), var.realValue());
+                return new RealWrapper(result);
+            }
+            if (var.isNumber())
+                return new LongWrapper(value * var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant div(Variant var) {
+            if (var.isReal()) {
+                FixedPoint result = new FixedPoint();
+                FixedPoint.div(result, realValue(), var.realValue());
+                return new RealWrapper(result);
+            }
+            if (var.isNumber())
+                return new LongWrapper(value / var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant mod(Variant var) {
+            if (var.isNumber())
+                return new LongWrapper(value % var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant leftShift(Variant var) {
+            if (var.isNumber())
+                return new LongWrapper(value << var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant rightShift(Variant var) {
+            if (var.isNumber())
+                return new LongWrapper(value >>> var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant and(Variant var) {
+            if (var.isNumber())
+                return new LongWrapper(value & var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant or(Variant var) {
+            if (var.isNumber())
+                return new LongWrapper(value | var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant xor(Variant var) {
+            if (var.isNumber())
+                return new LongWrapper(value ^ var.longValue());
+            return Null.getInstance();
         }
 
         private long value;
@@ -1020,13 +1738,135 @@ public abstract class Variant {
         }
 
         @Override
+        public Variant neg() {
+            FixedPoint result = new FixedPoint();
+            FixedPoint.neg(result, value);
+            return new RealWrapper(result);
+        }
+
+        @Override
+        public Variant not() {
+            return Null.getInstance();
+        }
+
+        @Override
         public Variant add(Variant var) {
             if (!var.isNumber())
-                return null;
-            FixedPoint rightValue = var.realValue();
+                return Null.getInstance();
             FixedPoint result = new FixedPoint();
-            FixedPoint.add(result, value, rightValue);
+            FixedPoint.add(result, value, var.realValue());
             return new RealWrapper(result);
+        }
+
+        @Override
+        public Variant sub(Variant var) {
+            if (!var.isNumber())
+                return Null.getInstance();
+            FixedPoint result = new FixedPoint();
+            FixedPoint.sub(result, value, var.realValue());
+            return new RealWrapper(result);
+        }
+
+        @Override
+        public Variant mul(Variant var) {
+            if (!var.isNumber())
+                return Null.getInstance();
+            FixedPoint result = new FixedPoint();
+            FixedPoint.mul(result, value, var.realValue());
+            return new RealWrapper(result);
+        }
+
+        @Override
+        public Variant div(Variant var) {
+            if (!var.isNumber())
+                return Null.getInstance();
+            FixedPoint result = new FixedPoint();
+            FixedPoint.div(result, value, var.realValue());
+            return new RealWrapper(result);
+        }
+
+        @Override
+        public Variant mod(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant leftShift(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant rightShift(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant and(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant or(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant xor(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant equals(Variant var) {
+            if (var.isReal())
+                return new BooleanWrapper(value.getFloat() == var.realValue().getFloat());
+            if (var.isNumber())
+                return new BooleanWrapper(value.getFloat() == var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant diff(Variant var) {
+            if (var.isReal())
+                return new BooleanWrapper(value.getFloat() != var.realValue().getFloat());
+            if (var.isNumber())
+                return new BooleanWrapper(value.getFloat() != var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant less(Variant var) {
+            if (var.isReal())
+                return new BooleanWrapper(value.getFloat() < var.realValue().getFloat());
+            if (var.isNumber())
+                return new BooleanWrapper(value.getFloat() < var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant greater(Variant var) {
+            if (var.isReal())
+                return new BooleanWrapper(value.getFloat() > var.realValue().getFloat());
+            if (var.isNumber())
+                return new BooleanWrapper(value.getFloat() > var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant lessEqual(Variant var) {
+            if (var.isReal())
+                return new BooleanWrapper(value.getFloat() <= var.realValue().getFloat());
+            if (var.isNumber())
+                return new BooleanWrapper(value.getFloat() <= var.longValue());
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant greaterEqual(Variant var) {
+            if (var.isReal())
+                return new BooleanWrapper(value.getFloat() >= var.realValue().getFloat());
+            if (var.isNumber())
+                return new BooleanWrapper(value.getFloat() >= var.longValue());
+            return Null.getInstance();
         }
 
         private FixedPoint value;
@@ -1153,8 +1993,105 @@ public abstract class Variant {
         }
 
         @Override
+        public Variant neg() {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant not() {
+            return Null.getInstance();
+        }
+
+        @Override
         public Variant add(Variant var) {
             return new StringWrapper(value + var.stringValue());
+        }
+
+        @Override
+        public Variant sub(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant mul(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant div(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant mod(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant leftShift(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant rightShift(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant and(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant or(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant xor(Variant var) {
+            return Null.getInstance();
+        }
+
+        @Override
+        public Variant equals(Variant var) {
+            if (!var.isString())
+                return Null.getInstance();
+            return new BooleanWrapper(value.equals(var.stringValue()));
+        }
+
+        @Override
+        public Variant diff(Variant var) {
+            if (!var.isString())
+                return Null.getInstance();
+            return new BooleanWrapper(!value.equals(var.stringValue()));
+        }
+
+        @Override
+        public Variant less(Variant var) {
+            if (!var.isString())
+                return Null.getInstance();
+            return new BooleanWrapper(value.compareTo(var.stringValue()) < 0);
+        }
+
+        @Override
+        public Variant greater(Variant var) {
+            if (!var.isString())
+                return Null.getInstance();
+            return new BooleanWrapper(value.compareTo(var.stringValue()) > 0);
+        }
+
+        @Override
+        public Variant lessEqual(Variant var) {
+            if (!var.isString())
+                return Null.getInstance();
+            return new BooleanWrapper(value.compareTo(var.stringValue()) <= 0);
+        }
+
+        @Override
+        public Variant greaterEqual(Variant var) {
+            if (!var.isString())
+                return Null.getInstance();
+            return new BooleanWrapper(value.compareTo(var.stringValue()) >= 0);
         }
 
         private String value;

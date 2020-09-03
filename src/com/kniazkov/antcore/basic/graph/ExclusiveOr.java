@@ -22,6 +22,7 @@ import com.kniazkov.antcore.basic.bytecodebuilder.Or;
 import com.kniazkov.antcore.basic.bytecodebuilder.Xor;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.exceptions.OperatorNotApplicable;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The node represents 'Exclusive OR' ('XOR') operation
@@ -37,27 +38,8 @@ public class ExclusiveOr extends BinaryOperation {
     }
 
     @Override
-    public Object calculate() {
-        Object leftValue = left.calculate();
-        if (leftValue == null)
-            return null;
-
-        Object rightValue = right.calculate();
-        if (rightValue == null)
-            return null;
-
-        if (leftValue instanceof Short) {
-            if (rightValue instanceof Short) {
-                return (short)(Short)leftValue ^ (Short)rightValue;
-            }
-        }
-
-        if (leftValue instanceof Integer) {
-            if (rightValue instanceof Integer) {
-                return (Integer)leftValue ^ (Integer)rightValue;
-            }
-        }
-        return null;
+    public Variant calculate() {
+        return left.calculate().xor(right.calculate());
     }
 
     @Override

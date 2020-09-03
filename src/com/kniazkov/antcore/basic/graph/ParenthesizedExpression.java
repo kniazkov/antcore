@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * Node represents expression in brackets
@@ -44,7 +45,7 @@ public class ParenthesizedExpression extends Expression implements ExpressionOwn
     }
 
     @Override
-    public Object calculate() {
+    public Variant calculate() {
         return expression.calculate();
     }
 

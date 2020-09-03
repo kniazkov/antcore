@@ -19,6 +19,7 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushBoolean;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushInteger;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The node represents a boolean expression
@@ -39,8 +40,8 @@ public class BooleanNode extends Expression {
     }
 
     @Override
-    public Object calculate() {
-        return value;
+    public Variant calculate() {
+        return Variant.createBoolean(value);
     }
 
     @Override

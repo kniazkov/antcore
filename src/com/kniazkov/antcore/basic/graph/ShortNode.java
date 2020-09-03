@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushShort;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The node represents an short integer constant
@@ -38,8 +39,8 @@ public class ShortNode extends Expression {
     }
 
     @Override
-    public Object calculate() {
-        return value;
+    public Variant calculate() {
+        return Variant.createShort(value);
     }
 
     @Override

@@ -19,6 +19,7 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.bytecodebuilder.Cast;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * Expression casted to other type
@@ -46,7 +47,7 @@ public class Casting extends Expression implements ExpressionOwner, DataTypeOwne
     }
 
     @Override
-    public Object calculate() {
+    public Variant calculate() {
         return expression.calculate();
     }
 

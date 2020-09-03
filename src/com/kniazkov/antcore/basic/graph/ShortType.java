@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The SHORT data type
@@ -73,12 +74,9 @@ public class ShortType extends BuiltInType {
         if (otherType == this)
             return expression;
         if (otherType instanceof IntegerType) {
-            Object value = expression.calculate();
-            if (value != null) {
-                int intValue = (Integer) value;
-                if (intValue >= Short.MIN_VALUE && intValue <= Short.MAX_VALUE)
-                    return new ShortNode((short)intValue);
-            }
+            Variant value = expression.calculate();
+            if (value.hasShortValue())
+                return new ShortNode(value.shortValue());
             return null;
         }
         return null;

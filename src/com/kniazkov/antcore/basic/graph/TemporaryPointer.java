@@ -19,6 +19,7 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushLocalPointer;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The node represents pointer to a temporary object
@@ -44,8 +45,8 @@ public class TemporaryPointer extends Expression {
     }
 
     @Override
-    public Object calculate() {
-        return null;
+    public Variant calculate() {
+        return Variant.createNull();
     }
 
     @Override

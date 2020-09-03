@@ -20,6 +20,7 @@ import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushGlobalPointer;
 import com.kniazkov.antcore.basic.common.Offset;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The node represents pointer to a dynamic global object (a field, etc)
@@ -45,8 +46,8 @@ public class GlobalDynamicPointer extends Expression {
     }
 
     @Override
-    public Object calculate() {
-        return null;
+    public Variant calculate() {
+        return Variant.createNull();
     }
 
     @Override

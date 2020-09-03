@@ -117,6 +117,10 @@ public final class FixedPoint {
         return (byte) (X > 0 ? 1 : -1);
     }
 
+    public static void neg(FixedPoint dst, FixedPoint src) {
+        dst.X = -src.X;
+    }
+
     public static void add(FixedPoint dst, FixedPoint op1, FixedPoint op2) {
         dst.X = op1.X + op2.X;
     }

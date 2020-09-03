@@ -21,6 +21,7 @@ import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.Mul;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.exceptions.OperatorNotApplicable;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The node represents multiplication, i.e. operation '*'
@@ -68,29 +69,8 @@ public class Multiplication extends BinaryOperation {
     }
 
     @Override
-    public Object calculate() {
-        Object leftValue = left.calculate();
-        if (leftValue == null)
-            return null;
-
-        Object rightValue = right.calculate();
-        if (rightValue == null)
-            return null;
-
-        if (leftValue instanceof Short) {
-            if (rightValue instanceof Short) {
-                return (short)((Short)leftValue * (Short)rightValue);
-            }
-        }
-
-        if (leftValue instanceof Integer) {
-            if (rightValue instanceof Short)
-                return (Integer)leftValue * (Short)rightValue;
-            if (rightValue instanceof Integer)
-                return (Integer)leftValue * (Integer)rightValue;
-        }
-
-        return null;
+    public Variant calculate() {
+        return left.calculate().mul(right.calculate());
     }
 
     @Override

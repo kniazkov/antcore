@@ -20,6 +20,7 @@ import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.exceptions.IncompatibleTypes;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The node represents a constant
@@ -76,7 +77,7 @@ public class Constant extends Expression implements DataTypeOwner, ExpressionOwn
     }
 
     @Override
-    public Object calculate() {
+    public Variant calculate() {
         return value.calculate();
     }
 

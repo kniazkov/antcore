@@ -19,6 +19,7 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.exceptions.CannotResolveSymbol;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The reference to variable (local variable, field of data set, argument)
@@ -49,8 +50,8 @@ public class VariableReference extends Expression implements ExpressionOwner {
     }
 
     @Override
-    public Object calculate() {
-        return expression != null ? expression.calculate() : null;
+    public Variant calculate() {
+        return expression != null ? expression.calculate() : Variant.createNull();
     }
 
     @Override

@@ -20,6 +20,7 @@ import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.PushLocalPointer;
 import com.kniazkov.antcore.basic.common.Offset;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The node represents pointer to a local object (a variable, an argument etc)
@@ -45,8 +46,8 @@ public class LocalPointer extends Expression {
     }
 
     @Override
-    public Object calculate() {
-        return offset;
+    public Variant calculate() {
+        return Variant.createNull();
     }
 
     @Override

@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * An expression, i.e. node that has a type
@@ -31,7 +32,7 @@ public abstract class Expression extends Node {
     /**
      * @return constant value of the expression
      */
-    public abstract Object calculate();
+    public abstract Variant calculate();
 
     /**
      * Set owner of the node

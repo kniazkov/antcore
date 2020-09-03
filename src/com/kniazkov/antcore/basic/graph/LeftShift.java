@@ -21,6 +21,7 @@ import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.Shl;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.exceptions.OperatorNotApplicable;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The node represents left shift operation
@@ -36,28 +37,8 @@ public class LeftShift extends BinaryOperation {
     }
 
     @Override
-    public Object calculate() {
-        Object leftValue = left.calculate();
-        if (leftValue == null)
-            return null;
-
-        Object rightValue = right.calculate();
-        if (rightValue == null)
-            return null;
-
-        if (leftValue instanceof Short) {
-            if (rightValue instanceof Short) {
-                return (short)(Short)leftValue << (Short)rightValue;
-            }
-        }
-
-        if (leftValue instanceof Integer) {
-            if (rightValue instanceof Integer) {
-                return (Integer)leftValue << (Integer)rightValue;
-            }
-        }
-
-        return null;
+    public Variant calculate() {
+        return left.calculate().leftShift(right.calculate());
     }
 
     @Override

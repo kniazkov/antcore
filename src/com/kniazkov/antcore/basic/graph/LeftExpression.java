@@ -18,14 +18,15 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * A left expression, i.e. expression that can be assigned
  */
 public abstract class LeftExpression extends Expression {
     @Override
-    public Object calculate() {
-        return null;
+    public Variant calculate() {
+        return Variant.createNull();
     }
 
     @Override

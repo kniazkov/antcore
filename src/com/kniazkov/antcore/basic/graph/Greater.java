@@ -20,6 +20,7 @@ import com.kniazkov.antcore.basic.bytecode.ComparatorSelector;
 import com.kniazkov.antcore.basic.bytecodebuilder.Compare;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The node represents 'greater' operation, i.e. operation '>'
@@ -41,8 +42,8 @@ public class Greater extends BinaryOperation {
     }
 
     @Override
-    public Object calculate() {
-       return false;
+    public Variant calculate() {
+        return left.calculate().greater(right.calculate());
     }
 
     @Override

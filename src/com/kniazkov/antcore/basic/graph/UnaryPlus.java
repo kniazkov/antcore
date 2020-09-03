@@ -19,6 +19,7 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.exceptions.OperatorNotApplicable;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The node represents unary plus
@@ -42,8 +43,9 @@ public class UnaryPlus extends UnaryOperation {
     }
 
     @Override
-    public Object calculate() {
-        return expression.calculate();
+    public Variant calculate() {
+        Variant value = expression.calculate();
+        return value.isNumber() ? value : Variant.createNull();
     }
 
     @Override

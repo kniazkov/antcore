@@ -22,6 +22,7 @@ import com.kniazkov.antcore.basic.bytecodebuilder.Load;
 import com.kniazkov.antcore.basic.bytecodebuilder.RawInstruction;
 import com.kniazkov.antcore.basic.common.Offset;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,8 +54,8 @@ public class StringNode extends Expression {
     }
 
     @Override
-    public Object calculate() {
-        return value;
+    public Variant calculate() {
+        return Variant.createString(value);
     }
 
     @Override
