@@ -10,7 +10,7 @@ public abstract class Variant {
     }
 
     public static Variant createBoolean(boolean booleanValue) {
-        return new BooleanWrapper(booleanValue);
+        return booleanValue ? True.getInstance() : False.getInstance();
     }
 
     public static Variant createByte(byte byteValue) {
@@ -317,10 +317,8 @@ public abstract class Variant {
         }
     }
 
-    private static class BooleanWrapper extends  Variant {
-        public BooleanWrapper(boolean value) {
-            this.value = value;
-        }
+    private static abstract class BooleanWrapper extends  Variant {
+        protected abstract boolean value();
 
         @Override
         public boolean isNull() {
@@ -344,7 +342,7 @@ public abstract class Variant {
 
         @Override
         public boolean booleanValue() {
-            return value;
+            return value();
         }
 
         @Override
@@ -359,7 +357,7 @@ public abstract class Variant {
 
         @Override
         public byte byteValue() {
-            return (byte) (value ? 1 : 0);
+            return (byte) (value() ? 1 : 0);
         }
 
         @Override
@@ -374,7 +372,7 @@ public abstract class Variant {
 
         @Override
         public short shortValue() {
-            return (short) (value ? 1 : 0);
+            return (short) (value() ? 1 : 0);
         }
 
         @Override
@@ -389,7 +387,7 @@ public abstract class Variant {
 
         @Override
         public int intValue() {
-            return value ? 1 : 0;
+            return value() ? 1 : 0;
         }
 
         @Override
@@ -404,7 +402,7 @@ public abstract class Variant {
 
         @Override
         public long longValue() {
-            return value ? 1 : 0;
+            return value() ? 1 : 0;
         }
 
         @Override
@@ -420,7 +418,7 @@ public abstract class Variant {
         @Override
         public FixedPoint realValue() {
             FixedPoint result = new FixedPoint();
-            result.setInteger(value ? 1 : 0);
+            result.setInteger(value() ? 1 : 0);
             return result;
         }
 
@@ -436,7 +434,7 @@ public abstract class Variant {
 
         @Override
         public String stringValue() {
-            return value ? "TRUE" : "FALSE";
+            return value() ? "TRUE" : "FALSE";
         }
 
         @Override
@@ -451,7 +449,7 @@ public abstract class Variant {
 
         @Override
         public Variant not() {
-            return new BooleanWrapper(!value);
+            return Variant.createBoolean(!value());
         }
 
         @Override
@@ -493,35 +491,35 @@ public abstract class Variant {
         public Variant and(Variant var) {
             if (!var.isBoolean())
                 return Null.getInstance();
-            return new BooleanWrapper(value && var.booleanValue());
+            return Variant.createBoolean(value() && var.booleanValue());
         }
 
         @Override
         public Variant or(Variant var) {
             if (!var.isBoolean())
                 return Null.getInstance();
-            return new BooleanWrapper(value || var.booleanValue());
+            return Variant.createBoolean(value() || var.booleanValue());
         }
 
         @Override
         public Variant xor(Variant var) {
             if (!var.isBoolean())
                 return Null.getInstance();
-            return new BooleanWrapper(value != var.booleanValue());
+            return Variant.createBoolean(value() != var.booleanValue());
         }
 
         @Override
         public Variant equals(Variant var) {
             if (!var.isBoolean())
                 return Null.getInstance();
-            return new BooleanWrapper(value == var.booleanValue());
+            return Variant.createBoolean(value() == var.booleanValue());
         }
 
         @Override
         public Variant diff(Variant var) {
             if (!var.isBoolean())
                 return Null.getInstance();
-            return new BooleanWrapper(value != var.booleanValue());
+            return Variant.createBoolean(value() != var.booleanValue());
         }
 
         @Override
@@ -543,8 +541,42 @@ public abstract class Variant {
         public Variant greaterEqual(Variant var) {
             return Null.getInstance();
         }
+    }
 
-        private boolean value;
+    private static class True extends BooleanWrapper {
+        private True() {
+        }
+
+        private static True instance;
+
+        public static Variant getInstance() {
+            if (instance == null)
+                instance = new True();
+            return instance;
+        }
+
+        @Override
+        protected boolean value() {
+            return true;
+        }
+    }
+
+    private static class False extends BooleanWrapper {
+        private False() {
+        }
+
+        private static False instance;
+
+        public static Variant getInstance() {
+            if (instance == null)
+                instance = new False();
+            return instance;
+        }
+
+        @Override
+        protected boolean value() {
+            return false;
+        }
     }
 
     private static abstract class BaseIntWrapper extends Variant {
@@ -564,54 +596,54 @@ public abstract class Variant {
         @Override
         public Variant equals(Variant var) {
             if (var.isReal())
-                return new BooleanWrapper(longValue() == var.realValue().getFloat());
+                return Variant.createBoolean(longValue() == var.realValue().getFloat());
             if (var.isNumber())
-                return new BooleanWrapper(longValue() == var.longValue());
+                return Variant.createBoolean(longValue() == var.longValue());
             return Null.getInstance();
         }
 
         @Override
         public Variant diff(Variant var) {
             if (var.isReal())
-                return new BooleanWrapper(longValue() != var.realValue().getFloat());
+                return Variant.createBoolean(longValue() != var.realValue().getFloat());
             if (var.isNumber())
-                return new BooleanWrapper(longValue() != var.longValue());
+                return Variant.createBoolean(longValue() != var.longValue());
             return Null.getInstance();
         }
 
         @Override
         public Variant less(Variant var) {
             if (var.isReal())
-                return new BooleanWrapper(longValue() < var.realValue().getFloat());
+                return Variant.createBoolean(longValue() < var.realValue().getFloat());
             if (var.isNumber())
-                return new BooleanWrapper(longValue() < var.longValue());
+                return Variant.createBoolean(longValue() < var.longValue());
             return Null.getInstance();
         }
 
         @Override
         public Variant greater(Variant var) {
             if (var.isReal())
-                return new BooleanWrapper(longValue() > var.realValue().getFloat());
+                return Variant.createBoolean(longValue() > var.realValue().getFloat());
             if (var.isNumber())
-                return new BooleanWrapper(longValue() > var.longValue());
+                return Variant.createBoolean(longValue() > var.longValue());
             return Null.getInstance();
         }
 
         @Override
         public Variant lessEqual(Variant var) {
             if (var.isReal())
-                return new BooleanWrapper(longValue() <= var.realValue().getFloat());
+                return Variant.createBoolean(longValue() <= var.realValue().getFloat());
             if (var.isNumber())
-                return new BooleanWrapper(longValue() <= var.longValue());
+                return Variant.createBoolean(longValue() <= var.longValue());
             return Null.getInstance();
         }
 
         @Override
         public Variant greaterEqual(Variant var) {
             if (var.isReal())
-                return new BooleanWrapper(longValue() >= var.realValue().getFloat());
+                return Variant.createBoolean(longValue() >= var.realValue().getFloat());
             if (var.isNumber())
-                return new BooleanWrapper(longValue() >= var.longValue());
+                return Variant.createBoolean(longValue() >= var.longValue());
             return Null.getInstance();
         }
     }
@@ -1848,54 +1880,54 @@ public abstract class Variant {
         @Override
         public Variant equals(Variant var) {
             if (var.isReal())
-                return new BooleanWrapper(value.getFloat() == var.realValue().getFloat());
+                return Variant.createBoolean(value.getFloat() == var.realValue().getFloat());
             if (var.isNumber())
-                return new BooleanWrapper(value.getFloat() == var.longValue());
+                return Variant.createBoolean(value.getFloat() == var.longValue());
             return Null.getInstance();
         }
 
         @Override
         public Variant diff(Variant var) {
             if (var.isReal())
-                return new BooleanWrapper(value.getFloat() != var.realValue().getFloat());
+                return Variant.createBoolean(value.getFloat() != var.realValue().getFloat());
             if (var.isNumber())
-                return new BooleanWrapper(value.getFloat() != var.longValue());
+                return Variant.createBoolean(value.getFloat() != var.longValue());
             return Null.getInstance();
         }
 
         @Override
         public Variant less(Variant var) {
             if (var.isReal())
-                return new BooleanWrapper(value.getFloat() < var.realValue().getFloat());
+                return Variant.createBoolean(value.getFloat() < var.realValue().getFloat());
             if (var.isNumber())
-                return new BooleanWrapper(value.getFloat() < var.longValue());
+                return Variant.createBoolean(value.getFloat() < var.longValue());
             return Null.getInstance();
         }
 
         @Override
         public Variant greater(Variant var) {
             if (var.isReal())
-                return new BooleanWrapper(value.getFloat() > var.realValue().getFloat());
+                return Variant.createBoolean(value.getFloat() > var.realValue().getFloat());
             if (var.isNumber())
-                return new BooleanWrapper(value.getFloat() > var.longValue());
+                return Variant.createBoolean(value.getFloat() > var.longValue());
             return Null.getInstance();
         }
 
         @Override
         public Variant lessEqual(Variant var) {
             if (var.isReal())
-                return new BooleanWrapper(value.getFloat() <= var.realValue().getFloat());
+                return Variant.createBoolean(value.getFloat() <= var.realValue().getFloat());
             if (var.isNumber())
-                return new BooleanWrapper(value.getFloat() <= var.longValue());
+                return Variant.createBoolean(value.getFloat() <= var.longValue());
             return Null.getInstance();
         }
 
         @Override
         public Variant greaterEqual(Variant var) {
             if (var.isReal())
-                return new BooleanWrapper(value.getFloat() >= var.realValue().getFloat());
+                return Variant.createBoolean(value.getFloat() >= var.realValue().getFloat());
             if (var.isNumber())
-                return new BooleanWrapper(value.getFloat() >= var.longValue());
+                return Variant.createBoolean(value.getFloat() >= var.longValue());
             return Null.getInstance();
         }
 
@@ -2093,42 +2125,42 @@ public abstract class Variant {
         public Variant equals(Variant var) {
             if (!var.isString())
                 return Null.getInstance();
-            return new BooleanWrapper(value.equals(var.stringValue()));
+            return Variant.createBoolean(value.equals(var.stringValue()));
         }
 
         @Override
         public Variant diff(Variant var) {
             if (!var.isString())
                 return Null.getInstance();
-            return new BooleanWrapper(!value.equals(var.stringValue()));
+            return Variant.createBoolean(!value.equals(var.stringValue()));
         }
 
         @Override
         public Variant less(Variant var) {
             if (!var.isString())
                 return Null.getInstance();
-            return new BooleanWrapper(value.compareTo(var.stringValue()) < 0);
+            return Variant.createBoolean(value.compareTo(var.stringValue()) < 0);
         }
 
         @Override
         public Variant greater(Variant var) {
             if (!var.isString())
                 return Null.getInstance();
-            return new BooleanWrapper(value.compareTo(var.stringValue()) > 0);
+            return Variant.createBoolean(value.compareTo(var.stringValue()) > 0);
         }
 
         @Override
         public Variant lessEqual(Variant var) {
             if (!var.isString())
                 return Null.getInstance();
-            return new BooleanWrapper(value.compareTo(var.stringValue()) <= 0);
+            return Variant.createBoolean(value.compareTo(var.stringValue()) <= 0);
         }
 
         @Override
         public Variant greaterEqual(Variant var) {
             if (!var.isString())
                 return Null.getInstance();
-            return new BooleanWrapper(value.compareTo(var.stringValue()) >= 0);
+            return Variant.createBoolean(value.compareTo(var.stringValue()) >= 0);
         }
 
         private String value;
