@@ -19,6 +19,7 @@ package com.kniazkov.antcore.basic.graph;
 import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.lib.FixedPoint;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The REAL data type
@@ -74,12 +75,9 @@ public class RealType extends BuiltInType {
         if (otherType == this)
             return expression;
         if (otherType instanceof IntegerType) {
-            Object value = expression.calculate();
-            if (value != null) {
-                int intValue = (Integer) value;
-                FixedPoint realValue = new FixedPoint();
-                realValue.setFloat(intValue);
-                return new RealNode(realValue);
+            Variant value = expression.calculate();
+            if (value.hasRealValue()) {
+                return new RealNode(value.realValue());
             }
             return null;
         }

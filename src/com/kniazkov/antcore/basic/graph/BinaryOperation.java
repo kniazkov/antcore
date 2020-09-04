@@ -106,6 +106,19 @@ public abstract class BinaryOperation extends Expression implements ExpressionOw
             }
         }
 
+        if (leftType instanceof LongType) {
+            if (rightType instanceof ShortType || rightType instanceof IntegerType) {
+                type = leftType;
+                right = new Casting(true, right, leftType);
+                right.setOwner(this);
+                return true;
+            }
+            if (rightType instanceof LongType) {
+                type = leftType;
+                return true;
+            }
+        }
+
         if (leftType instanceof RealType && rightType instanceof RealType) {
             type = leftType;
             return true;

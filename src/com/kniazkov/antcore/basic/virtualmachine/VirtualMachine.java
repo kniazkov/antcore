@@ -268,6 +268,24 @@ public class VirtualMachine {
             stub    // 10 -> STRUCT
     };
 
+    final Unit[] castToLong = {
+            stub,
+            stub,   // 1 -> POINTER
+            stub,   // 2 -> BOOLEAN
+            stub,   // 3 -> BYTE
+            () -> { // 4 -> SHORT
+                pushLong(popShort());
+            },
+            () -> { // 5 -> INTEGER
+                pushLong(popInteger());
+            },
+            stub,   // 6 -> LONG
+            stub,   // 7 -> REAL
+            stub,   // 8 -> STRING
+            stub,   // 9 -> ARRAY
+            stub    // 10 -> STRUCT
+    };
+
     void castAnyToString(String strValue, int currentSize) {
         int newSize = read_x1();
         int capacity = (newSize - 8) / 2;
@@ -345,7 +363,9 @@ public class VirtualMachine {
             () -> { // 5 -> INTEGER
                 castToInteger[read_p0()].exec();
             },
-            stub,   // 6 -> LONG
+            () -> { // 6 -> LONG
+                castToLong[read_p0()].exec();
+            },
             stub,   // 7 -> REAL
             () -> { // 8 -> STRING
                 castToString[read_p0()].exec();

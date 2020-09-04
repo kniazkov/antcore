@@ -103,6 +103,11 @@ public class Addition extends BinaryOperation {
             return;
         }
 
+        if (leftType instanceof LongType && rightType instanceof LongType) {
+            unit.addInstruction(new Add(TypeSelector.LONG,8, 8, 8));
+            return;
+        }
+
         if (leftType instanceof RealType && rightType instanceof RealType) {
             unit.addInstruction(new Add(TypeSelector.REAL,8, 8, 8));
             return;

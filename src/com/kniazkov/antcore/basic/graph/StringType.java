@@ -57,11 +57,9 @@ public class StringType extends DataType implements ExpressionOwner {
 
     public int getStringLength() throws SyntaxError {
         if (lengthValue < 0) {
-            Object value = lengthNode.calculate();
-            if (value instanceof Short)
-                lengthValue = ((Short) value).intValue();
-            else if (value instanceof Integer)
-                lengthValue = (Integer) value;
+            Variant value = lengthNode.calculate();
+            if (value.hasIntValue())
+                lengthValue = value.intValue();
             else
                 throw new StringLengthMustBeConstant(getFragment());
         }

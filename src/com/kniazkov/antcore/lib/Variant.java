@@ -37,6 +37,11 @@ public abstract class Variant {
         return new StringWrapper(stringValue);
     }
 
+    @Override
+    public String toString() {
+        return stringValue();
+    }
+
     public abstract boolean isNull();
     public abstract boolean isNumber();
 
@@ -67,6 +72,8 @@ public abstract class Variant {
     public abstract boolean isString();
     public abstract boolean hasStringValue();
     public abstract String stringValue();
+
+    public abstract byte sign();
 
     public abstract Variant neg();
     public abstract Variant not();
@@ -212,6 +219,11 @@ public abstract class Variant {
         @Override
         public String stringValue() {
             return null;
+        }
+
+        @Override
+        public byte sign() {
+            return 0;
         }
 
         @Override
@@ -428,6 +440,11 @@ public abstract class Variant {
         }
 
         @Override
+        public byte sign() {
+            return 0;
+        }
+
+        @Override
         public Variant neg() {
             return Null.getInstance();
         }
@@ -531,6 +548,14 @@ public abstract class Variant {
     }
 
     private static abstract class BaseIntWrapper extends Variant {
+        @Override
+        public byte sign() {
+            long value = longValue();
+            if (value > 0) return 1;
+            else if (value < 0) return -1;
+            else return 0;
+        }
+
         @Override
         public boolean isNumber() {
             return true;
@@ -1738,6 +1763,11 @@ public abstract class Variant {
         }
 
         @Override
+        public byte sign() {
+            return value.sign();
+        }
+
+        @Override
         public Variant neg() {
             FixedPoint result = new FixedPoint();
             FixedPoint.neg(result, value);
@@ -1990,6 +2020,11 @@ public abstract class Variant {
         @Override
         public String stringValue() {
             return value;
+        }
+
+        @Override
+        public byte sign() {
+            return 0;
         }
 
         @Override

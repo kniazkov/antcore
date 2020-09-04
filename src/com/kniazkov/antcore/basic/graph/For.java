@@ -24,6 +24,7 @@ import com.kniazkov.antcore.basic.exceptions.CounterMustBeNumeric;
 import com.kniazkov.antcore.basic.exceptions.ExpressionCannotBeAssigned;
 import com.kniazkov.antcore.basic.exceptions.IncompatibleTypes;
 import com.kniazkov.antcore.lib.Math2;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The 'FOR' statement
@@ -70,8 +71,10 @@ public class For extends Statement implements  ExpressionOwner, StatementListOwn
 
         // evaluate the end
         Variable tmpVarEnd = null;
-        Object endValue = end.calculate();
-        if (endValue == null) {
+        Variant endValue = end.calculate();
+        boolean noStaticEnd = false;
+        if (!endValue.isNumber()) {
+            noStaticEnd = true;
             tmpVarEnd = function.createTemporaryVariable(counterType);
             end.genLoad(unit);
             tmpVarEnd.genStore(unit);
@@ -80,9 +83,11 @@ public class For extends Statement implements  ExpressionOwner, StatementListOwn
         // evaluate the step and the sign of the step
         Variable tmpVarStep = null;
         Variable tmpVarStepSign = null;
-        Object stepValue = step.calculate();
+        Variant stepValue = step.calculate();
         byte stepSing = 0;
-        if (stepValue == null) {
+        boolean noStaticStep = false;
+        if (!stepValue.isNumber()) {
+            noStaticStep = true;
             tmpVarStep = function.createTemporaryVariable(counterType);
             tmpVarStepSign = function.createTemporaryVariable(ByteType.getInstance());
             step.genLoad(unit);
@@ -92,7 +97,7 @@ public class For extends Statement implements  ExpressionOwner, StatementListOwn
             tmpVarStepSign.genStore(unit);
         }
         else {
-            stepSing = Math2.sign(stepValue);
+            stepSing = stepValue.sign();
         }
 
         // evaluate the start
@@ -101,14 +106,14 @@ public class For extends Statement implements  ExpressionOwner, StatementListOwn
 
         // begin of the body - compare the variable with the end value and calculate the sign of the difference
         Offset beginAddress = unit.getCurrentAddress();
-        if (endValue == null)
+        if (noStaticEnd)
             tmpVarEnd.genLoad(unit);
         else
             end.genLoad(unit);
         assignableExpression.genLoad(unit);
         unit.addInstruction(new Sub(counterSelector, counterSize, counterSize, counterSize));
         unit.addInstruction(new Sign(counterSelector));
-        if (stepValue == null)
+        if (noStaticStep)
             tmpVarStepSign.genLoad(unit);
         else
             new ByteNode(stepSing).genLoad(unit);
@@ -121,7 +126,7 @@ public class For extends Statement implements  ExpressionOwner, StatementListOwn
 
         // end of the body - increment the counter
         assignableExpression.genLoad(unit);
-        if (stepValue == null)
+        if (noStaticStep)
             tmpVarStep.genLoad(unit);
         else
             step.genLoad(unit);
