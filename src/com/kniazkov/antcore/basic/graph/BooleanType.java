@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The BOOLEAN data type
@@ -56,6 +57,13 @@ public class BooleanType extends BuiltInType {
     @Override
     public boolean containsPointer() {
         return false;
+    }
+
+    @Override
+    public Expression createExpression(Variant var) {
+        if (var.hasBooleanValue())
+            return new BooleanNode(var.booleanValue());
+        return null;
     }
 
     @Override

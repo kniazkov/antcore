@@ -65,5 +65,22 @@ public class Return extends Statement implements ExpressionOwner {
         buff.append('\n');
     }
 
+    @Override
+    public Expression[] getExpressions() {
+        if (value != null)
+            return new Expression[] {value};
+        else
+            return new Expression[0];
+    }
+
+    @Override
+    public void replaceExpressions(Expression[] list) {
+        if (list.length == 0)
+            return;
+        assert (list.length == 1);
+        value = list[0];
+        value.setOwner(this);
+    }
+
     private Expression value;
 }

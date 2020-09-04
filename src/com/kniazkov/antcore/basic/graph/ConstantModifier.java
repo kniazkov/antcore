@@ -17,6 +17,7 @@
 package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The constant modifier for data type
@@ -75,6 +76,11 @@ public class ConstantModifier extends DataType implements DataTypeOwner {
     @Override
     public boolean containsPointer() {
         return type.containsPointer();
+    }
+
+    @Override
+    public Expression createExpression(Variant var) {
+        return type.createExpression(var);
     }
 
     @Override

@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.common.SyntaxError;
 import com.kniazkov.antcore.basic.exceptions.UnknownType;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The reference to data type
@@ -82,6 +83,11 @@ public class DataTypeReference extends DataType {
     @Override
     public boolean containsPointer() {
         return type.containsPointer();
+    }
+
+    @Override
+    public Expression createExpression(Variant var) {
+        return type.createExpression(var);
     }
 
     @Override

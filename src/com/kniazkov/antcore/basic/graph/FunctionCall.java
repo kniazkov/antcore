@@ -77,6 +77,19 @@ public class FunctionCall extends Expression implements ExpressionOwner {
         buff.append(')');
     }
 
+    @Override
+    public Expression[] getExpressions() {
+        Expression[] expressions = new Expression[arguments.size()];
+        arguments.toArray(expressions);
+        return expressions;
+    }
+
+    @Override
+    public void replaceExpressions(Expression[] list) {
+        assert(list.length == arguments.size());
+        arguments = Arrays.asList(list);
+    }
+
     /**
      * Bind function by name
      */

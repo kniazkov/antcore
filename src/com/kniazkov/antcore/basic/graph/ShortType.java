@@ -60,6 +60,13 @@ public class ShortType extends BuiltInType {
     }
 
     @Override
+    public Expression createExpression(Variant var) {
+        if (var.hasShortValue())
+            return new ShortNode(var.shortValue());
+        return null;
+    }
+
+    @Override
     public boolean isBinaryAnalog(DataType otherType) throws SyntaxError {
         return otherType == this;
     }

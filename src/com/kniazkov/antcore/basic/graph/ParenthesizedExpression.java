@@ -66,5 +66,17 @@ public class ParenthesizedExpression extends Expression implements ExpressionOwn
         expression.genLoad(unit);
     }
 
+    @Override
+    public Expression[] getExpressions() {
+        return new Expression[] {expression};
+    }
+
+    @Override
+    public void replaceExpressions(Expression[] list) {
+        assert (list.length == 1);
+        expression = list[0];
+        expression.setOwner(this);
+    }
+
     private Expression expression;
 }

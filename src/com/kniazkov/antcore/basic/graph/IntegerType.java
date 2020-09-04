@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The INTEGER data type
@@ -56,6 +57,13 @@ public class IntegerType extends BuiltInType {
     @Override
     public boolean containsPointer() {
         return false;
+    }
+
+    @Override
+    public Expression createExpression(Variant var) {
+        if (var.hasIntValue())
+            return new IntegerNode(var.intValue());
+        return null;
     }
 
     @Override

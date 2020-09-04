@@ -66,6 +66,20 @@ public abstract class BinaryOperation extends Expression implements ExpressionOw
         right.toUsageSourceCode(buff);
     }
 
+    @Override
+    public Expression[] getExpressions() {
+        return new Expression[]{ left, right };
+    }
+
+    @Override
+    public void replaceExpressions(Expression[] list) {
+        assert (list.length == 2);
+        left = list[0];
+        left.setOwner(this);
+        right = list[1];
+        right.setOwner(this);
+    }
+
     protected DataType getLeftPureNonConstantType () throws SyntaxError {
         DataType type = left.getType().getPureType();
         if (type instanceof ConstantModifier)

@@ -20,6 +20,7 @@ import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.common.DataPrefix;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 import java.util.List;
 
@@ -76,6 +77,11 @@ public class Struct extends DataType implements DataSetOwner {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public Expression createExpression(Variant var) {
+        return null;
     }
 
     @Override

@@ -22,7 +22,7 @@ import com.kniazkov.antcore.basic.common.SyntaxError;
 /**
  * The 'ELSE' block
  */
-public class Else extends Node implements ExpressionOwner, StatementListOwner {
+public class Else extends Node implements StatementListOwner {
     public Else(Fragment fragment, StatementList body) {
         this.fragment = fragment;
         this.body = body;

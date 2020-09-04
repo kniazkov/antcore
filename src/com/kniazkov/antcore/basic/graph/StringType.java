@@ -103,6 +103,13 @@ public class StringType extends DataType implements ExpressionOwner {
     }
 
     @Override
+    public Expression createExpression(Variant var) {
+        if (var.hasStringValue())
+            return new StringNode(var.stringValue());
+        return null;
+    }
+
+    @Override
     void setOwner(DataTypeOwner owner) {
         this.owner = owner;
     }
@@ -147,6 +154,18 @@ public class StringType extends DataType implements ExpressionOwner {
     @Override
     public Node getOwner() {
         return (Node)owner;
+    }
+
+    @Override
+    public Expression[] getExpressions() {
+        return new Expression[] {lengthNode};
+    }
+
+    @Override
+    public void replaceExpressions(Expression[] list) {
+        assert (list.length == 1);
+        lengthNode = list[0];
+        lengthNode.setOwner(this);
     }
 
     private DataTypeOwner owner;

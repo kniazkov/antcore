@@ -64,6 +64,16 @@ public class ConstantList extends Node implements ExpressionOwner {
         }
     }
 
+    @Override
+    public Expression[] getExpressions() {
+        return new Expression[]{};
+    }
+
+    @Override
+    public void replaceExpressions(Expression[] list) {
+        assert (list.length == 0);
+    }
+
     Constant findConstantByName(String name) {
         return constantMap.get(name);
     }

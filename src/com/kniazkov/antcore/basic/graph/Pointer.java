@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The pointer data type
@@ -80,6 +81,11 @@ public class Pointer extends DataType implements DataTypeOwner {
     @Override
     public boolean containsPointer() {
         return true;
+    }
+
+    @Override
+    public Expression createExpression(Variant var) {
+        return null;
     }
 
     @Override

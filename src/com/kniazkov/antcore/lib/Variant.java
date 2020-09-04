@@ -288,12 +288,12 @@ public abstract class Variant {
 
         @Override
         public Variant equals(Variant var) {
-            return new BooleanWrapper(var.isNull());
+            return this;
         }
 
         @Override
         public Variant diff(Variant var) {
-            return new BooleanWrapper(!var.isNull());
+            return this;
         }
 
         @Override
@@ -2039,7 +2039,9 @@ public abstract class Variant {
 
         @Override
         public Variant add(Variant var) {
-            return new StringWrapper(value + var.stringValue());
+            if (!var.isNull())
+                return new StringWrapper(value + var.stringValue());
+            return Null.getInstance();
         }
 
         @Override

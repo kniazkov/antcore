@@ -44,6 +44,18 @@ public class Assignment extends Statement implements ExpressionOwner {
         return new Node[] { right, left };
     }
 
+    @Override
+    public Expression[] getExpressions() {
+        return new Expression[]{right};
+    }
+
+    @Override
+    public void replaceExpressions(Expression[] list) {
+        assert (list.length == 1);
+        right = list[0];
+        right.setOwner(this);
+    }
+
     public Expression getLeft() {
         return left;
     }

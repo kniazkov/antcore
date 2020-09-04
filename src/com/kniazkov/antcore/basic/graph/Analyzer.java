@@ -32,8 +32,9 @@ public class Analyzer {
         root.mergeModulesAndCodeBlocks();
         bindTypes(root);
         bindNames(root);
-        buildStaticData(root);
         checkTypes(root);
+        simplifyExpressions(root);
+        buildStaticData(root);
         calculateOffsets(root);
     }
 
@@ -226,5 +227,18 @@ public class Analyzer {
         }
 
         visitAll(root, new Calculator());
+    }
+
+    /**
+     * Simplify complex expressions to avoid unnecessary computations
+     * @param root the root node
+     */
+    protected static void simplifyExpressions(Program root) throws SyntaxError {
+        List<Node> list = root.enumerate();
+        for (Node node : list) {
+            if (node instanceof ExpressionOwner) {
+                ExpressionSimplification.apply((ExpressionOwner) node);
+            }
+        }
     }
 }

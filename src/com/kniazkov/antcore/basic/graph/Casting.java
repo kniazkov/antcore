@@ -76,6 +76,23 @@ public class Casting extends Expression implements ExpressionOwner, DataTypeOwne
         unit.addInstruction(cast);
     }
 
+    @Override
+    public boolean isAtomic() {
+        return expression.isAtomic();
+    }
+
+    @Override
+    public Expression[] getExpressions() {
+        return new Expression[] {expression};
+    }
+
+    @Override
+    public void replaceExpressions(Expression[] list) {
+        assert (list.length == 1);
+        expression = list[0];
+        expression.setOwner(this);
+    }
+
     private boolean implicit;
     private Expression expression;
     private DataType newType;

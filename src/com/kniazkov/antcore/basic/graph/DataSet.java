@@ -84,6 +84,16 @@ public class DataSet extends Node implements ExpressionOwner {
         buff.append(i).append("END DATA").append('\n');
     }
 
+    @Override
+    public Expression[] getExpressions() {
+        return new Expression[]{};
+    }
+
+    @Override
+    public void replaceExpressions(Expression[] list) {
+        assert (list.length == 0);
+    }
+
     public List<Field> getFields() {
         return fieldList;
     }

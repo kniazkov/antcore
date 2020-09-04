@@ -78,6 +78,18 @@ public class ElseIf extends Node implements ExpressionOwner, StatementListOwner 
         body.toSourceCode(buff, i1, i0);
     }
 
+    @Override
+    public Expression[] getExpressions() {
+        return new Expression[] {condition};
+    }
+
+    @Override
+    public void replaceExpressions(Expression[] list) {
+        assert (list.length == 1);
+        condition = list[0];
+        condition.setOwner(this);
+    }
+
     void checkType() throws SyntaxError {
         Expression cast = DataTypeCast.cast(BooleanType.getInstance(), condition);
         if (cast != condition) {

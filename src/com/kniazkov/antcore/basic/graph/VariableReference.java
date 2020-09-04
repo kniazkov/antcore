@@ -55,6 +55,11 @@ public class VariableReference extends Expression implements ExpressionOwner {
     }
 
     @Override
+    public boolean isAtomic() {
+        return false;
+    }
+
+    @Override
     public void toDeclarationSourceCode(StringBuilder buff, String i) {
         toUsageSourceCode(buff);
     }
@@ -115,6 +120,16 @@ public class VariableReference extends Expression implements ExpressionOwner {
     @Override
     public Expression getPointer() throws SyntaxError {
         return expression.getPointer();
+    }
+
+    @Override
+    public Expression[] getExpressions() {
+        return new Expression[]{};
+    }
+
+    @Override
+    public void replaceExpressions(Expression[] list) {
+        assert (list.length == 0);
     }
 
     private String name;

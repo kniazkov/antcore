@@ -17,7 +17,17 @@
 package com.kniazkov.antcore.basic.graph;
 
 /**
- * Marker interface for expression owners
+ * Interface for expression owners
  */
 public interface ExpressionOwner {
+    /**
+     * @return an expression list for an expression simplification algorithm
+     */
+    Expression[] getExpressions();
+
+    /**
+     * Applies a list of simplified expressions
+     * @param list a list
+     */
+    void replaceExpressions(Expression[] list);
 }

@@ -35,6 +35,13 @@ public abstract class Expression extends Node {
     public abstract Variant calculate();
 
     /**
+     * @return true if this is an atomic expression, that is, cannot be divided into parts
+     */
+    public boolean isAtomic() {
+        return false;
+    }
+
+    /**
      * Set owner of the node
      * @param owner owner
      */
@@ -75,8 +82,8 @@ public abstract class Expression extends Node {
 
     @Override
     public String toString() {
-        Object value = calculate();
-        if (value != null)
+        Variant value = calculate();
+        if (!value.isNull())
             return value.toString();
         StringBuilder buff = new StringBuilder();
         toUsageSourceCode(buff);

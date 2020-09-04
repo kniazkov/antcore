@@ -46,6 +46,11 @@ public class RealNode extends Expression {
     }
 
     @Override
+    public boolean isAtomic() {
+        return true;
+    }
+
+    @Override
     public void toDeclarationSourceCode(StringBuilder buff, String i) {
         buff.append(value);
     }

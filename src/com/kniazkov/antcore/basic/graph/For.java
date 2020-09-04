@@ -196,6 +196,26 @@ public class For extends Statement implements  ExpressionOwner, StatementListOwn
         }
     }
 
+    @Override
+    public Expression[] getExpressions() {
+        if (step != null)
+            return new Expression[] {start, end, step};
+        return new Expression[] {start, end};
+    }
+
+    @Override
+    public void replaceExpressions(Expression[] list) {
+        assert (list.length == 2 || list.length == 3);
+        start = list[0];
+        start.setOwner(this);
+        end = list[1];
+        end.setOwner(this);
+        if (list.length == 3) {
+            step = list[2];
+            step.setOwner(this);
+        }
+    }
+
     private Expression variable;
     private Expression start;
     private Expression end;

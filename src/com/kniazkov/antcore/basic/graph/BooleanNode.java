@@ -45,6 +45,11 @@ public class BooleanNode extends Expression {
     }
 
     @Override
+    public boolean isAtomic() {
+        return true;
+    }
+
+    @Override
     public void toDeclarationSourceCode(StringBuilder buff, String i) {
         toUsageSourceCode(buff);
     }

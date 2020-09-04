@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The basic interface for data type
@@ -62,6 +63,13 @@ public abstract class DataType extends Node {
      * @return true if the type is pointer or contains pointer
      */
     public abstract boolean containsPointer();
+
+    /**
+     * Create an expression of this type with the specified value
+     * @param var value
+     * @return an expression
+     */
+    public abstract Expression createExpression(Variant var);
 
     /**
      * Set owner of the node

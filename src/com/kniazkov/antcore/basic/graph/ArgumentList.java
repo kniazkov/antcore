@@ -74,6 +74,16 @@ public class ArgumentList extends Node implements ExpressionOwner {
         buff.append(')');
     }
 
+    @Override
+    public Expression[] getExpressions() {
+        return new Expression[]{};
+    }
+
+    @Override
+    public void replaceExpressions(Expression[] list) {
+        assert (list.length == 0);
+    }
+
     public int getCount() {
         return argumentList.size();
     }

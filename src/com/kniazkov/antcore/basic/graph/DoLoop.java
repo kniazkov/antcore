@@ -86,6 +86,18 @@ public class DoLoop extends Statement implements ExpressionOwner, StatementListO
         buff.append('\n');
     }
 
+    @Override
+    public Expression[] getExpressions() {
+        return new Expression[] {condition};
+    }
+
+    @Override
+    public void replaceExpressions(Expression[] list) {
+        assert (list.length == 1);
+        condition = list[0];
+        condition.setOwner(this);
+    }
+
     void checkType() throws SyntaxError {
         Expression cast = DataTypeCast.cast(BooleanType.getInstance(), condition);
         if (cast != condition) {

@@ -18,13 +18,14 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 import java.util.List;
 
 /**
  * The STRING data type without size specified
  */
-public class AbstractStringType extends BuiltInType implements ExpressionOwner {
+public class AbstractStringType extends BuiltInType {
     @Override
     public String getName() {
         return "STRING";
@@ -58,6 +59,11 @@ public class AbstractStringType extends BuiltInType implements ExpressionOwner {
     @Override
     public boolean containsPointer() {
         return false;
+    }
+
+    @Override
+    public Expression createExpression(Variant var) {
+        return null;
     }
 
     @Override

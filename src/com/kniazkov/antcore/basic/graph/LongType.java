@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The LONG data type
@@ -56,6 +57,13 @@ public class LongType extends BuiltInType {
     @Override
     public boolean containsPointer() {
         return false;
+    }
+
+    @Override
+    public Expression createExpression(Variant var) {
+        if (var.hasLongValue())
+            return new LongNode(var.longValue());
+        return null;
     }
 
     @Override

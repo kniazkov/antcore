@@ -61,6 +61,13 @@ public class RealType extends BuiltInType {
     }
 
     @Override
+    public Expression createExpression(Variant var) {
+        if (var.hasRealValue())
+            return new RealNode(var.realValue());
+        return null;
+    }
+
+    @Override
     public boolean isBinaryAnalog(DataType otherType) throws SyntaxError {
         return otherType == this;
     }

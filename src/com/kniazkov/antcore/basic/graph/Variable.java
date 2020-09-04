@@ -142,6 +142,23 @@ public class Variable extends LeftExpression implements DataTypeOwner, Expressio
         return new LocalPointer(this, offset);
     }
 
+    @Override
+    public Expression[] getExpressions() {
+        if (initValue != null)
+            return new Expression[] {initValue};
+        else
+            return new Expression[0];
+    }
+
+    @Override
+    public void replaceExpressions(Expression[] list) {
+        if (list.length == 0)
+            return;
+        assert (list.length == 1);
+        initValue = list[0];
+        initValue.setOwner(this);
+    }
+
     private VariableDeclaration owner;
     private String name;
     private Expression initValue;

@@ -20,6 +20,7 @@ import com.kniazkov.antcore.basic.bytecodebuilder.CompilationUnit;
 import com.kniazkov.antcore.basic.bytecodebuilder.Pop;
 import com.kniazkov.antcore.basic.common.Fragment;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The statement that has only one expression
@@ -43,10 +44,13 @@ public class StatementExpression extends Statement implements ExpressionOwner {
 
     @Override
     public void compile(CompilationUnit unit) throws SyntaxError {
-        expression.genLoad(unit);
-        DataType returnType = expression.getType();
-        if (returnType != null)
-            unit.addInstruction(new Pop(returnType.getSize()));
+        Variant value = expression.calculate();
+        if (value.isNull()) {
+            expression.genLoad(unit);
+            DataType returnType = expression.getType();
+            if (returnType != null)
+                unit.addInstruction(new Pop(returnType.getSize()));
+        }
     }
 
     @Override
@@ -54,6 +58,18 @@ public class StatementExpression extends Statement implements ExpressionOwner {
         buff.append(i);
         expression.toUsageSourceCode(buff);
         buff.append('\n');
+    }
+
+    @Override
+    public Expression[] getExpressions() {
+        return new Expression[] {expression};
+    }
+
+    @Override
+    public void replaceExpressions(Expression[] list) {
+        assert (list.length == 1);
+        expression = list[0];
+        expression.setOwner(this);
     }
 
     private Expression expression;

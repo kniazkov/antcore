@@ -126,6 +126,18 @@ public class Constant extends Expression implements DataTypeOwner, ExpressionOwn
         value.genLoad(unit);
     }
 
+    @Override
+    public Expression[] getExpressions() {
+        return new Expression[] {value};
+    }
+
+    @Override
+    public void replaceExpressions(Expression[] list) {
+        assert (list.length == 1);
+        value = list[0];
+        value.setOwner(this);
+    }
+
     private ConstantList owner;
     private Fragment fragment;
     private String name;

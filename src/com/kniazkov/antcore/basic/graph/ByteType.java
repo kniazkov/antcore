@@ -18,6 +18,7 @@ package com.kniazkov.antcore.basic.graph;
 
 import com.kniazkov.antcore.basic.bytecode.TypeSelector;
 import com.kniazkov.antcore.basic.common.SyntaxError;
+import com.kniazkov.antcore.lib.Variant;
 
 /**
  * The BYTE data type
@@ -79,6 +80,13 @@ public class ByteType extends BuiltInType {
     public Expression dynamicCast(Expression expression, DataType otherType) throws SyntaxError {
         if (otherType == this)
             return expression;
+        return null;
+    }
+
+    @Override
+    public Expression createExpression(Variant var) {
+        if (var.hasByteValue())
+            return new ByteNode(var.byteValue());
         return null;
     }
 
